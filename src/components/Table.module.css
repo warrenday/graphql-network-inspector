@@ -1,0 +1,35 @@
+.table {
+  width: 100%;
+  border-spacing: 0;
+  text-align: left;
+  color: #fff;
+  white-space: nowrap;
+  font-size: 1.2rem;
+}
+
+.table thead th {
+  background-color: #232729;
+  border-bottom: 1px solid #3d4043;
+  padding: 5px;
+}
+
+.table td {
+  padding: 5px;
+}
+
+.table tr:nth-child(odd) {
+  background-color: #1f1f1f;
+}
+
+.table tr:nth-child(even) {
+  background-color: #212526;
+}
+
+.table tr.selected {
+  background-color: #0458cf !important;
+}
+
+.table tr:hover {
+  cursor: pointer;
+  background-color: #29303c;
+}

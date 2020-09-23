@@ -1,0 +1,9 @@
+{
+  "name": "GraphQL Network Inspector",
+  "version": "1.0",
+  "description": "An inspect network tab for graphgl queries",
+
+  "manifest_version": 2,
+  "permissions": ["webRequest", "webRequestBlocking", "*://*/*"],
+  "devtools_page": "devtools/devtools.html"
+}

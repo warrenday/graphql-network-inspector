@@ -1,0 +1,3 @@
+* hidden scroll bars for windows
+* overflow scroll for table - with fixed header
+* replace header mechanism to track requests/responses - since auth doesnt like custom headers, same probably true for other APIs

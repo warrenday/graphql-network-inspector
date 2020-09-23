@@ -1,0 +1,27 @@
+.subtitle {
+  margin-left: 10px;
+}
+
+.query {
+  border-bottom: 1px solid #3d4043;
+}
+
+.closeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  color: #fff;
+  border: none;
+  padding: 0 10px;
+  font-family: Arial, Helvetica, sans-serif;
+  outline: 0;
+  opacity: 0.5;
+}
+.closeButton svg {
+  height: 15px;
+  width: 15px;
+}
+.closeButton:hover {
+  opacity: 1;
+}

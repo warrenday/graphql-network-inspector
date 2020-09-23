@@ -1,0 +1,51 @@
+{
+  "name": "my-app",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@types/react-table": "^7.0.22",
+    "graphql": "^15.3.0",
+    "graphql-tag": "^2.11.0",
+    "mergeby": "^1.1.0",
+    "react": "^16.13.1",
+    "react-code-blocks": "^0.0.8",
+    "react-dom": "^16.13.1",
+    "react-split-pane": "^0.1.92",
+    "react-table": "^7.5.0",
+    "uuid": "^8.3.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "INLINE_RUNTIME_CHUNK=false react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "@types/chrome": "^0.0.122",
+    "@types/jest": "^24.0.0",
+    "@types/node": "^12.0.0",
+    "@types/react": "^16.9.0",
+    "@types/react-dom": "^16.9.0",
+    "@types/uuid": "^8.3.0",
+    "react-scripts": "3.4.3",
+    "typescript": "~3.7.2"
+  }
+}

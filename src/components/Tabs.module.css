@@ -1,0 +1,40 @@
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs {
+  display: flex;
+  background-color: #232729;
+  border-bottom: 1px solid #3d4043;
+}
+
+.tab {
+  background: none;
+  color: #fff;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 0px;
+  outline: none;
+}
+
+.tabTitle {
+  margin: 0;
+  line-height: 1.5rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.tabActive {
+  background-color: #17181a;
+}
+
+.tabActive .tabTitle {
+  color: #0458cf;
+}
+
+.tabContent {
+  overflow: scroll;
+}

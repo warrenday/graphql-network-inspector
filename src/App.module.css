@@ -1,0 +1,15 @@
+.container {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+}
+
+.networkTable {
+  width: 100%;
+}
+
+.networkPanel {
+  width: 100%;
+  border-left: 1px solid #3d4043;
+  background-color: #1c2022;
+}
