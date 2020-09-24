@@ -74,17 +74,19 @@ export const Table = <T extends {}>(props: TableProps<T>) => {
   const { getTableProps, headerGroups } = tableInstance;
 
   return (
-    <table {...getTableProps()} className={classes.table}>
-      <TableHead headerGroups={headerGroups} />
-      <TableBody
-        {...tableInstance}
-        onRowClick={(row) => {
-          if (onRowClick) {
-            onRowClick(row.id, row.original);
-          }
-        }}
-        selectedRowId={selectedRowId}
-      />
-    </table>
+    <div className={`${classes.container} scroll`}>
+      <table {...getTableProps()} className={classes.table}>
+        <TableHead headerGroups={headerGroups} />
+        <TableBody
+          {...tableInstance}
+          onRowClick={(row) => {
+            if (onRowClick) {
+              onRowClick(row.id, row.original);
+            }
+          }}
+          selectedRowId={selectedRowId}
+        />
+      </table>
+    </div>
   );
 };

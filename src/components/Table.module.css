@@ -1,3 +1,9 @@
+.container {
+  overflow: scroll;
+  position: relative;
+  max-height: 100vh;
+}
+
 .table {
   width: 100%;
   border-spacing: 0;
@@ -11,6 +17,8 @@
   background-color: #232729;
   border-bottom: 1px solid #3d4043;
   padding: 5px;
+  position: sticky;
+  top: 0;
 }
 
 .table td {

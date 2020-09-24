@@ -28,7 +28,9 @@ export const Tabs = (props: TabsProps) => {
           </button>
         ))}
       </div>
-      <div className={classes.tabContent}>{tabs[activeTab].component}</div>
+      <div className={`${classes.tabContent} scroll`}>
+        {tabs[activeTab].component}
+      </div>
     </div>
   );
 };
