@@ -25,6 +25,10 @@
   padding: 5px;
   border-right: 1px solid #3d4043;
 }
+.table td:last-child,
+.table th:last-child {
+  border-right: none;
+}
 
 .table tr:nth-child(odd) {
   background-color: #1f1f1f;

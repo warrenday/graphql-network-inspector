@@ -6,6 +6,7 @@
 
 .networkTable {
   width: 100%;
+  border-right: 1px solid #3d4043;
 }
 
 .networkPanel {

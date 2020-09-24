@@ -1,9 +1,12 @@
 {
   "name": "GraphQL Network Inspector",
   "version": "1.0",
-  "description": "An inspect network tab for graphgl queries",
+  "description": "Simple and clean network inspector for GraphQL",
 
+  "icons": {
+    "128": "icon.png"
+  },
   "manifest_version": 2,
-  "permissions": ["webRequest", "webRequestBlocking", "*://*/*"],
+  "permissions": ["webRequest", "activeTab"],
   "devtools_page": "devtools/devtools.html"
 }
