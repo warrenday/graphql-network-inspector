@@ -35,12 +35,18 @@
   text-transform: capitalize;
   font-weight: bold;
   margin-right: 5px;
+
+  background: #3c4042;
+  border-radius: 3px;
+  width: 15px;
+  height: 15px;
+  text-align: center;
 }
 .queryTypeQuery {
   color: #1ef57a;
 }
 .queryTypeMutation {
-  color: #d64292;
+  color: #f41dec;
 }
 .queryTotal {
   font-weight: bold;

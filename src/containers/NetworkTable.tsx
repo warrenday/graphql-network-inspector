@@ -36,7 +36,7 @@ const Query = ({
           : classes.queryTypeMutation
       }`}
     >
-      {queryType}
+      {queryType === "query" ? "Q" : "M"}
     </span>
     <span>{method}</span>
     {totalQueries > 1 && (
