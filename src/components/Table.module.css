@@ -16,13 +16,14 @@
 .table thead th {
   background-color: #232729;
   border-bottom: 1px solid #3d4043;
-  padding: 5px;
   position: sticky;
   top: 0;
 }
 
-.table td {
+.table td,
+.table th {
   padding: 5px;
+  border-right: 1px solid #3d4043;
 }
 
 .table tr:nth-child(odd) {
