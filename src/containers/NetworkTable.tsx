@@ -21,11 +21,11 @@ const ClearButton = ({ onClick }: { onClick: () => void }) => (
 
 const Query = ({
   queryType,
-  method,
+  operationName,
   totalQueries,
 }: {
   queryType: string;
-  method: string;
+  operationName: string;
   totalQueries: number;
 }) => (
   <div className={classes.query}>
@@ -38,7 +38,7 @@ const Query = ({
     >
       {queryType === "query" ? "Q" : "M"}
     </span>
-    <span>{method}</span>
+    <span>{operationName}</span>
     {totalQueries > 1 && (
       <span className={classes.queryTotal}>+{totalQueries - 1}</span>
     )}
@@ -67,16 +67,12 @@ export const NetworkTable = (props: NetworkTableProps) => {
         id: "query",
         Header: "Query / Mutation",
         accessor: (row) => {
-          const body = row.request.body[0];
-          const [queryType, method] = body.query
-            .slice(0, body.query.indexOf("("))
-            .trim()
-            .split(" ");
+          const { operation, operationName } = row.request.primaryOperation;
 
           return (
             <Query
-              queryType={queryType}
-              method={method}
+              queryType={operation}
+              operationName={operationName}
               totalQueries={row.request.body.length}
             />
           );

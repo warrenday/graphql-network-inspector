@@ -31,19 +31,15 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
               <div>
                 {requestBody.map(({ query, variables }) => (
                   <div key={query} className={classes.query}>
-                    <div>
-                      <CodeBlock text={query} language={"graphql"} />
-                    </div>
+                    <h2 className={classes.subtitle}>Request</h2>
+                    <CodeBlock text={query} language={"graphql"} />
                     <h2 className={classes.subtitle}>Variables</h2>
-                    <div>
-                      <CodeBlock
-                        text={
-                          safeJson.stringify(variables || {}, undefined, 4) ||
-                          ""
-                        }
-                        language={"json"}
-                      />
-                    </div>
+                    <CodeBlock
+                      text={
+                        safeJson.stringify(variables || {}, undefined, 4) || ""
+                      }
+                      language={"json"}
+                    />
                   </div>
                 ))}
               </div>
@@ -52,18 +48,16 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
           {
             title: "Response",
             component: (
-              <div>
-                <CodeBlock
-                  text={
-                    safeJson.stringify(
-                      safeJson.parse(responseBody) || {},
-                      undefined,
-                      4
-                    ) || ""
-                  }
-                  language={"json"}
-                />
-              </div>
+              <CodeBlock
+                text={
+                  safeJson.stringify(
+                    safeJson.parse(responseBody) || {},
+                    undefined,
+                    4
+                  ) || ""
+                }
+                language={"json"}
+              />
             ),
           },
         ]}

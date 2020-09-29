@@ -21,6 +21,7 @@ export const Tabs = (props: TabsProps) => {
         {leftContent && leftContent}
         {tabs.map((tab, i) => (
           <button
+            key={i}
             className={`${classes.tab} ${i === activeTab && classes.tabActive}`}
             onClick={() => setActiveTab(i)}
           >

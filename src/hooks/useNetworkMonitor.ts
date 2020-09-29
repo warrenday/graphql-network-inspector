@@ -2,8 +2,9 @@ import mergeby from "mergeby";
 import { useEffect, useState } from "react";
 import { v4 as uuid } from "uuid";
 import {
-  getIsGraphqlRequest,
+  getPrimaryOperation,
   parseGraphqlRequest,
+  OperationDetails,
 } from "../helpers/graphqlHelpers";
 import { onRequestFinished } from "../services/networkMonitor";
 
@@ -13,6 +14,7 @@ export type NetworkRequest = {
   status: number;
   url: string;
   request: {
+    primaryOperation: OperationDetails;
     headers: Header[];
     body: {
       query: string;
@@ -38,7 +40,10 @@ export const useNetworkMonitor = (): [NetworkRequest[], () => void] => {
     const handleRequestFinished = (
       details: chrome.devtools.network.Request
     ) => {
-      if (!getIsGraphqlRequest(details.request.postData?.text)) {
+      const primaryOperation = getPrimaryOperation(
+        details.request.postData?.text
+      );
+      if (!primaryOperation) {
         return;
       }
 
@@ -54,6 +59,7 @@ export const useNetworkMonitor = (): [NetworkRequest[], () => void] => {
         status: details.response.status,
         url: details.request.url,
         request: {
+          primaryOperation,
           headers: details.request.headers,
           body: requestBody,
         },
