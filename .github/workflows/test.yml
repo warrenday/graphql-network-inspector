@@ -28,10 +28,9 @@ jobs:
         run: |
           npm install yarn -g
 
-      - name: yarn install, build, and test
+      - name: yarn install and test
         run: |
           yarn install
-          yarn build
           yarn test
         env:
           CI: true
