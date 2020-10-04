@@ -47,7 +47,7 @@ const TableBody = <T extends {}>({
   selectedRowId,
 }: TableBodyProps<T>) => (
   <tbody {...getTableBodyProps()}>
-    {rows.map((row, index) => {
+    {rows.map((row) => {
       prepareRow(row);
       return (
         <tr

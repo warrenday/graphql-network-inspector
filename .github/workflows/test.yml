@@ -1,0 +1,36 @@
+name: Test App
+
+on: [push]
+
+jobs:
+  build:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.4.x]
+
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.4.1
+        with:
+          access_token: ${{ github.token }}
+
+      - uses: actions/checkout@v1
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install Yarn
+        run: |
+          npm install yarn -g
+
+      - name: yarn install and test
+        run: |
+          yarn install
+          yarn test
+        env:
+          CI: true
