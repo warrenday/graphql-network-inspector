@@ -77,3 +77,9 @@ button {
 .Pane2 {
   width: 0;
 }
+
+/* JSON Viewer */
+
+.react-json-view {
+  background: none !important;
+}

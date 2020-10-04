@@ -1,6 +1,7 @@
 import React from "react";
 import classes from "./NetworkPanel.module.css";
 import { CodeBlock } from "../../components/CodeBlock";
+import { JsonView } from "../../components/JsonView";
 import { Tabs } from "../../components/Tabs";
 import { CloseIcon } from "../../components/Icons/CloseIcon";
 import { NetworkRequest } from "../../hooks/useNetworkMonitor";
@@ -51,6 +52,10 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
           },
           {
             title: "Response",
+            component: <JsonView src={safeJson.parse(responseBody) || {}} />,
+          },
+          {
+            title: "Response (Raw)",
             component: (
               <CodeBlock
                 text={
