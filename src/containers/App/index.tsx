@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import SplitPane from "react-split-pane";
-import { useNetworkMonitor, NetworkRequest } from "./hooks/useNetworkMonitor";
-import { NetworkTable } from "./containers/NetworkTable";
-import { NetworkPanel } from "./containers/NetworkPanel";
 import classes from "./App.module.css";
+import { NetworkTable } from "../NetworkTable";
+import { NetworkPanel } from "../NetworkPanel";
+import {
+  useNetworkMonitor,
+  NetworkRequest,
+} from "../../hooks/useNetworkMonitor";
 
-function App() {
+export function App() {
   const [networkRequests, clearWebRequests] = useNetworkMonitor();
   const [selectedRowId, setSelectedRowId] = useState<string | null>();
   const [selectedRequest, setSelectedRequest] = useState<NetworkRequest | null>(
@@ -50,5 +53,3 @@ function App() {
     </div>
   );
 }
-
-export default App;

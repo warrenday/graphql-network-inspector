@@ -1,10 +1,10 @@
 import React from "react";
-import { CodeBlock } from "../components/CodeBlock";
-import { Tabs } from "../components/Tabs";
-import { CloseIcon } from "../components/Icons/CloseIcon";
 import classes from "./NetworkPanel.module.css";
-import { NetworkRequest } from "../hooks/useNetworkMonitor";
-import * as safeJson from "../helpers/safeJson";
+import { CodeBlock } from "../../components/CodeBlock";
+import { Tabs } from "../../components/Tabs";
+import { CloseIcon } from "../../components/Icons/CloseIcon";
+import { NetworkRequest } from "../../hooks/useNetworkMonitor";
+import * as safeJson from "../../helpers/safeJson";
 
 export type NetworkPanelProps = {
   data: NetworkRequest;
@@ -17,10 +17,14 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
   const responseBody = data.response?.body;
 
   return (
-    <div>
+    <div data-testid="network-tabs">
       <Tabs
         leftContent={
-          <button onClick={onClose} className={classes.closeButton}>
+          <button
+            onClick={onClose}
+            className={classes.closeButton}
+            data-testid="close-side-panel"
+          >
             <CloseIcon />
           </button>
         }

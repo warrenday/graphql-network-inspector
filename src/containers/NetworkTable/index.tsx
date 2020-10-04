@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
-import { Table, TableProps } from "../components/Table";
-import { BinIcon } from "../components/Icons/BinIcon";
 import classes from "./NetworkTable.module.css";
-import { getStatusColor } from "../helpers/getStatusColor";
-import { NetworkRequest } from "../hooks/useNetworkMonitor";
+import { Table, TableProps } from "../../components/Table";
+import { BinIcon } from "../../components/Icons/BinIcon";
+import { getStatusColor } from "../../helpers/getStatusColor";
+import { NetworkRequest } from "../../hooks/useNetworkMonitor";
 
 export type NetworkTableProps = {
   data: NetworkRequest[];
@@ -14,7 +14,11 @@ export type NetworkTableProps = {
 };
 
 const ClearButton = ({ onClick }: { onClick: () => void }) => (
-  <button className={classes.clearButton} onClick={onClick}>
+  <button
+    className={classes.clearButton}
+    onClick={onClick}
+    data-testid="clear-network-table"
+  >
     <BinIcon />
   </button>
 );
@@ -94,7 +98,7 @@ export const NetworkTable = (props: NetworkTableProps) => {
   }, [showSingleColumn]);
 
   return (
-    <div className={classes.container}>
+    <div className={classes.container} data-testid="network-table">
       <ClearButton onClick={onClear} />
       <Table
         columns={columns}

@@ -18,5 +18,7 @@ const mockChrome = {
 } as typeof chrome;
 
 export const chromeProvider = (): typeof chrome => {
-  return typeof chrome?.devtools === "undefined" ? mockChrome : chrome;
+  return typeof chrome === "undefined" || !chrome?.devtools
+    ? mockChrome
+    : chrome;
 };
