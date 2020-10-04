@@ -29,7 +29,6 @@ jobs:
           npm install yarn -g
 
       - name: yarn install, build, and test
-        working-directory: packages/api
         run: |
           yarn install
           yarn test
