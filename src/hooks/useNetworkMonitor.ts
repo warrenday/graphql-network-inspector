@@ -33,7 +33,8 @@ export const useNetworkMonitor = (): [NetworkRequest[], () => void] => {
   useEffect(() => {
     const updateRequest = (newWebRequest: Partial<NetworkRequest>) => {
       setWebRequests((webRequests) => {
-        return mergeby(webRequests, newWebRequest, "id", true);
+        const newRequests = mergeby(webRequests, newWebRequest, "id", true);
+        return newRequests as NetworkRequest[];
       });
     };
 
