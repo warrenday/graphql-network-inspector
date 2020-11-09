@@ -1,4 +1,5 @@
 import React from "react";
+import copy from "copy-to-clipboard";
 import classes from "./NetworkPanel.module.css";
 import { CodeBlock } from "../../components/CodeBlock";
 import { JsonView } from "../../components/JsonView";
@@ -57,16 +58,25 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
           {
             title: "Response (Raw)",
             component: (
-              <CodeBlock
-                text={
-                  safeJson.stringify(
-                    safeJson.parse(responseBody) || {},
-                    undefined,
-                    4
-                  ) || ""
-                }
-                language={"json"}
-              />
+              <>
+                <CodeBlock
+                  text={
+                    safeJson.stringify(
+                      safeJson.parse(responseBody) || {},
+                      undefined,
+                      4
+                    ) || ""
+                  }
+                  language={"json"}
+                />
+                <button
+                  onClick={() => {
+                    copy(`${safeJson.parse(responseBody)}`);
+                  }}
+                >
+                  Copy Response
+                </button>
+              </>
             ),
           },
         ]}
