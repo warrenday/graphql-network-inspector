@@ -1,11 +1,11 @@
 import React from "react";
-import copy from "copy-to-clipboard";
 import classes from "./NetworkPanel.module.css";
 import { CodeBlock } from "../../components/CodeBlock";
 import { JsonView } from "../../components/JsonView";
 import { Tabs } from "../../components/Tabs";
 import { CloseIcon } from "../../components/Icons/CloseIcon";
 import { NetworkRequest } from "../../hooks/useNetworkMonitor";
+import { CopyButton } from "../../components/CopyButton";
 import * as safeJson from "../../helpers/safeJson";
 
 export type NetworkPanelProps = {
@@ -37,6 +37,7 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
               <div>
                 {requestBody.map(({ query, variables }) => (
                   <div key={query} className={classes.query}>
+                    <CopyButton textToCopy={query} />
                     <h2 className={classes.subtitle}>Request</h2>
                     <CodeBlock text={query} language={"graphql"} />
                     <h2 className={classes.subtitle}>Variables</h2>
@@ -53,12 +54,22 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
           },
           {
             title: "Response",
-            component: <JsonView src={safeJson.parse(responseBody) || {}} />,
+            component: (
+              <>
+                <JsonView src={safeJson.parse(responseBody) || {}} />
+                <CopyButton
+                  textToCopy={`${safeJson.stringify(responseBody)}`}
+                />
+              </>
+            ),
           },
           {
             title: "Response (Raw)",
             component: (
               <>
+                <CopyButton
+                  textToCopy={`${safeJson.stringify(responseBody)}`}
+                />
                 <CodeBlock
                   text={
                     safeJson.stringify(
@@ -69,13 +80,6 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
                   }
                   language={"json"}
                 />
-                <button
-                  onClick={() => {
-                    copy(`${safeJson.parse(responseBody)}`);
-                  }}
-                >
-                  Copy Response
-                </button>
               </>
             ),
           },
