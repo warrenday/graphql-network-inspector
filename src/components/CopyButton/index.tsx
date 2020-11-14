@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import copy from "copy-to-clipboard";
 import classes from "./CopyButton.module.css";
+
 type CopyButtonProps = {
   textToCopy: string;
 };
