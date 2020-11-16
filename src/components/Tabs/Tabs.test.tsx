@@ -5,11 +5,11 @@ import { Tabs, Tab } from "./index";
 const tabs: Tab[] = [
   {
     title: "Tab One",
-    component: <div>I am tab one</div>,
+    component: () => <div>I am tab one</div>,
   },
   {
     title: "Tab Two",
-    component: <div>I am tab two</div>,
+    component: () => <div>I am tab two</div>,
   },
 ];
 

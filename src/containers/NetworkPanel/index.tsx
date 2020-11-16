@@ -33,7 +33,7 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
         tabs={[
           {
             title: "Request",
-            component: (
+            component: () => (
               <div>
                 {requestBody.map(({ query, variables }) => (
                   <div key={query} className={classes.query}>
@@ -54,34 +54,31 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
           },
           {
             title: "Response",
-            component: (
-              <>
-                <JsonView src={safeJson.parse(responseBody) || {}} />
-                <CopyButton
-                  textToCopy={`${safeJson.stringify(responseBody)}`}
-                />
-              </>
-            ),
+            component: () => {
+              const parsedResponse = safeJson.parse(responseBody) || {};
+              const formattedJson =
+                safeJson.stringify(parsedResponse, undefined, 4) || "";
+              return (
+                <>
+                  <JsonView src={parsedResponse} />
+                  <CopyButton textToCopy={formattedJson} />
+                </>
+              );
+            },
           },
           {
             title: "Response (Raw)",
-            component: (
-              <>
-                <CopyButton
-                  textToCopy={`${safeJson.stringify(responseBody)}`}
-                />
-                <CodeBlock
-                  text={
-                    safeJson.stringify(
-                      safeJson.parse(responseBody) || {},
-                      undefined,
-                      4
-                    ) || ""
-                  }
-                  language={"json"}
-                />
-              </>
-            ),
+            component: () => {
+              const parsedResponse = safeJson.parse(responseBody) || {};
+              const formattedJson =
+                safeJson.stringify(parsedResponse, undefined, 4) || "";
+              return (
+                <>
+                  <CopyButton textToCopy={formattedJson} />
+                  <CodeBlock text={formattedJson} language={"json"} />
+                </>
+              );
+            },
           },
         ]}
       />

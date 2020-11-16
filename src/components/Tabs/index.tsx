@@ -3,7 +3,7 @@ import classes from "./Tabs.module.css";
 
 export type Tab = {
   title: string;
-  component: React.ReactNode;
+  component: () => React.ReactNode;
 };
 
 export type TabsProps = {
@@ -30,7 +30,7 @@ export const Tabs = (props: TabsProps) => {
         ))}
       </div>
       <div className={`${classes.tabContent} scroll`}>
-        {tabs[activeTab].component}
+        {tabs[activeTab].component()}
       </div>
     </div>
   );
