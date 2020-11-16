@@ -59,10 +59,10 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
               const formattedJson =
                 safeJson.stringify(parsedResponse, undefined, 4) || "";
               return (
-                <>
+                <div className={classes.response}>
                   <JsonView src={parsedResponse} />
                   <CopyButton textToCopy={formattedJson} />
-                </>
+                </div>
               );
             },
           },
@@ -73,10 +73,10 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
               const formattedJson =
                 safeJson.stringify(parsedResponse, undefined, 4) || "";
               return (
-                <>
+                <div className={classes.response}>
                   <CopyButton textToCopy={formattedJson} />
                   <CodeBlock text={formattedJson} language={"json"} />
-                </>
+                </div>
               );
             },
           },
