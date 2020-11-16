@@ -5,6 +5,7 @@ import { JsonView } from "../../components/JsonView";
 import { Tabs } from "../../components/Tabs";
 import { CloseIcon } from "../../components/Icons/CloseIcon";
 import { NetworkRequest } from "../../hooks/useNetworkMonitor";
+import { CopyButton } from "../../components/CopyButton";
 import * as safeJson from "../../helpers/safeJson";
 
 export type NetworkPanelProps = {
@@ -32,10 +33,11 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
         tabs={[
           {
             title: "Request",
-            component: (
+            component: () => (
               <div>
                 {requestBody.map(({ query, variables }) => (
                   <div key={query} className={classes.query}>
+                    <CopyButton textToCopy={query} />
                     <h2 className={classes.subtitle}>Request</h2>
                     <CodeBlock text={query} language={"graphql"} />
                     <h2 className={classes.subtitle}>Variables</h2>
@@ -52,22 +54,31 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
           },
           {
             title: "Response",
-            component: <JsonView src={safeJson.parse(responseBody) || {}} />,
+            component: () => {
+              const parsedResponse = safeJson.parse(responseBody) || {};
+              const formattedJson =
+                safeJson.stringify(parsedResponse, undefined, 4) || "";
+              return (
+                <div className={classes.response}>
+                  <JsonView src={parsedResponse} />
+                  <CopyButton textToCopy={formattedJson} />
+                </div>
+              );
+            },
           },
           {
             title: "Response (Raw)",
-            component: (
-              <CodeBlock
-                text={
-                  safeJson.stringify(
-                    safeJson.parse(responseBody) || {},
-                    undefined,
-                    4
-                  ) || ""
-                }
-                language={"json"}
-              />
-            ),
+            component: () => {
+              const parsedResponse = safeJson.parse(responseBody) || {};
+              const formattedJson =
+                safeJson.stringify(parsedResponse, undefined, 4) || "";
+              return (
+                <div className={classes.response}>
+                  <CopyButton textToCopy={formattedJson} />
+                  <CodeBlock text={formattedJson} language={"json"} />
+                </div>
+              );
+            },
           },
         ]}
       />
