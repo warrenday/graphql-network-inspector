@@ -15,7 +15,25 @@ const createRequest = ({
   return {
     request: {
       url,
-      headers: [],
+      headers: [
+        {
+          name: "Authorization",
+          value: "Bearer fe0e8768-3b2f-4f63-983d-1a74c26dde1e",
+        },
+        {
+          name: "access-control-allow-credentials",
+          value: true,
+        },
+        {
+          name: "access-control-allow-origin",
+          value: "https://www.google.com",
+        },
+        {
+          name: "set-cookie:",
+          value:
+            "SIDCC=fe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1e; expires=Thu, 14-Apr-2022 08:09:50 GMT; path=/; domain=.google.com; priority=high",
+        },
+      ],
       postData: {
         text: JSON.stringify(
           request.map(({ query, variables }) => ({
@@ -27,7 +45,13 @@ const createRequest = ({
     },
     response: {
       status: 200,
-      headers: [],
+      headers: [
+        {
+          name: "cookie",
+          value:
+            "CONSENT=YES+GB.en+20151113-21-1; ANID=fe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1e",
+        },
+      ],
     },
     getContent: (cb: Function) => {
       cb(JSON.stringify(response));
