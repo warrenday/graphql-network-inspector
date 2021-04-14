@@ -11,7 +11,7 @@ export const Headers = (props: IHeadersProps) => {
   return (
     <ul className={classes.list}>
       {headers.map((header) => (
-        <li className={classes.item}>
+        <li key={`${header.name}:${header.value}`} className={classes.item}>
           <span>{header.name}: </span>
           {header.value}
         </li>
