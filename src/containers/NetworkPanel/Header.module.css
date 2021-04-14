@@ -11,9 +11,10 @@
 }
 
 .item {
-  padding: 2px;
-  opacity: 0.7;
+  width: fit-content;
+  padding: 2px 20px 2px 2px;
   white-space: nowrap;
+  opacity: 0.7;
 }
 .item span {
   font-weight: bold;
