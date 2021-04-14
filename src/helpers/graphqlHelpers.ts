@@ -28,13 +28,15 @@ export const getPrimaryOperation = (
     const request = JSON.parse(requestBody || "");
     const postData = Array.isArray(request) ? request : [request];
     const documentNode = parseGraphqlQuery(postData[0].query) as any;
+    const totalDefinitions = documentNode.definitions.length;
+    const lastDefinition = documentNode.definitions[totalDefinitions - 1];
     const operationName =
-      documentNode.definitions[0]?.name?.value ||
-      documentNode.definitions[0].selectionSet.selections[0].name.value;
+      lastDefinition?.name?.value ||
+      lastDefinition.selectionSet.selections[0].name.value;
 
     return {
       operationName,
-      operation: documentNode.definitions[0]?.operation,
+      operation: lastDefinition?.operation,
     };
   } catch (e) {
     return null;

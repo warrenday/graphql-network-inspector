@@ -7,6 +7,6 @@
     "128": "icon.png"
   },
   "manifest_version": 2,
-  "permissions": ["webRequest", "activeTab"],
+  "permissions": [],
   "devtools_page": "devtools/devtools.html"
 }

@@ -40,6 +40,11 @@ export const mockRequests = [
     request: [
       {
         query: `
+          fragment NameParts on Person {
+            firstName
+            lastName
+          }
+
           query getMovie($title: String) {
             getMovie(title: $title) {
               id
