@@ -9,11 +9,12 @@ export type Tab = {
 export type TabsProps = {
   tabs: Tab[];
   leftContent?: React.ReactNode;
+  defaultActiveTab?: number;
 };
 
 export const Tabs = (props: TabsProps) => {
-  const [activeTab, setActiveTab] = useState(0);
-  const { tabs, leftContent } = props;
+  const { tabs, leftContent, defaultActiveTab = 0 } = props;
+  const [activeTab, setActiveTab] = useState(defaultActiveTab);
 
   return (
     <div className={classes.container}>

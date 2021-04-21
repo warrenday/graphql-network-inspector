@@ -28,6 +28,7 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
   return (
     <div data-testid="network-tabs">
       <Tabs
+        defaultActiveTab={1}
         leftContent={
           <button
             onClick={onClose}
