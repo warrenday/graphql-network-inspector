@@ -1,0 +1,21 @@
+.list {
+  list-style: none;
+  padding: 5px 15px 12px;
+  margin: 0;
+  font-size: 1.2rem;
+  overflow: scroll;
+}
+
+.list::-webkit-scrollbar {
+  display: none;
+}
+
+.item {
+  width: fit-content;
+  padding: 2px 20px 2px 2px;
+  white-space: nowrap;
+  opacity: 0.7;
+}
+.item span {
+  font-weight: bold;
+}

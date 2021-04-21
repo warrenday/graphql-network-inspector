@@ -6,6 +6,7 @@ import { Tabs } from "../../components/Tabs";
 import { CloseIcon } from "../../components/Icons/CloseIcon";
 import { NetworkRequest } from "../../hooks/useNetworkMonitor";
 import { CopyButton } from "../../components/CopyButton";
+import { Headers } from "./Headers";
 import * as safeJson from "../../helpers/safeJson";
 
 export type NetworkPanelProps = {
@@ -13,14 +14,21 @@ export type NetworkPanelProps = {
   onClose: () => void;
 };
 
+const Subtitle: React.FunctionComponent = ({ children }) => {
+  return <h2 className={classes.subtitle}>{children}</h2>;
+};
+
 export const NetworkPanel = (props: NetworkPanelProps) => {
   const { data, onClose } = props;
+  const requestHeaders = data.request.headers;
+  const responseHeaders = data.response?.headers || [];
   const requestBody = data.request.body;
   const responseBody = data.response?.body;
 
   return (
     <div data-testid="network-tabs">
       <Tabs
+        defaultActiveTab={1}
         leftContent={
           <button
             onClick={onClose}
@@ -32,15 +40,38 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
         }
         tabs={[
           {
+            title: "Headers",
+            component: () => (
+              <div className={classes.headers}>
+                <CopyButton
+                  textToCopy={
+                    safeJson.stringify(
+                      {
+                        request: requestHeaders,
+                        response: responseHeaders,
+                      },
+                      undefined,
+                      4
+                    ) || ""
+                  }
+                />
+                <Subtitle>Request Headers</Subtitle>
+                <Headers headers={requestHeaders} />
+                <Subtitle>Response Headers</Subtitle>
+                <Headers headers={responseHeaders} />
+              </div>
+            ),
+          },
+          {
             title: "Request",
             component: () => (
               <div>
                 {requestBody.map(({ query, variables }) => (
                   <div key={query} className={classes.query}>
                     <CopyButton textToCopy={query} />
-                    <h2 className={classes.subtitle}>Request</h2>
+                    <Subtitle>Request</Subtitle>
                     <CodeBlock text={query} language={"graphql"} />
-                    <h2 className={classes.subtitle}>Variables</h2>
+                    <Subtitle>Variables</Subtitle>
                     <CodeBlock
                       text={
                         safeJson.stringify(variables || {}, undefined, 4) || ""
@@ -60,8 +91,8 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
                 safeJson.stringify(parsedResponse, undefined, 4) || "";
               return (
                 <div className={classes.response}>
-                  <JsonView src={parsedResponse} />
                   <CopyButton textToCopy={formattedJson} />
+                  <JsonView src={parsedResponse} />
                 </div>
               );
             },
