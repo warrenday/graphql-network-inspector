@@ -212,4 +212,31 @@ export const mockRequests = [
       },
     },
   }),
+  createRequest({
+    request: [
+      {
+        query: `
+          query actorDetails($id: String) {
+            actorDetails(id: $id) {
+              ...actorDetailsData
+              __typename
+            }
+          }
+          fragment actorDetailsData on ActorDetail {
+            id
+            name
+            __typename
+          }
+        `,
+        variables: {
+          id: "2",
+        },
+      },
+    ],
+    response: {
+      data: {
+        actorDetails: [],
+      },
+    },
+  }),
 ];

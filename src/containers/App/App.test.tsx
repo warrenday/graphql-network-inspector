@@ -34,7 +34,7 @@ test("renders all network data within the table", () => {
   }
   const { queryAllByRole } = within(table);
 
-  expect(queryAllByRole("row")).toHaveLength(41);
+  expect(queryAllByRole("row")).toHaveLength(51);
 });
 
 test("clears the table of all network data when clicking the bin button", () => {
