@@ -27,7 +27,7 @@
 
 .query {
   display: flex;
-  width: 180px;
+  padding-right: 10px;
   overflow: hidden;
   text-overflow: ellipsis;
 }

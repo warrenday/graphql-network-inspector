@@ -7,20 +7,15 @@ import {
   Row,
 } from "react-table";
 
-export interface ContainerProps {
-  hasShadow: boolean;
-}
 export type TableProps<T extends {}> = TableOptions<T> & {
   onRowClick?: (rowId: string, data: Row<T>["original"]) => void;
   selectedRowId?: string | null;
 };
-export type TableBodyProps<T extends {}> = TableInstance<T> & {
+
+type TableBodyProps<T extends {}> = TableInstance<T> & {
   onRowClick?: (data: Row<T>) => void;
   selectedRowId?: string | null;
 };
-export interface TableCellProps {
-  evenRow: boolean;
-}
 
 const TableHead = <T extends {}>({
   headerGroups,
