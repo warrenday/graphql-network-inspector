@@ -3,7 +3,9 @@
   "version": "1.7.0",
   "private": true,
   "dependencies": {
+    "@craco/craco": "^6.2.0",
     "@types/react-table": "^7.0.22",
+    "classnames": "^2.3.1",
     "copy-to-clipboard": "^3.3.1",
     "graphql": "^15.3.0",
     "graphql-tag": "^2.11.0",
@@ -17,9 +19,9 @@
     "uuid": "^8.3.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "INLINE_RUNTIME_CHUNK=false react-scripts build",
-    "test": "react-scripts test",
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -47,8 +49,11 @@
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
     "@types/uuid": "^8.3.0",
+    "autoprefixer": "^9",
     "dedent": "^0.7.0",
-    "react-scripts": "4.0.0-next.77",
+    "postcss": "^7",
+    "react-scripts": "^4.0.3",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat",
     "typescript": "^4.0.3"
   }
 }

@@ -37,7 +37,7 @@ export function App() {
   }
 
   return (
-    <div className={classes.container}>
+    <div className={`${classes.container} bg-gray-800`}>
       <SplitPane split="vertical" minSize={200}>
         <div className={classes.networkTable}>{NetworkTableComponent}</div>
         <div className={classes.networkPanel}>

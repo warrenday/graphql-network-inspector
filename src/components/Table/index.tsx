@@ -6,7 +6,6 @@ import {
   TableOptions,
   Row,
 } from "react-table";
-import classes from "./Table.module.css";
 
 export interface ContainerProps {
   hasShadow: boolean;
@@ -30,9 +29,14 @@ const TableHead = <T extends {}>({
 }) => (
   <thead>
     {headerGroups.map(({ getHeaderGroupProps, headers }) => (
-      <tr {...getHeaderGroupProps()}>
+      <tr {...getHeaderGroupProps()} className="text-left sticky top-0">
         {headers.map(({ getHeaderProps, render }) => (
-          <th {...getHeaderProps()}>{render("Header")}</th>
+          <th
+            {...getHeaderProps()}
+            className="bg-gray-800 p-2 border-r border-b border-gray-600 last:border-r-0"
+          >
+            {render("Header")}
+          </th>
         ))}
       </tr>
     ))}
@@ -49,15 +53,20 @@ const TableBody = <T extends {}>({
   <tbody {...getTableBodyProps()}>
     {rows.map((row) => {
       prepareRow(row);
+
+      const isSelected = row.id === selectedRowId;
       return (
         <tr
           {...row.getRowProps()}
-          className={row.id === selectedRowId ? classes.selected : ""}
+          className={`${
+            isSelected ? "bg-blue-600" : "even:bg-gray-900 hover:bg-blue-900"
+          } cursor-pointer `}
         >
           {row.cells.map((cell) => (
             <td
               {...cell.getCellProps()}
               onClick={onRowClick ? () => onRowClick(row) : undefined}
+              className="p-2 border-r border-gray-600 last:border-r-0"
             >
               {cell.render("Cell")}
             </td>
@@ -74,8 +83,12 @@ export const Table = <T extends {}>(props: TableProps<T>) => {
   const { getTableProps, headerGroups } = tableInstance;
 
   return (
-    <div className={`${classes.container} scroll`}>
-      <table {...getTableProps()} className={classes.table}>
+    <div className="scroll relative max-h-screen overflow-y-scroll">
+      <table
+        {...getTableProps()}
+        className={`w-full whitespace-nowrap bg-gray-800 border-separate`}
+        style={{ borderSpacing: 0 }}
+      >
         <TableHead headerGroups={headerGroups} />
         <TableBody
           {...tableInstance}
