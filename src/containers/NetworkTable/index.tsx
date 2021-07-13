@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import classes from "./NetworkTable.module.css";
 import { Table, TableProps } from "../../components/Table";
 import { BinIcon } from "../../components/Icons/BinIcon";
+import { Badge } from "../../components/Badge";
 import { getStatusColor } from "../../helpers/getStatusColor";
 import { NetworkRequest } from "../../hooks/useNetworkMonitor";
 
@@ -15,11 +15,11 @@ export type NetworkTableProps = {
 
 const ClearButton = ({ onClick }: { onClick: () => void }) => (
   <button
-    className={classes.clearButton}
+    className="z-10 absolute right-2 top-2 h-6 w-6 border-0 p-0 m-0 bg-none opacity-50 outline-none hover:opacity-100"
     onClick={onClick}
     data-testid="clear-network-table"
   >
-    <BinIcon />
+    <BinIcon width="1.5rem" height="1.5rem" />
   </button>
 );
 
@@ -32,19 +32,19 @@ const Query = ({
   operationName: string;
   totalQueries: number;
 }) => (
-  <div className={classes.query}>
-    <span
-      className={`${classes.queryType} ${
-        queryType === "query"
-          ? classes.queryTypeQuery
-          : classes.queryTypeMutation
-      }`}
-    >
-      {queryType === "query" ? "Q" : "M"}
-    </span>
-    <span>{operationName}</span>
+  <div className="flex">
+    <Badge>
+      <span
+        className={queryType === "query" ? "text-green-400" : "text-indigo-400"}
+      >
+        {queryType === "query" ? "Q" : "M"}
+      </span>
+    </Badge>
+    <span className="pl-2 font-bold">{operationName}</span>
     {totalQueries > 1 && (
-      <span className={classes.queryTotal}>+{totalQueries - 1}</span>
+      <span className="ml-auto pr-2 font-bold opacity-75">
+        +{totalQueries - 1}
+      </span>
     )}
   </div>
 );
@@ -52,9 +52,9 @@ const Query = ({
 const Status = ({ status }: { status?: number }) => {
   const statusColor = getStatusColor(status);
   return (
-    <div className={classes.status}>
+    <div className="flex items-center">
       <div
-        className={classes.statusColor}
+        className="w-3 h-3 rounded-full mr-2"
         style={{ backgroundColor: statusColor }}
       ></div>
       {status || "pending"}
@@ -98,7 +98,7 @@ export const NetworkTable = (props: NetworkTableProps) => {
   }, [showSingleColumn]);
 
   return (
-    <div className={classes.container} data-testid="network-table">
+    <div className="w-full relative" data-testid="network-table">
       <ClearButton onClick={onClear} />
       <Table
         columns={columns}

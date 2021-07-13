@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import classes from "./Tabs.module.css";
+import cx from "classnames";
 
 export type Tab = {
   title: string;
@@ -17,22 +17,22 @@ export const Tabs = (props: TabsProps) => {
   const [activeTab, setActiveTab] = useState(defaultActiveTab);
 
   return (
-    <div className={classes.container}>
-      <div className={classes.tabs}>
+    <div className="h-screen flex flex-col">
+      <div className="flex border-b-2 border-gray-600">
         {leftContent && leftContent}
         {tabs.map((tab, i) => (
           <button
             key={i}
-            className={`${classes.tab} ${i === activeTab && classes.tabActive}`}
+            className={cx("px-4 py-2 bg-none", {
+              "bg-gray-700": i === activeTab,
+            })}
             onClick={() => setActiveTab(i)}
           >
-            <h2 className={classes.tabTitle}>{tab.title}</h2>
+            <h2 className="font-bold">{tab.title}</h2>
           </button>
         ))}
       </div>
-      <div className={`${classes.tabContent} scroll`}>
-        {tabs[activeTab].component()}
-      </div>
+      <div className="scroll">{tabs[activeTab].component()}</div>
     </div>
   );
 };
