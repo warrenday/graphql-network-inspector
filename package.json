@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "@craco/craco": "^6.2.0",
-    "@tailwindcss/custom-forms": "^0.2.1",
+    "@tailwindcss/forms": "^0.3.3",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.0.4",
     "@types/chrome": "^0.0.122",

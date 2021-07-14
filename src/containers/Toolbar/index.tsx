@@ -4,10 +4,17 @@ import { Checkbox } from "../../components/Checkbox";
 interface IToolbarProps {
   searchValue: string;
   onSearchValueChange: (searchValue: string) => void;
+  preserveLogs: boolean;
+  onPreserveLogsChange: (preserveLogs: boolean) => void;
 }
 
 export const Toolbar = (props: IToolbarProps) => {
-  const { searchValue, onSearchValueChange } = props;
+  const {
+    searchValue,
+    onSearchValueChange,
+    preserveLogs,
+    onPreserveLogsChange,
+  } = props;
   return (
     <div className="flex w-full p-2 border-gray-600 border-b">
       <input
@@ -22,8 +29,8 @@ export const Toolbar = (props: IToolbarProps) => {
         id="preserveLog"
         label="Preserve Log"
         className="pl-4"
-        checked={false}
-        onChange={() => {}}
+        checked={preserveLogs}
+        onChange={onPreserveLogsChange}
       />
     </div>
   );

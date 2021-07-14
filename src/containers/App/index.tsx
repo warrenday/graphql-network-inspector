@@ -29,13 +29,19 @@ export function App() {
     null
   );
   const [searchValue, setSearchValue] = useState("");
+  const [isPreserveLogs, setIsPreserveLogs] = useState(false);
   const filteredNetworkRequests = filterNetworkRequests(
     networkRequests,
     searchValue
   );
 
   const ToolbarComponent = (
-    <Toolbar searchValue={searchValue} onSearchValueChange={setSearchValue} />
+    <Toolbar
+      searchValue={searchValue}
+      onSearchValueChange={setSearchValue}
+      preserveLogs={isPreserveLogs}
+      onPreserveLogsChange={setIsPreserveLogs}
+    />
   );
 
   const NetworkTableComponent = (

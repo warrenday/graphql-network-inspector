@@ -25,5 +25,5 @@ module.exports = {
       backgroundColor: ["odd", "even"],
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/forms")],
 };
