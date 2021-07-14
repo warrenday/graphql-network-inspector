@@ -1,7 +1,9 @@
 .container {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
+  font-weight: bold;
+  font-family: monospace;
 }
 
 .container span {
-  background: #1c2022 !important;
+  background: none !important;
 }

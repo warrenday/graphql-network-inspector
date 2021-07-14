@@ -24,7 +24,7 @@ const TableHead = <T extends {}>({
 }) => (
   <thead>
     {headerGroups.map(({ getHeaderGroupProps, headers }) => (
-      <tr {...getHeaderGroupProps()} className="text-left sticky top-0">
+      <tr {...getHeaderGroupProps()} className="text-left sticky top-0 z-10">
         {headers.map(({ getHeaderProps, render }) => (
           <th
             {...getHeaderProps()}

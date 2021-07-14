@@ -1,0 +1,35 @@
+import React from "react";
+import { Panels, PanelSection } from "./PanelSection";
+import { CodeBlock } from "../../components/CodeBlock";
+import * as safeJson from "../../helpers/safeJson";
+
+interface IRequestViewProps {
+  requests: {
+    query: string;
+    variables: object;
+  }[];
+}
+
+export const RequestView = (props: IRequestViewProps) => {
+  const { requests } = props;
+
+  return (
+    <Panels>
+      {requests.map((request, i) => {
+        return (
+          <PanelSection key={request.query}>
+            <CodeBlock text={request.query} language={"graphql"} />
+            {Boolean(Object.keys(request.variables).length) && (
+              <div className="bg-gray-900 rounded-lg">
+                <CodeBlock
+                  text={safeJson.stringify(request.variables, undefined, 2)}
+                  language={"json"}
+                />
+              </div>
+            )}
+          </PanelSection>
+        );
+      })}
+    </Panels>
+  );
+};

@@ -1,21 +1,15 @@
 import React from "react";
-import classes from "./NetworkPanel.module.css";
-import { CodeBlock } from "../../components/CodeBlock";
-import { JsonView } from "../../components/JsonView";
 import { Tabs } from "../../components/Tabs";
 import { CloseIcon } from "../../components/Icons/CloseIcon";
 import { NetworkRequest } from "../../hooks/useNetworkMonitor";
-import { CopyButton } from "../../components/CopyButton";
-import { Headers } from "./Headers";
-import * as safeJson from "../../helpers/safeJson";
+import { HeaderView } from "./HeaderView";
+import { RequestView } from "./RequestView";
+import { ResponseView } from "./ResponseView";
+import { ResponseRawView } from "./ResponseRawView";
 
 export type NetworkPanelProps = {
   data: NetworkRequest;
   onClose: () => void;
-};
-
-const Subtitle: React.FunctionComponent = ({ children }) => {
-  return <h2 className={classes.subtitle}>{children}</h2>;
 };
 
 export const NetworkPanel = (props: NetworkPanelProps) => {
@@ -32,84 +26,33 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
         leftContent={
           <button
             onClick={onClose}
-            className={classes.closeButton}
+            className="w-10 flex justify-center items-center opacity-50 hover:opacity-100"
             data-testid="close-side-panel"
           >
-            <CloseIcon />
+            <CloseIcon width="1.5rem" height="1.5rem" />
           </button>
         }
         tabs={[
           {
             title: "Headers",
-            component: () => (
-              <div className={classes.headers}>
-                <CopyButton
-                  textToCopy={
-                    safeJson.stringify(
-                      {
-                        request: requestHeaders,
-                        response: responseHeaders,
-                      },
-                      undefined,
-                      4
-                    ) || ""
-                  }
-                />
-                <Subtitle>Request Headers</Subtitle>
-                <Headers headers={requestHeaders} />
-                <Subtitle>Response Headers</Subtitle>
-                <Headers headers={responseHeaders} />
-              </div>
+            component: (
+              <HeaderView
+                requestHeaders={requestHeaders}
+                responseHeaders={responseHeaders}
+              />
             ),
           },
           {
             title: "Request",
-            component: () => (
-              <div>
-                {requestBody.map(({ query, variables }) => (
-                  <div key={query} className={classes.query}>
-                    <CopyButton textToCopy={query} />
-                    <Subtitle>Request</Subtitle>
-                    <CodeBlock text={query} language={"graphql"} />
-                    <Subtitle>Variables</Subtitle>
-                    <CodeBlock
-                      text={
-                        safeJson.stringify(variables || {}, undefined, 4) || ""
-                      }
-                      language={"json"}
-                    />
-                  </div>
-                ))}
-              </div>
-            ),
+            component: <RequestView requests={requestBody} />,
           },
           {
             title: "Response",
-            component: () => {
-              const parsedResponse = safeJson.parse(responseBody) || {};
-              const formattedJson =
-                safeJson.stringify(parsedResponse, undefined, 4) || "";
-              return (
-                <div className={classes.response}>
-                  <CopyButton textToCopy={formattedJson} />
-                  <JsonView src={parsedResponse} />
-                </div>
-              );
-            },
+            component: <ResponseView response={responseBody} />,
           },
           {
             title: "Response (Raw)",
-            component: () => {
-              const parsedResponse = safeJson.parse(responseBody) || {};
-              const formattedJson =
-                safeJson.stringify(parsedResponse, undefined, 4) || "";
-              return (
-                <div className={classes.response}>
-                  <CopyButton textToCopy={formattedJson} />
-                  <CodeBlock text={formattedJson} language={"json"} />
-                </div>
-              );
-            },
+            component: <ResponseRawView response={responseBody} />,
           },
         ]}
       />

@@ -2,11 +2,11 @@ export const stringify = (
   value: any,
   replacer?: (this: any, key: string, value: any) => any,
   space?: string | number
-): string | null => {
+): string => {
   try {
     return JSON.stringify(value, replacer, space);
   } catch (e) {
-    return null;
+    return "{}";
   }
 };
 

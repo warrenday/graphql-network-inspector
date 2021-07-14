@@ -3,7 +3,7 @@ import cx from "classnames";
 
 export type Tab = {
   title: string;
-  component: () => React.ReactNode;
+  component: React.ReactNode;
 };
 
 export type TabsProps = {
@@ -36,7 +36,7 @@ export const Tabs = (props: TabsProps) => {
           );
         })}
       </div>
-      <div className="scroll">{tabs[activeTab].component()}</div>
+      <div className="scroll">{tabs[activeTab].component}</div>
     </div>
   );
 };
