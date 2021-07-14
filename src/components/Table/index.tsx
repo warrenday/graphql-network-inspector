@@ -38,7 +38,7 @@ const TableHead = <T extends {}>({
   </thead>
 );
 
-const TableBody = <T extends {}>({
+const TableBody = <T extends { id: string }>({
   rows,
   getTableBodyProps,
   prepareRow,
@@ -49,7 +49,7 @@ const TableBody = <T extends {}>({
     {rows.map((row) => {
       prepareRow(row);
 
-      const isSelected = row.id === selectedRowId;
+      const isSelected = row.original.id === selectedRowId;
       return (
         <tr
           {...row.getRowProps()}
@@ -72,7 +72,7 @@ const TableBody = <T extends {}>({
   </tbody>
 );
 
-export const Table = <T extends {}>(props: TableProps<T>) => {
+export const Table = <T extends { id: string }>(props: TableProps<T>) => {
   const { columns, data, onRowClick, selectedRowId } = props;
   const tableInstance = useTable({ columns, data });
   const { getTableProps, headerGroups } = tableInstance;
@@ -89,7 +89,7 @@ export const Table = <T extends {}>(props: TableProps<T>) => {
           {...tableInstance}
           onRowClick={(row) => {
             if (onRowClick) {
-              onRowClick(row.id, row.original);
+              onRowClick(row.original.id, row.original);
             }
           }}
           selectedRowId={selectedRowId}
