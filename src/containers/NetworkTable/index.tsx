@@ -18,6 +18,7 @@ const ClearButton = ({ onClick }: { onClick: () => void }) => (
     className="z-20 absolute right-2 top-2 h-6 w-6 border-0 p-0 m-0 bg-none opacity-50 outline-none hover:opacity-100"
     onClick={onClick}
     data-testid="clear-network-table"
+    style={{ marginTop: 1 }}
   >
     <BinIcon width="1.5rem" height="1.5rem" />
   </button>

@@ -7,12 +7,18 @@ export const BinIcon = (props: IBinIconProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      fill="none"
       width={width}
       height={height}
       viewBox="0 0 24 24"
-      fill="#fff"
+      stroke="currentColor"
     >
-      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+      />
     </svg>
   );
 };
