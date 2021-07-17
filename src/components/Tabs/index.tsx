@@ -26,7 +26,7 @@ export const Tabs = (props: TabsProps) => {
           return (
             <button
               key={i}
-              className={cx("px-4 py-2 bg-none", {
+              className={cx("px-4 py-2 bg-none whitespace-nowrap", {
                 "bg-gray-700": isActive,
                 "text-gray-400": !isActive,
               })}

@@ -83,7 +83,10 @@ export function App() {
         body={
           <SplitPane split="vertical" minSize={210}>
             {NetworkTableComponent}
-            <div className="bg-gray-900 border-l border-gray-600 h-full">
+            <div
+              className="bg-gray-900 border-l border-gray-600 h-full"
+              style={{ minWidth: 400 }}
+            >
               <NetworkPanel
                 data={selectedRequest}
                 onClose={() => {
