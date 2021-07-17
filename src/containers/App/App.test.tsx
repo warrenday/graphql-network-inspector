@@ -37,7 +37,7 @@ test("renders all network data within the table", () => {
   expect(queryAllByRole("row")).toHaveLength(51);
 });
 
-test("clears the table of all network data when clicking the bin button", () => {
+test("clears the table of all network data when clicking the clear button", () => {
   const { queryByTestId } = render(<App />);
   const table = queryByTestId("network-table");
   if (!table) {
@@ -49,3 +49,9 @@ test("clears the table of all network data when clicking the bin button", () => 
 
   expect(queryAllByRole("row")).toHaveLength(1);
 });
+
+test("clears the table of all network data when reloading", () => {});
+
+test("does not clear the table of all network data when reloading and preserve log checked", () => {});
+
+test("filters network data with the given search query", () => {});
