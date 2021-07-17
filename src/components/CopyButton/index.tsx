@@ -4,11 +4,12 @@ import classes from "./CopyButton.module.css";
 
 type CopyButtonProps = {
   textToCopy: string;
+  className?: string;
 };
 
 export const CopyButton = (props: CopyButtonProps) => {
+  const { textToCopy, className } = props;
   const [copied, setCopied] = useState(false);
-  const { textToCopy } = props;
 
   useEffect(() => {
     if (copied) {
@@ -20,9 +21,9 @@ export const CopyButton = (props: CopyButtonProps) => {
     }
   });
   return (
-    <div className={classes.container}>
+    <div className={className}>
       <button
-        className={classes.button}
+        className="bg-gray-600 rounded-lg px-3 py-1.5 font-bold opacity-50 hover:opacity-100 transition-opacity"
         data-testid="copy-button"
         onClick={() => {
           copy(textToCopy);

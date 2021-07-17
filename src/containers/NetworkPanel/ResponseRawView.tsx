@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import * as safeJson from "../../helpers/safeJson";
 import { CodeBlock } from "../../components/CodeBlock";
+import { CopyButton } from "../../components/CopyButton";
 
 interface IResponseRawViewProps {
   response?: string;
@@ -14,7 +15,11 @@ export const ResponseRawView = (props: IResponseRawViewProps) => {
   }, [response]);
 
   return (
-    <div>
+    <div className="relative">
+      <CopyButton
+        textToCopy={formattedJson}
+        className="absolute right-6 top-6 z-10"
+      />
       <CodeBlock text={formattedJson} language={"json"} />
     </div>
   );

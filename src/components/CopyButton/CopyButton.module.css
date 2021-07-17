@@ -1,21 +1,3 @@
-.container {
-  position: absolute;
-  right: 15px;
-  top: 15px;
-}
-
-.button {
-  font-size: 1.2rem;
-  background: #505356;
-  border: none;
-  padding: 0.5rem 1rem;
-  color: white;
-  font-weight: 600;
-  border-radius: 5px;
-  cursor: pointer;
-  outline: 0;
-}
-
 .button:active {
   background: #6c6c70;
 }

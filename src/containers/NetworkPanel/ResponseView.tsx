@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import * as safeJson from "../../helpers/safeJson";
 import { JsonView } from "../../components/JsonView";
+import { CopyButton } from "../../components/CopyButton";
 
 interface IResponseViewProps {
   response?: string;
@@ -17,7 +18,11 @@ export const ResponseView = (props: IResponseViewProps) => {
   }, [response]);
 
   return (
-    <div>
+    <div className="relative">
+      <CopyButton
+        textToCopy={formattedJson}
+        className="absolute right-6 top-6 z-10"
+      />
       <JsonView src={parsedResponse} />
     </div>
   );
