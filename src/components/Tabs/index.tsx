@@ -10,15 +10,16 @@ export type TabsProps = {
   tabs: Tab[];
   leftContent?: React.ReactNode;
   defaultActiveTab?: number;
+  testId?: string;
 };
 
 export const Tabs = (props: TabsProps) => {
-  const { tabs, leftContent, defaultActiveTab = 0 } = props;
+  const { tabs, leftContent, defaultActiveTab = 0, testId } = props;
   const [activeTab, setActiveTab] = useState(defaultActiveTab);
 
   return (
-    <div className="h-screen flex flex-col">
-      <div className="flex border-b border-gray-600">
+    <div className="flex flex-col h-full" data-testid={testId}>
+      <div className="flex bg-gray-800 border-b border-gray-600">
         {leftContent && leftContent}
         {tabs.map((tab, i) => {
           const isActive = i === activeTab;
@@ -36,7 +37,9 @@ export const Tabs = (props: TabsProps) => {
           );
         })}
       </div>
-      <div className="scroll">{tabs[activeTab].component}</div>
+      <div className="overflow-y-scroll scroll">
+        {tabs[activeTab].component}
+      </div>
     </div>
   );
 };

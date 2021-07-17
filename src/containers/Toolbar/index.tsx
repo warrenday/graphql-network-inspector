@@ -16,7 +16,7 @@ export const Toolbar = (props: IToolbarProps) => {
     onPreserveLogsChange,
   } = props;
   return (
-    <div className="flex w-full p-2 border-gray-600 border-b">
+    <div className="flex w-full p-2 bg-gray-800 border-gray-600 border-b">
       <input
         className="bg-gray-900 px-2 py-1 w-80"
         value={searchValue}

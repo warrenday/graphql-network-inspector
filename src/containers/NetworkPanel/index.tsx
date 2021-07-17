@@ -20,42 +20,41 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
   const responseBody = data.response?.body;
 
   return (
-    <div data-testid="network-tabs">
-      <Tabs
-        defaultActiveTab={1}
-        leftContent={
-          <button
-            onClick={onClose}
-            className="w-10 flex justify-center items-center opacity-50 hover:opacity-100"
-            data-testid="close-side-panel"
-          >
-            <CloseIcon width="1.5rem" height="1.5rem" />
-          </button>
-        }
-        tabs={[
-          {
-            title: "Headers",
-            component: (
-              <HeaderView
-                requestHeaders={requestHeaders}
-                responseHeaders={responseHeaders}
-              />
-            ),
-          },
-          {
-            title: "Request",
-            component: <RequestView requests={requestBody} />,
-          },
-          {
-            title: "Response",
-            component: <ResponseView response={responseBody} />,
-          },
-          {
-            title: "Response (Raw)",
-            component: <ResponseRawView response={responseBody} />,
-          },
-        ]}
-      />
-    </div>
+    <Tabs
+      testId="network-tabs"
+      defaultActiveTab={1}
+      leftContent={
+        <button
+          onClick={onClose}
+          className="w-10 flex justify-center items-center opacity-50 hover:opacity-100"
+          data-testid="close-side-panel"
+        >
+          <CloseIcon width="1.5rem" height="1.5rem" />
+        </button>
+      }
+      tabs={[
+        {
+          title: "Headers",
+          component: (
+            <HeaderView
+              requestHeaders={requestHeaders}
+              responseHeaders={responseHeaders}
+            />
+          ),
+        },
+        {
+          title: "Request",
+          component: <RequestView requests={requestBody} />,
+        },
+        {
+          title: "Response",
+          component: <ResponseView response={responseBody} />,
+        },
+        {
+          title: "Response (Raw)",
+          component: <ResponseRawView response={responseBody} />,
+        },
+      ]}
+    />
   );
 };

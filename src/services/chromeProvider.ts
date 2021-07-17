@@ -13,6 +13,10 @@ const mockChrome = {
         },
         removeListener: (cb) => {},
       },
+      onNavigated: {
+        addListener: (cb) => {},
+        removeListener: (cb) => {},
+      },
     },
   },
 } as typeof chrome;

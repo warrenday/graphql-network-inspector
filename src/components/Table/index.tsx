@@ -54,7 +54,9 @@ const TableBody = <T extends { id: string }>({
         <tr
           {...row.getRowProps()}
           className={`${
-            isSelected ? "bg-blue-600" : "even:bg-gray-900 hover:bg-blue-900"
+            isSelected
+              ? "bg-blue-600"
+              : "even:bg-gray-900 odd:bg-gray-800 hover:bg-blue-900"
           } cursor-pointer `}
         >
           {row.cells.map((cell) => (
@@ -78,10 +80,10 @@ export const Table = <T extends { id: string }>(props: TableProps<T>) => {
   const { getTableProps, headerGroups } = tableInstance;
 
   return (
-    <div className="scroll relative max-h-screen overflow-y-scroll">
+    <div className="scroll relative h-full overflow-y-scroll">
       <table
         {...getTableProps()}
-        className={`w-full whitespace-nowrap bg-gray-800 border-separate`}
+        className={`w-full whitespace-nowrap border-separate`}
         style={{ borderSpacing: 0 }}
       >
         <TableHead headerGroups={headerGroups} />
@@ -95,6 +97,11 @@ export const Table = <T extends { id: string }>(props: TableProps<T>) => {
           selectedRowId={selectedRowId}
         />
       </table>
+      {data.length === 0 && (
+        <div className="w-full h-full flex items-center justify-center">
+          <div className="p-6 text-center">No requests have been detected</div>
+        </div>
+      )}
     </div>
   );
 };

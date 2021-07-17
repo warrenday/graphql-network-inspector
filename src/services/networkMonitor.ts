@@ -10,3 +10,10 @@ export const onRequestFinished = (
     chrome.devtools.network.onRequestFinished.removeListener(cb);
   };
 };
+
+export const onNavigate = (cb: () => void) => {
+  chrome.devtools.network.onNavigated.addListener(cb);
+  return () => {
+    chrome.devtools.network.onNavigated.removeListener(cb);
+  };
+};

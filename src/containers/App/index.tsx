@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SplitPane from "react-split-pane";
-import classes from "./App.module.css";
+import { LayoutMain } from "../../components/Layout";
 import { NetworkTable } from "../NetworkTable";
 import { NetworkPanel } from "../NetworkPanel";
 import { Toolbar } from "../Toolbar";
@@ -8,6 +8,7 @@ import {
   useNetworkMonitor,
   NetworkRequest,
 } from "../../hooks/useNetworkMonitor";
+import { onNavigate } from "../../services/networkMonitor";
 
 const filterNetworkRequests = (
   networkRequests: NetworkRequest[],
@@ -18,13 +19,13 @@ const filterNetworkRequests = (
   }
   return networkRequests.filter((networkRequest) => {
     const { operationName } = networkRequest.request.primaryOperation;
-    return operationName.toLowerCase().startsWith(searchValue.toLowerCase());
+    return operationName.toLowerCase().includes(searchValue.toLowerCase());
   });
 };
 
 export function App() {
   const [networkRequests, clearWebRequests] = useNetworkMonitor();
-  const [selectedRowId, setSelectedRowId] = useState<string | null>();
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const [selectedRequest, setSelectedRequest] = useState<NetworkRequest | null>(
     null
   );
@@ -34,6 +35,14 @@ export function App() {
     networkRequests,
     searchValue
   );
+
+  useEffect(() => {
+    return onNavigate(() => {
+      if (!isPreserveLogs) {
+        clearWebRequests();
+      }
+    });
+  }, [isPreserveLogs, clearWebRequests]);
 
   const ToolbarComponent = (
     <Toolbar
@@ -63,30 +72,29 @@ export function App() {
 
   if (!selectedRequest) {
     return (
-      <div className="bg-gray-800 h-full">
-        {ToolbarComponent}
-        {NetworkTableComponent}
-      </div>
+      <LayoutMain header={ToolbarComponent} body={NetworkTableComponent} />
     );
   }
 
   return (
-    <div className={`${classes.container} bg-gray-800 h-full`}>
-      {ToolbarComponent}
-      <div>
-        <SplitPane split="vertical" minSize={210}>
-          <div className={classes.networkTable}>{NetworkTableComponent}</div>
-          <div className={classes.networkPanel}>
-            <NetworkPanel
-              data={selectedRequest}
-              onClose={() => {
-                setSelectedRowId(null);
-                setSelectedRequest(null);
-              }}
-            />
-          </div>
-        </SplitPane>
-      </div>
+    <div className="flex flex-col bg-gray-800">
+      <LayoutMain
+        header={ToolbarComponent}
+        body={
+          <SplitPane split="vertical" minSize={210}>
+            {NetworkTableComponent}
+            <div className="bg-gray-900 border-l border-gray-600 h-full">
+              <NetworkPanel
+                data={selectedRequest}
+                onClose={() => {
+                  setSelectedRowId(null);
+                  setSelectedRequest(null);
+                }}
+              />
+            </div>
+          </SplitPane>
+        }
+      />
     </div>
   );
 }

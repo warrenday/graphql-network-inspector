@@ -99,7 +99,10 @@ export const NetworkTable = (props: NetworkTableProps) => {
   }, [showSingleColumn]);
 
   return (
-    <div className="w-full relative" data-testid="network-table">
+    <div
+      className="w-full relative h-full bg-gray-900"
+      data-testid="network-table"
+    >
       <ClearButton onClick={onClear} />
       <Table
         columns={columns}
