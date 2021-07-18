@@ -97,7 +97,7 @@ export const mockRequests = [
       {
         query: `
           query searchMovie($title: String) {
-            getMovie(title: $title) {
+            searchMovie(title: $title) {
               id
               title
               genre

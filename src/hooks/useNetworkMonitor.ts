@@ -41,6 +41,7 @@ export const useNetworkMonitor = (): [NetworkRequest[], () => void] => {
     const handleRequestFinished = (
       details: chrome.devtools.network.Request
     ) => {
+      console.log(details.request.postData?.text);
       const primaryOperation = getPrimaryOperation(
         details.request.postData?.text
       );

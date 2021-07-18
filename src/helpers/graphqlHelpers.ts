@@ -1,3 +1,4 @@
+import { FieldNode, OperationDefinitionNode } from "graphql";
 import gql from "graphql-tag";
 
 export type OperationDetails = {
@@ -27,13 +28,19 @@ export const getPrimaryOperation = (
   try {
     const request = JSON.parse(requestBody || "");
     const postData = Array.isArray(request) ? request : [request];
-    const documentNode = parseGraphqlQuery(postData[0].query) as any;
+    const documentNode = parseGraphqlQuery(postData[0].query);
     const firstOperationDefinition = documentNode.definitions.find(
-      (def: any) => def.kind === "OperationDefinition"
-    );
+      (def) => def.kind === "OperationDefinition"
+    ) as OperationDefinitionNode;
+    const field = firstOperationDefinition.selectionSet.selections.find(
+      (selection) => selection.kind === "Field"
+    ) as FieldNode;
     const operationName =
-      firstOperationDefinition?.name?.value ||
-      firstOperationDefinition.selectionSet.selections[0].name.value;
+      field?.name.value || firstOperationDefinition.name?.value;
+
+    if (!operationName) {
+      throw new Error("Operation name could not be determined");
+    }
 
     return {
       operationName,
