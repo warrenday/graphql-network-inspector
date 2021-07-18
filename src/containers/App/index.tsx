@@ -25,7 +25,9 @@ const filterNetworkRequests = (
 
 export function App() {
   const [networkRequests, clearWebRequests] = useNetworkMonitor();
-  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+  const [selectedRowId, setSelectedRowId] = useState<string | number | null>(
+    null
+  );
   const [selectedRequest, setSelectedRequest] = useState<NetworkRequest | null>(
     null
   );

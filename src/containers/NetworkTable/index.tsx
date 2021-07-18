@@ -7,9 +7,9 @@ import { NetworkRequest } from "../../hooks/useNetworkMonitor";
 
 export type NetworkTableProps = {
   data: NetworkRequest[];
-  onRowClick: (rowId: string, row: NetworkRequest) => void;
+  onRowClick: (rowId: string | number, row: NetworkRequest) => void;
   onClear: () => void;
-  selectedRowId?: string | null;
+  selectedRowId?: string | number | null;
   showSingleColumn: boolean;
 };
 
