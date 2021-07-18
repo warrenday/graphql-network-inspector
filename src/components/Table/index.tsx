@@ -7,14 +7,20 @@ import {
   Row,
 } from "react-table";
 
+type RowId = string | number;
+
 export type TableProps<T extends {}> = TableOptions<T> & {
-  onRowClick?: (rowId: string, data: Row<T>["original"]) => void;
-  selectedRowId?: string | null;
+  onRowClick?: (rowId: RowId, data: Row<T>["original"]) => void;
+  selectedRowId?: RowId | null;
 };
 
 type TableBodyProps<T extends {}> = TableInstance<T> & {
   onRowClick?: (data: Row<T>) => void;
-  selectedRowId?: string | null;
+  selectedRowId?: RowId | null;
+};
+
+type BaseRowData = {
+  id: RowId;
 };
 
 const TableHead = <T extends {}>({
@@ -38,7 +44,7 @@ const TableHead = <T extends {}>({
   </thead>
 );
 
-const TableBody = <T extends { id: string }>({
+const TableBody = <T extends BaseRowData>({
   rows,
   getTableBodyProps,
   prepareRow,
@@ -74,7 +80,7 @@ const TableBody = <T extends { id: string }>({
   </tbody>
 );
 
-export const Table = <T extends { id: string }>(props: TableProps<T>) => {
+export const Table = <T extends BaseRowData>(props: TableProps<T>) => {
   const { columns, data, onRowClick, selectedRowId } = props;
   const tableInstance = useTable({ columns, data });
   const { getTableProps, headerGroups } = tableInstance;

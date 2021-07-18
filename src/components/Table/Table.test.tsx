@@ -4,16 +4,19 @@ import { Table, TableProps } from "./index";
 
 const data = [
   {
+    id: 1,
     title: "Batman Begins",
     year: 2005,
     rating: 4,
   },
   {
+    id: 2,
     title: "Get Out",
     year: 2017,
     rating: 5,
   },
   {
+    id: 3,
     title: "George of the Jungle",
     year: 1997,
     rating: 3,
@@ -43,7 +46,8 @@ test("outputs correct row index and data when a row is clicked", () => {
 
   fireEvent.click(getByText(/Get Out/i));
 
-  expect(mockOnRowClick).toHaveBeenCalledWith("1", {
+  expect(mockOnRowClick).toHaveBeenCalledWith(2, {
+    id: 2,
     title: "Get Out",
     year: 2017,
     rating: 5,

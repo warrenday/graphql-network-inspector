@@ -6,12 +6,18 @@ interface ICheckboxProps {
   className?: string;
   checked: boolean;
   onChange: (value: boolean) => void;
+  testId?: string;
 }
 
 export const Checkbox = (props: ICheckboxProps) => {
-  const { id, label, className, onChange, checked } = props;
+  const { id, label, className, onChange, checked, testId } = props;
+
   return (
-    <label htmlFor={id} className={`flex items-center ${className}`}>
+    <label
+      htmlFor={id}
+      className={`flex items-center ${className}`}
+      data-testid={testId}
+    >
       <input
         id={id}
         type="checkbox"
