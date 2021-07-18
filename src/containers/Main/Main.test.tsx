@@ -1,6 +1,6 @@
 import React from "react";
 import { render, fireEvent, within } from "@testing-library/react";
-import { App } from "./index";
+import { Main } from "./index";
 import { chromeProvider } from "../../services/chromeProvider";
 import { mockChrome } from "../../mocks/mock-chrome";
 import { act } from "react-dom/test-utils";
@@ -32,20 +32,20 @@ const mockOnNavigated = () => {
   };
 };
 
-describe("App", () => {
+describe("Main", () => {
   beforeEach(() => {
     mockChromeProvider.mockReturnValue(mockChrome);
   });
 
   it("renders the table only by default", () => {
-    const { queryByTestId } = render(<App />);
+    const { queryByTestId } = render(<Main />);
 
     expect(queryByTestId("network-table")).toBeInTheDocument();
     expect(queryByTestId("network-tabs")).not.toBeInTheDocument();
   });
 
   it("opens the side panel when clicking a table row", () => {
-    const { getAllByText, getByTestId } = render(<App />);
+    const { getAllByText, getByTestId } = render(<Main />);
 
     fireEvent.click(getAllByText(/getMovie/i)[0]);
 
@@ -53,7 +53,7 @@ describe("App", () => {
   });
 
   it("closes the side panel when clicking the 'x' button", () => {
-    const { queryByTestId, getByTestId, getAllByText } = render(<App />);
+    const { queryByTestId, getByTestId, getAllByText } = render(<Main />);
 
     fireEvent.click(getAllByText(/getMovie/i)[0]);
     fireEvent.click(getByTestId("close-side-panel"));
@@ -62,7 +62,7 @@ describe("App", () => {
   });
 
   it("renders all network data within the table", () => {
-    const { queryByTestId } = render(<App />);
+    const { queryByTestId } = render(<Main />);
     const table = queryByTestId("network-table");
     if (!table) {
       throw new Error("Table not found in dom");
@@ -73,7 +73,7 @@ describe("App", () => {
   });
 
   it("clears the table of all network data when clicking the clear button", () => {
-    const { queryByTestId } = render(<App />);
+    const { queryByTestId } = render(<Main />);
     const table = queryByTestId("network-table");
     const { getByTestId, queryAllByRole } = within(table!);
 
@@ -85,7 +85,7 @@ describe("App", () => {
   it("clears the table of all network data when reloading", () => {
     const triggerOnNavigated = mockOnNavigated();
 
-    const { queryByTestId } = render(<App />);
+    const { queryByTestId } = render(<Main />);
     const table = queryByTestId("network-table");
     const { queryAllByRole } = within(table!);
 
@@ -99,7 +99,7 @@ describe("App", () => {
   it("does not clear the table of all network data when reloading and preserve log checked", () => {
     const triggerOnNavigated = mockOnNavigated();
 
-    const { getByTestId, queryByTestId } = render(<App />);
+    const { getByTestId, queryByTestId } = render(<Main />);
     const table = queryByTestId("network-table");
     const { queryAllByRole } = within(table!);
 
@@ -115,7 +115,7 @@ describe("App", () => {
   });
 
   it("filters network data with the given search query", () => {
-    const { getByTestId, queryByTestId } = render(<App />);
+    const { getByTestId, queryByTestId } = render(<Main />);
     const table = queryByTestId("network-table");
     const { queryAllByRole } = within(table!);
     const filterInput = getByTestId("filter-input") as HTMLInputElement;

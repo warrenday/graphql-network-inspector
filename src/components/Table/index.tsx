@@ -34,7 +34,7 @@ const TableHead = <T extends {}>({
         {headers.map(({ getHeaderProps, render }) => (
           <th
             {...getHeaderProps()}
-            className="bg-gray-800 p-2 border-r border-b border-gray-600 last:border-r-0"
+            className="bg-gray-100 dark:bg-gray-800 p-2 border-r border-b dark:border-gray-600 last:border-r-0"
           >
             {render("Header")}
           </th>
@@ -61,15 +61,15 @@ const TableBody = <T extends BaseRowData>({
           {...row.getRowProps()}
           className={`${
             isSelected
-              ? "bg-blue-600"
-              : "even:bg-gray-900 odd:bg-gray-800 hover:bg-blue-900"
+              ? "bg-blue-500 dark:bg-blue-600"
+              : "even:bg-gray-200 dark:even:bg-gray-900 odd:bg-gray-100 dark:odd:bg-gray-800 hover:bg-blue-300 dark:hover:bg-blue-900"
           } cursor-pointer `}
         >
           {row.cells.map((cell) => (
             <td
               {...cell.getCellProps()}
               onClick={onRowClick ? () => onRowClick(row) : undefined}
-              className="p-2 border-r border-gray-600 last:border-r-0"
+              className="p-2 border-r dark:border-gray-600 last:border-r-0"
             >
               {cell.render("Cell")}
             </td>

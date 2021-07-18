@@ -100,7 +100,7 @@ export const NetworkTable = (props: NetworkTableProps) => {
 
   return (
     <div
-      className="w-full relative h-full bg-gray-900"
+      className="w-full relative h-full dark:bg-gray-900"
       data-testid="network-table"
     >
       <ClearButton onClick={onClear} />

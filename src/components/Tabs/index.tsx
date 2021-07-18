@@ -19,7 +19,7 @@ export const Tabs = (props: TabsProps) => {
 
   return (
     <div className="flex flex-col h-full" data-testid={testId}>
-      <div className="flex bg-gray-800 border-b border-gray-600">
+      <div className="flex dark:bg-gray-800 border-b dark:border-gray-600">
         {leftContent && leftContent}
         {tabs.map((tab, i) => {
           const isActive = i === activeTab;
@@ -27,8 +27,8 @@ export const Tabs = (props: TabsProps) => {
             <button
               key={i}
               className={cx("px-4 py-2 bg-none whitespace-nowrap", {
-                "bg-gray-700": isActive,
-                "text-gray-400": !isActive,
+                "bg-gray-300 dark:bg-gray-700": isActive,
+                "text-gray-500 dark:text-gray-400": !isActive,
               })}
               onClick={() => setActiveTab(i)}
             >

@@ -4,7 +4,7 @@ export const Panels: React.FunctionComponent = (props) => {
   const { children } = props;
 
   return (
-    <div className="divide-y divide-solid divide-gray-600">{children}</div>
+    <div className="divide-y divide-solid dark:divide-gray-600">{children}</div>
   );
 };
 

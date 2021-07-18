@@ -12,7 +12,7 @@ export const HeaderList = (props: IHeadersProps) => {
       {headers.map((header) => (
         <li
           key={`${header.name}:${header.value}`}
-          className="text-gray-300 pl-4 py-0.5"
+          className="dark:text-gray-300 pl-4 py-0.5"
         >
           <span className="font-bold">{header.name}: </span>
           {header.value}

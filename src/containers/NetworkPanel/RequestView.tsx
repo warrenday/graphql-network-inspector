@@ -25,7 +25,7 @@ export const RequestView = (props: IRequestViewProps) => {
             />
             <CodeBlock text={request.query} language={"graphql"} />
             {Boolean(Object.keys(request.variables).length) && (
-              <div className="bg-gray-800 rounded-lg">
+              <div className="dark:bg-gray-800 rounded-lg">
                 <CodeBlock
                   text={safeJson.stringify(request.variables, undefined, 2)}
                   language={"json"}
