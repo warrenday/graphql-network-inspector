@@ -9,6 +9,7 @@ type CodeBlockProps = {
 
 export const CodeBlock = (props: CodeBlockProps) => {
   const { text } = props;
+
   return (
     <div className={classes.container}>
       <ReactCodeBlock text={text} language={"graphql"} theme={atomOneDark} />
