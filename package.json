@@ -8,6 +8,8 @@
     "graphql": "^15.3.0",
     "graphql-tag": "^2.11.0",
     "mergeby": "^2.0.1",
+    "pretty-bytes": "^5.6.0",
+    "pretty-ms": "^7.0.1",
     "react": "^16.13.1",
     "react-code-blocks": "^0.0.8",
     "react-dom": "^16.13.1",

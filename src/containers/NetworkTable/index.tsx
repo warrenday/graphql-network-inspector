@@ -1,4 +1,6 @@
 import React, { useMemo } from "react";
+import prettyBytes from "pretty-bytes";
+import prettyMs from "pretty-ms";
 import { Table, TableProps } from "../../components/Table";
 import { BinIcon } from "../../components/Icons/BinIcon";
 import { Badge } from "../../components/Badge";
@@ -63,6 +65,16 @@ const Status = ({ status }: { status?: number }) => {
   );
 };
 
+const ByteSize = ({ byteSize }: { byteSize: number }) => {
+  const prettyByteSize = useMemo(() => prettyBytes(byteSize), [byteSize]);
+  return <div>{prettyByteSize}</div>;
+};
+
+const Time = ({ ms }: { ms: number }) => {
+  const prettyTimeValue = useMemo(() => prettyMs(ms), [ms]);
+  return <div>{prettyTimeValue}</div>;
+};
+
 export const NetworkTable = (props: NetworkTableProps) => {
   const { data, onRowClick, onClear, selectedRowId, showSingleColumn } = props;
 
@@ -84,12 +96,20 @@ export const NetworkTable = (props: NetworkTableProps) => {
         },
       },
       {
-        Header: "URL",
-        accessor: (row) => row.url,
-      },
-      {
         Header: "Status",
         accessor: (row) => <Status status={row.status} />,
+      },
+      {
+        Header: "Size",
+        accessor: (row) => <ByteSize byteSize={row.response?.bodySize || 0} />,
+      },
+      {
+        Header: "Time",
+        accessor: (row) => <Time ms={row.time} />,
+      },
+      {
+        Header: "URL",
+        accessor: (row) => row.url,
       },
     ] as TableProps<NetworkRequest>["columns"];
 

@@ -7,12 +7,14 @@ import {
   OperationDetails,
 } from "../helpers/graphqlHelpers";
 import { onRequestFinished } from "../services/networkMonitor";
+import { DeepPartial } from "../types";
 
 export type Header = { name: string; value?: string };
 export type NetworkRequest = {
   id: string;
   status: number;
   url: string;
+  time: number;
   request: {
     primaryOperation: OperationDetails;
     headers: Header[];
@@ -20,10 +22,14 @@ export type NetworkRequest = {
       query: string;
       variables: object;
     }[];
+    headersSize: number;
+    bodySize: number;
   };
   response?: {
     headers?: Header[];
     body?: string;
+    headersSize: number;
+    bodySize: number;
   };
 };
 
@@ -31,7 +37,7 @@ export const useNetworkMonitor = (): [NetworkRequest[], () => void] => {
   const [webRequests, setWebRequests] = useState<NetworkRequest[]>([]);
 
   useEffect(() => {
-    const updateRequest = (newWebRequest: Partial<NetworkRequest>) => {
+    const updateRequest = (newWebRequest: DeepPartial<NetworkRequest>) => {
       setWebRequests((webRequests) => {
         const newRequests = mergeby(webRequests, newWebRequest, "id", true);
         return newRequests as NetworkRequest[];
@@ -41,7 +47,6 @@ export const useNetworkMonitor = (): [NetworkRequest[], () => void] => {
     const handleRequestFinished = (
       details: chrome.devtools.network.Request
     ) => {
-      console.log(details.request.postData?.text);
       const primaryOperation = getPrimaryOperation(
         details.request.postData?.text
       );
@@ -60,13 +65,18 @@ export const useNetworkMonitor = (): [NetworkRequest[], () => void] => {
         id: requestId,
         status: details.response.status,
         url: details.request.url,
+        time: details.time,
         request: {
           primaryOperation,
           headers: details.request.headers,
           body: requestBody,
+          headersSize: details.request.headersSize,
+          bodySize: details.request.bodySize,
         },
         response: {
           headers: details.response.headers,
+          headersSize: details.response.headersSize,
+          bodySize: details.response.bodySize,
         },
       });
 

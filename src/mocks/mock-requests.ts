@@ -13,6 +13,7 @@ const createRequest = ({
   response: object;
 }) => {
   return {
+    time: 1099.4580000406131,
     request: {
       url,
       headers: [
@@ -42,6 +43,8 @@ const createRequest = ({
           }))
         ),
       },
+      headersSize: 698,
+      bodySize: 578,
     },
     response: {
       status: 200,
@@ -52,6 +55,8 @@ const createRequest = ({
             "CONSENT=YES+GB.en+20151113-21-1; ANID=fe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1e",
         },
       ],
+      headersSize: 589,
+      bodySize: 3364,
     },
     getContent: (cb: Function) => {
       cb(JSON.stringify(response));
