@@ -35,7 +35,7 @@ const Query = ({
   operationName: string;
   totalQueries: number;
 }) => (
-  <div className="flex">
+  <div className="flex" data-testid="column-query">
     <Badge>
       <span
         className={queryType === "query" ? "text-green-400" : "text-indigo-400"}
@@ -55,7 +55,7 @@ const Query = ({
 const Status = ({ status }: { status?: number }) => {
   const statusColor = getStatusColor(status);
   return (
-    <div className="flex items-center">
+    <div className="flex items-center" data-testid="column-status">
       <div
         className="w-3 h-3 rounded-full mr-2"
         style={{ backgroundColor: statusColor }}
@@ -67,12 +67,12 @@ const Status = ({ status }: { status?: number }) => {
 
 const ByteSize = ({ byteSize }: { byteSize: number }) => {
   const prettyByteSize = useMemo(() => prettyBytes(byteSize), [byteSize]);
-  return <div>{prettyByteSize}</div>;
+  return <div data-testid="column-size">{prettyByteSize}</div>;
 };
 
 const Time = ({ ms }: { ms: number }) => {
   const prettyTimeValue = useMemo(() => prettyMs(ms), [ms]);
-  return <div>{prettyTimeValue}</div>;
+  return <div data-testid="column-time">{prettyTimeValue}</div>;
 };
 
 export const NetworkTable = (props: NetworkTableProps) => {
@@ -109,7 +109,7 @@ export const NetworkTable = (props: NetworkTableProps) => {
       },
       {
         Header: "URL",
-        accessor: (row) => row.url,
+        accessor: (row) => <div data-testid="column-url">{row.url}</div>,
       },
     ] as TableProps<NetworkRequest>["columns"];
 

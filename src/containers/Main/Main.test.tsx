@@ -72,6 +72,26 @@ describe("Main", () => {
     expect(queryAllByRole("row")).toHaveLength(51);
   });
 
+  it("renders correct values for each column within the table", () => {
+    const { queryByTestId } = render(<Main />);
+    const table = queryByTestId("network-table");
+    if (!table) {
+      throw new Error("Table not found in dom");
+    }
+    const { queryAllByRole: queryAllByRoleWithinTable } = within(table);
+    const row = queryAllByRoleWithinTable("row")[1];
+    const { queryByTestId: queryByTestIdWithinRow } = within(row);
+
+    expect(queryByTestIdWithinRow("column-query")).toHaveTextContent(
+      "QgetMovie"
+    );
+    expect(queryByTestIdWithinRow("column-url")).toHaveTextContent(
+      "http://graphql-network-monitor.com/graphql"
+    );
+    expect(queryByTestIdWithinRow("column-time")).toHaveTextContent("1s");
+    expect(queryByTestIdWithinRow("column-size")).toHaveTextContent("3.36 kB");
+  });
+
   it("clears the table of all network data when clicking the clear button", () => {
     const { queryByTestId } = render(<Main />);
     const table = queryByTestId("network-table");
