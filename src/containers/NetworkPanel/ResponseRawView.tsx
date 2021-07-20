@@ -15,7 +15,7 @@ export const ResponseRawView = (props: IResponseRawViewProps) => {
   }, [response]);
 
   return (
-    <div className="relative">
+    <div className="relative p-4">
       <CopyButton
         textToCopy={formattedJson}
         className="absolute right-6 top-6 z-10"
