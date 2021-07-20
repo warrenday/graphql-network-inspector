@@ -1,7 +1,6 @@
 import React from "react";
 import ReactJson from "react-json-view";
 import { useDarkTheme } from "../../hooks/useTheme";
-import classes from "./JsonView.module.css";
 
 type JsonViewProps = {
   src: object;
@@ -11,7 +10,7 @@ export const JsonView = (props: JsonViewProps) => {
   const isDarkTheme = useDarkTheme();
 
   return (
-    <div className={classes.container}>
+    <div className="p-4 font-bold">
       <ReactJson
         name={null}
         src={props.src}
