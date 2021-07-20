@@ -15,6 +15,5 @@ export const useDarkTheme = () => {
     };
   }, [darkThemeMediaQuery, setIsDarkTheme]);
 
-  return false;
   return isDarkTheme;
 };
