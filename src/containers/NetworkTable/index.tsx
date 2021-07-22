@@ -129,6 +129,7 @@ export const NetworkTable = (props: NetworkTableProps) => {
         data={data}
         onRowClick={onRowClick}
         selectedRowId={selectedRowId}
+        isScollBottomMaintained
       />
     </div>
   );

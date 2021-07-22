@@ -5,11 +5,18 @@ export const mockChrome = {
     network: {
       onRequestFinished: {
         addListener: (cb) => {
-          for (let i = 0; i < 10; i++) {
-            mockRequests.forEach((mockRequest) => {
-              cb(mockRequest as any);
-            });
-          }
+          mockRequests.forEach((mockRequest) => {
+            cb(mockRequest as any);
+          });
+
+          // Test add more requests on space
+          window.addEventListener("keydown", (e) => {
+            if (e.code === "Digit1") {
+              mockRequests.forEach((mockRequest) => {
+                cb(mockRequest as any);
+              });
+            }
+          });
         },
         removeListener: (cb) => {},
       },

@@ -6,12 +6,14 @@ import {
   TableOptions,
   Row,
 } from "react-table";
+import { useMaintainScrollBottom } from "../../hooks/useMaintainScrollBottom";
 
 type RowId = string | number;
 
 export type TableProps<T extends {}> = TableOptions<T> & {
   onRowClick?: (rowId: RowId, data: Row<T>["original"]) => void;
   selectedRowId?: RowId | null;
+  isScollBottomMaintained?: boolean;
 };
 
 type TableBodyProps<T extends {}> = TableInstance<T> & {
@@ -81,12 +83,20 @@ const TableBody = <T extends BaseRowData>({
 );
 
 export const Table = <T extends BaseRowData>(props: TableProps<T>) => {
-  const { columns, data, onRowClick, selectedRowId } = props;
+  const { columns, data, onRowClick, selectedRowId, isScollBottomMaintained } =
+    props;
   const tableInstance = useTable({ columns, data });
   const { getTableProps, headerGroups } = tableInstance;
+  const ref = useMaintainScrollBottom({
+    totalEntries: data.length,
+    isActive: isScollBottomMaintained,
+  });
 
   return (
-    <div className="scroll relative h-full overflow-y-scroll">
+    <div
+      className="relative h-full flex flex-col scroll overflow-y-scroll"
+      ref={ref}
+    >
       <table
         {...getTableProps()}
         className={`w-full whitespace-nowrap border-separate`}
@@ -104,7 +114,7 @@ export const Table = <T extends BaseRowData>(props: TableProps<T>) => {
         />
       </table>
       {data.length === 0 && (
-        <div className="w-full h-full flex items-center justify-center">
+        <div className="w-full flex flex-1 items-center justify-center">
           <div className="p-6 text-center">No requests have been detected</div>
         </div>
       )}
