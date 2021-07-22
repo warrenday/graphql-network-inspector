@@ -48,7 +48,6 @@ export const useMaintainScrollBottom = (args: IUseMaintainScrollBottomArgs) => {
   useLayoutEffect(() => {
     const scrollElement = scrollRef.current;
     if (isAutoScrollEnabled && isEntriesChanged && isActive && scrollElement) {
-      console.log("auto-scroll");
       scrollElement.scrollTop = scrollElement.scrollHeight;
     }
   }, [scrollRef, isAutoScrollEnabled, isEntriesChanged, isActive]);
