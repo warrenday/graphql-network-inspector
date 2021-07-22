@@ -12,6 +12,9 @@ const removeListeners = () => {
 
 export const mockChrome = {
   devtools: {
+    panels: {
+      themeName: "dark",
+    },
     network: {
       onRequestFinished: {
         addListener: (cb) => {

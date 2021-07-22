@@ -1,19 +1,6 @@
-import { useState, useEffect } from "react";
+import { chromeProvider } from "../services/chromeProvider";
 
 export const useDarkTheme = () => {
-  const darkThemeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-  const [isDarkTheme, setIsDarkTheme] = useState(darkThemeMediaQuery.matches);
-
-  useEffect(() => {
-    const mediaQueryListener = (event: MediaQueryListEvent) => {
-      setIsDarkTheme(event.matches);
-    };
-
-    darkThemeMediaQuery.addEventListener("change", mediaQueryListener);
-    return () => {
-      darkThemeMediaQuery.removeEventListener("change", mediaQueryListener);
-    };
-  }, [darkThemeMediaQuery, setIsDarkTheme]);
-
-  return isDarkTheme;
+  const chrome = chromeProvider();
+  return chrome.devtools.panels.themeName === "dark";
 };

@@ -19,7 +19,7 @@ export const Tabs = (props: TabsProps) => {
 
   return (
     <div className="flex flex-col h-full" data-testid={testId}>
-      <div className="flex dark:bg-gray-800 border-b dark:border-gray-600">
+      <div className="flex dark:bg-gray-800 border-b border-gray-300 dark:border-gray-600">
         {leftContent && leftContent}
         {tabs.map((tab, i) => {
           const isActive = i === activeTab;

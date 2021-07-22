@@ -86,7 +86,7 @@ export const Main = () => {
           <SplitPane split="vertical" minSize={210}>
             {NetworkTableComponent}
             <div
-              className="dark:bg-gray-900 border-l dark:border-gray-600 h-full"
+              className="dark:bg-gray-900 border-l border-gray-300 dark:border-gray-600 h-full"
               style={{ minWidth: 400 }}
             >
               <NetworkPanel

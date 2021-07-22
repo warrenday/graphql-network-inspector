@@ -69,7 +69,7 @@ describe("Main", () => {
     }
     const { queryAllByRole } = within(table);
 
-    expect(queryAllByRole("row")).toHaveLength(51);
+    expect(queryAllByRole("row")).toHaveLength(6);
   });
 
   it("renders correct values for each column within the table", () => {
@@ -131,7 +131,7 @@ describe("Main", () => {
       triggerOnNavigated();
     });
 
-    expect(queryAllByRole("row")).toHaveLength(51);
+    expect(queryAllByRole("row")).toHaveLength(6);
   });
 
   it("filters network data with the given search query", () => {
@@ -147,7 +147,7 @@ describe("Main", () => {
     });
 
     expect(filterInput.value).toBe("getmovie");
-    expect(queryAllByRole("row")).toHaveLength(11);
+    expect(queryAllByRole("row")).toHaveLength(2);
     queryAllByRole("row").forEach((row, i) => {
       // First row is header
       if (i !== 0) {

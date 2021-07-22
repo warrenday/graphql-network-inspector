@@ -17,9 +17,9 @@ export const Toolbar = (props: IToolbarProps) => {
   } = props;
 
   return (
-    <div className="flex w-full p-2 dark:bg-gray-800 dark:border-gray-600 border-b">
+    <div className="flex w-full p-2 border-b dark:bg-gray-800 border-gray-300 dark:border-gray-600">
       <input
-        className="dark:bg-gray-900 px-2 py-1 w-80"
+        className="dark:bg-gray-900 border border-gray-300 dark:border-gray-600 px-3 py-1 w-80 rounded-lg"
         value={searchValue}
         onChange={(event) => {
           onSearchValueChange(event.target.value);

@@ -36,7 +36,7 @@ const TableHead = <T extends {}>({
         {headers.map(({ getHeaderProps, render }) => (
           <th
             {...getHeaderProps()}
-            className="bg-gray-100 dark:bg-gray-800 p-2 border-r border-b dark:border-gray-600 last:border-r-0"
+            className="bg-gray-100 dark:bg-gray-800 p-2 border-r border-b border-gray-300 dark:border-gray-600 last:border-r-0"
           >
             {render("Header")}
           </th>
@@ -71,7 +71,7 @@ const TableBody = <T extends BaseRowData>({
             <td
               {...cell.getCellProps()}
               onClick={onRowClick ? () => onRowClick(row) : undefined}
-              className="p-2 border-r dark:border-gray-600 last:border-r-0"
+              className="p-2 border-r border-gray-300 dark:border-gray-600 last:border-r-0"
             >
               {cell.render("Cell")}
             </td>
@@ -96,6 +96,7 @@ export const Table = <T extends BaseRowData>(props: TableProps<T>) => {
     <div
       className="relative h-full flex flex-col scroll overflow-y-scroll"
       ref={ref}
+      data-testid="table-scroll"
     >
       <table
         {...getTableProps()}
