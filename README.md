@@ -6,6 +6,8 @@ A platform agnostic network inspector specifically built for GraphQL. Clearly se
 
 The browser plugin can be found on the [Chrome Webstore](https://chrome.google.com/webstore/detail/graphql-network-inspector/ndlbedplllcgconngcnfmkadhokfaaln)
 
+For product updates follow me on Twitter [@warrenjday](https://twitter.com/warrenjday)
+
 ## Contribute
 
 PRs are welcome! :D
