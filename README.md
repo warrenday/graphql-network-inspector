@@ -1,6 +1,6 @@
 # GraphQL Network Inspector
 
-![Application Preview](docs/preview@x2.png)
+![Application Preview](docs/promo-large.png)
 
 A platform agnostic network inspector specifically built for GraphQL. Clearly see individual GraphQL requests including support for query batching.
 
