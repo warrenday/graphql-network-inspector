@@ -83,11 +83,11 @@ export const Main = () => {
       <LayoutMain
         header={ToolbarComponent}
         body={
-          <SplitPane split="vertical" minSize={210}>
+          <SplitPane split="vertical" minSize={130} defaultSize={210}>
             {NetworkTableComponent}
             <div
               className="dark:bg-gray-900 border-l border-gray-300 dark:border-gray-600 h-full"
-              style={{ minWidth: 400 }}
+              style={{ minWidth: 200 }}
             >
               <NetworkPanel
                 data={selectedRequest}
