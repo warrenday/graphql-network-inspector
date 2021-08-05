@@ -1,5 +1,5 @@
 import React from "react";
-import { render, fireEvent, within } from "@testing-library/react";
+import { render, fireEvent, within, waitFor } from "@testing-library/react";
 import { Main } from "./index";
 import { chromeProvider } from "../../services/chromeProvider";
 import { mockChrome } from "../../mocks/mock-chrome";
@@ -37,48 +37,72 @@ describe("Main", () => {
     mockChromeProvider.mockReturnValue(mockChrome);
   });
 
-  it("renders the table only by default", () => {
-    const { queryByTestId } = render(<Main />);
+  it("renders the table only by default", async () => {
+    const { queryByTestId, getByText } = render(<Main />);
+
+    await waitFor(() => {
+      expect(getByText(/getMovie/i)).toBeInTheDocument();
+    });
 
     expect(queryByTestId("network-table")).toBeInTheDocument();
     expect(queryByTestId("network-tabs")).not.toBeInTheDocument();
   });
 
-  it("opens the side panel when clicking a table row", () => {
-    const { getAllByText, getByTestId } = render(<Main />);
+  it("opens the side panel when clicking a table row", async () => {
+    const { getByText, getByTestId } = render(<Main />);
 
-    fireEvent.click(getAllByText(/getMovie/i)[0]);
+    await waitFor(() => {
+      expect(getByText(/getMovie/i)).toBeInTheDocument();
+    });
+
+    fireEvent.click(getByText(/getMovie/i));
 
     expect(getByTestId("network-tabs")).toBeInTheDocument();
   });
 
-  it("closes the side panel when clicking the 'x' button", () => {
-    const { queryByTestId, getByTestId, getAllByText } = render(<Main />);
+  it("closes the side panel when clicking the 'x' button", async () => {
+    const { queryByTestId, getByTestId, getByText } = render(<Main />);
 
-    fireEvent.click(getAllByText(/getMovie/i)[0]);
+    await waitFor(() => {
+      expect(getByText(/getMovie/i)).toBeInTheDocument();
+    });
+
+    fireEvent.click(getByText(/getMovie/i));
     fireEvent.click(getByTestId("close-side-panel"));
 
     expect(queryByTestId("network-tabs")).not.toBeInTheDocument();
   });
 
-  it("renders all network data within the table", () => {
+  it("renders all network data within the table", async () => {
     const { queryByTestId } = render(<Main />);
     const table = queryByTestId("network-table");
     if (!table) {
       throw new Error("Table not found in dom");
     }
-    const { queryAllByRole } = within(table);
+    const { queryAllByRole, getByText } = within(table);
+
+    await waitFor(() => {
+      expect(getByText(/getMovie/i)).toBeInTheDocument();
+    });
 
     expect(queryAllByRole("row")).toHaveLength(6);
   });
 
-  it("renders correct values for each column within the table", () => {
+  it("renders correct values for each column within the table", async () => {
     const { queryByTestId } = render(<Main />);
     const table = queryByTestId("network-table");
     if (!table) {
       throw new Error("Table not found in dom");
     }
-    const { queryAllByRole: queryAllByRoleWithinTable } = within(table);
+    const {
+      queryAllByRole: queryAllByRoleWithinTable,
+      getByText: getByTextWithinTable,
+    } = within(table);
+
+    await waitFor(() => {
+      expect(getByTextWithinTable(/getMovie/i)).toBeInTheDocument();
+    });
+
     const row = queryAllByRoleWithinTable("row")[1];
     const { queryByTestId: queryByTestIdWithinRow } = within(row);
 
@@ -92,22 +116,30 @@ describe("Main", () => {
     expect(queryByTestIdWithinRow("column-size")).toHaveTextContent("3.36 kB");
   });
 
-  it("clears the table of all network data when clicking the clear button", () => {
+  it("clears the table of all network data when clicking the clear button", async () => {
     const { queryByTestId } = render(<Main />);
     const table = queryByTestId("network-table");
-    const { getByTestId, queryAllByRole } = within(table!);
+    const { getByTestId, queryAllByRole, getByText } = within(table!);
+
+    await waitFor(() => {
+      expect(getByText(/getMovie/i)).toBeInTheDocument();
+    });
 
     fireEvent.click(getByTestId("clear-network-table"));
 
     expect(queryAllByRole("row")).toHaveLength(1);
   });
 
-  it("clears the table of all network data when reloading", () => {
+  it("clears the table of all network data when reloading", async () => {
     const triggerOnNavigated = mockOnNavigated();
 
     const { queryByTestId } = render(<Main />);
     const table = queryByTestId("network-table");
-    const { queryAllByRole } = within(table!);
+    const { queryAllByRole, getByText } = within(table!);
+
+    await waitFor(() => {
+      expect(getByText(/getMovie/i)).toBeInTheDocument();
+    });
 
     act(() => {
       triggerOnNavigated();
@@ -116,12 +148,16 @@ describe("Main", () => {
     expect(queryAllByRole("row")).toHaveLength(1);
   });
 
-  it("does not clear the table of all network data when reloading and preserve log checked", () => {
+  it("does not clear the table of all network data when reloading and preserve log checked", async () => {
     const triggerOnNavigated = mockOnNavigated();
 
     const { getByTestId, queryByTestId } = render(<Main />);
     const table = queryByTestId("network-table");
-    const { queryAllByRole } = within(table!);
+    const { queryAllByRole, getByText } = within(table!);
+
+    await waitFor(() => {
+      expect(getByText(/getMovie/i)).toBeInTheDocument();
+    });
 
     act(() => {
       fireEvent.click(getByTestId("preserve-log-checkbox"));
@@ -134,11 +170,15 @@ describe("Main", () => {
     expect(queryAllByRole("row")).toHaveLength(6);
   });
 
-  it("filters network data with the given search query", () => {
+  it("filters network data with the given search query", async () => {
     const { getByTestId, queryByTestId } = render(<Main />);
     const table = queryByTestId("network-table");
-    const { queryAllByRole } = within(table!);
+    const { queryAllByRole, getByText } = within(table!);
     const filterInput = getByTestId("filter-input") as HTMLInputElement;
+
+    await waitFor(() => {
+      expect(getByText(/getMovie/i)).toBeInTheDocument();
+    });
 
     act(() => {
       fireEvent.change(filterInput, {

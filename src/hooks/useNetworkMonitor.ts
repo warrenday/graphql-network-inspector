@@ -1,12 +1,12 @@
 import mergeby from "mergeby";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { v4 as uuid } from "uuid";
 import {
   getPrimaryOperation,
   parseGraphqlRequest,
   OperationDetails,
 } from "../helpers/graphqlHelpers";
-import { onRequestFinished } from "../services/networkMonitor";
+import { onRequestFinished, getHAR } from "../services/networkMonitor";
 import { DeepPartial } from "../types";
 
 export type Header = { name: string; value?: string };
@@ -36,17 +36,18 @@ export type NetworkRequest = {
 export const useNetworkMonitor = (): [NetworkRequest[], () => void] => {
   const [webRequests, setWebRequests] = useState<NetworkRequest[]>([]);
 
-  useEffect(() => {
-    const updateRequest = (newWebRequest: DeepPartial<NetworkRequest>) => {
+  const upsertRequest = useCallback(
+    (newWebRequest: DeepPartial<NetworkRequest>) => {
       setWebRequests((webRequests) => {
         const newRequests = mergeby(webRequests, newWebRequest, "id", true);
         return newRequests as NetworkRequest[];
       });
-    };
+    },
+    []
+  );
 
-    const handleRequestFinished = (
-      details: chrome.devtools.network.Request
-    ) => {
+  const handleRequestFinished = useCallback(
+    (details: chrome.devtools.network.Request) => {
       const primaryOperation = getPrimaryOperation(
         details.request.postData?.text
       );
@@ -61,7 +62,7 @@ export const useNetworkMonitor = (): [NetworkRequest[], () => void] => {
         return;
       }
 
-      updateRequest({
+      upsertRequest({
         id: requestId,
         status: details.response.status,
         url: details.request.url,
@@ -81,24 +82,38 @@ export const useNetworkMonitor = (): [NetworkRequest[], () => void] => {
       });
 
       details.getContent((responseBody) => {
-        updateRequest({
+        upsertRequest({
           id: requestId,
           response: {
             body: responseBody || "",
           },
         });
       });
-    };
-
-    const removeListeners = [onRequestFinished(handleRequestFinished)];
-    return () => {
-      removeListeners.forEach((remove) => remove());
-    };
-  }, []);
+    },
+    [upsertRequest]
+  );
 
   const clearWebRequests = () => {
     setWebRequests([]);
   };
+
+  useEffect(() => {
+    const fetchHistoricWebRequests = async () => {
+      const HARLog = await getHAR();
+      for (const entry of HARLog.entries) {
+        if ("getContent" in entry) {
+          handleRequestFinished(entry as chrome.devtools.network.Request);
+        }
+      }
+    };
+
+    clearWebRequests();
+    fetchHistoricWebRequests();
+  }, [handleRequestFinished]);
+
+  useEffect(() => {
+    return onRequestFinished(handleRequestFinished);
+  }, [handleRequestFinished]);
 
   return [webRequests, clearWebRequests];
 };
