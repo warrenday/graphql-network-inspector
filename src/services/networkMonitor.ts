@@ -1,9 +1,5 @@
 import { chromeProvider } from "./chromeProvider";
 
-// On first load of app, try to get previous network activity
-// No requests would have loaded at this point?
-// Do we need to check against existing requests to avoid duplication?
-
 export const getHAR = async (): Promise<chrome.devtools.network.HARLog> => {
   const chrome = chromeProvider();
   return new Promise((resolve) => {
