@@ -16,12 +16,11 @@ export const mockChrome = {
       themeName: "dark",
     },
     network: {
+      getHAR: (cb) => {
+        cb({ entries: mockRequests } as any);
+      },
       onRequestFinished: {
         addListener: (cb) => {
-          mockRequests.forEach((mockRequest) => {
-            cb(mockRequest as any);
-          });
-
           // On press key "1", add more mock requests to app
           const handleKeydown = (e: KeyboardEvent) => {
             if (e.code === "Digit1") {
