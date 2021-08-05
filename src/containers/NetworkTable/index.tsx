@@ -6,10 +6,12 @@ import { BinIcon } from "../../components/Icons/BinIcon";
 import { Badge } from "../../components/Badge";
 import { getStatusColor } from "../../helpers/getStatusColor";
 import { NetworkRequest } from "../../hooks/useNetworkMonitor";
+import { useKeyPress } from "../../hooks/useKeyPress";
 
 export type NetworkTableProps = {
   data: NetworkRequest[];
   onRowClick: (rowId: string | number, row: NetworkRequest) => void;
+  onRowSelect: (rowId: string | number) => void;
   onClear: () => void;
   selectedRowId?: string | number | null;
   showSingleColumn: boolean;
@@ -76,7 +78,31 @@ const Time = ({ ms }: { ms: number }) => {
 };
 
 export const NetworkTable = (props: NetworkTableProps) => {
-  const { data, onRowClick, onClear, selectedRowId, showSingleColumn } = props;
+  const {
+    data,
+    onRowClick,
+    onRowSelect,
+    onClear,
+    selectedRowId,
+    showSingleColumn,
+  } = props;
+
+  const selectNextRow = (direction: "up" | "down") => {
+    const directionCount = direction === "up" ? -1 : 1;
+    const selectedRowIndex = data.findIndex((row) => row.id === selectedRowId);
+    const nextRow = data[selectedRowIndex + directionCount];
+    if (nextRow) {
+      onRowSelect(nextRow.id);
+    }
+  };
+
+  useKeyPress("ArrowUp", () => {
+    selectNextRow("up");
+  });
+
+  useKeyPress("ArrowDown", () => {
+    selectNextRow("down");
+  });
 
   const columns = useMemo(() => {
     const columns = [
