@@ -14,7 +14,7 @@ export type NetworkTableProps = {
   onRowSelect: (rowId: string | number) => void;
   onClear: () => void;
   selectedRowId?: string | number | null;
-  showSingleColumn: boolean;
+  showSingleColumn?: boolean;
 };
 
 const ClearButton = ({ onClick }: { onClick: () => void }) => (
