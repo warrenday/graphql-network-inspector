@@ -9,6 +9,7 @@ import {
   NetworkRequest,
 } from "../../hooks/useNetworkMonitor";
 import { onNavigate } from "../../services/networkMonitor";
+import { useKeyPress } from "../../hooks/useKeyPress";
 
 const filterNetworkRequests = (
   networkRequests: NetworkRequest[],
@@ -28,14 +29,14 @@ export const Main = () => {
   const [selectedRowId, setSelectedRowId] = useState<string | number | null>(
     null
   );
-  const [selectedRequest, setSelectedRequest] = useState<NetworkRequest | null>(
-    null
-  );
   const [searchValue, setSearchValue] = useState("");
   const [isPreserveLogs, setIsPreserveLogs] = useState(false);
   const filteredNetworkRequests = filterNetworkRequests(
     networkRequests,
     searchValue
+  );
+  const selectedRequest = networkRequests.find(
+    (request) => request.id === selectedRowId
   );
 
   useEffect(() => {
@@ -59,13 +60,10 @@ export const Main = () => {
     <NetworkTable
       data={filteredNetworkRequests}
       selectedRowId={selectedRowId}
-      onRowClick={(rowId, data) => {
-        setSelectedRequest(data);
-        setSelectedRowId(rowId);
-      }}
+      onRowClick={setSelectedRowId}
+      onRowSelect={setSelectedRowId}
       showSingleColumn={Boolean(selectedRequest)}
       onClear={() => {
-        setSelectedRequest(null);
         setSelectedRowId(null);
         clearWebRequests();
       }}
@@ -93,7 +91,6 @@ export const Main = () => {
                 data={selectedRequest}
                 onClose={() => {
                   setSelectedRowId(null);
-                  setSelectedRequest(null);
                 }}
               />
             </div>
