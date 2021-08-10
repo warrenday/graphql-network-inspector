@@ -74,7 +74,7 @@ export const mockRequests = [
             lastName
           }
 
-          query getMovie($title: String) {
+          query getMovieQuery($title: String) {
             getMovie(title: $title) {
               id
               title
@@ -101,7 +101,7 @@ export const mockRequests = [
     request: [
       {
         query: `
-          query searchMovie($title: String) {
+          query searchMovieQuery($title: String) {
             searchMovie(title: $title) {
               id
               title
@@ -140,7 +140,7 @@ export const mockRequests = [
     request: [
       {
         query: `
-          mutation createMovie($title: String, $genre: String) {
+          mutation createMovieMutation($title: String, $genre: String) {
             createMovie(title: $title, genre: $genre) {
               id
               title
@@ -167,7 +167,7 @@ export const mockRequests = [
     request: [
       {
         query: `
-          query listActors {
+          query {
             listActors {
               id
               name
@@ -178,7 +178,7 @@ export const mockRequests = [
       },
       {
         query: `
-          query listCategories {
+          query {
             listCategories {
               id
               title
@@ -221,7 +221,7 @@ export const mockRequests = [
     request: [
       {
         query: `
-          query actorDetails($id: String) {
+          query actorDetailsQuery($id: String) {
             actorDetails(id: $id) {
               ...actorDetailsData
               __typename
