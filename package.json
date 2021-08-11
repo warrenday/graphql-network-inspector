@@ -21,6 +21,7 @@
   "scripts": {
     "start": "craco start",
     "build": "INLINE_RUNTIME_CHUNK=false craco build",
+    "postbuild": "node ./scripts/set-manifest-version.js",
     "test": "craco test",
     "eject": "react-scripts eject"
   },
