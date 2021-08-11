@@ -6,7 +6,7 @@ describe("GraphQL Helpers", () => {
       JSON.stringify([
         {
           query: `
-            query searchMovie($title: String) {
+            query searchMovieQuery($title: String) {
               searchMovie(title: $title) {
                 id
                 title
@@ -22,7 +22,7 @@ describe("GraphQL Helpers", () => {
     );
 
     expect(operation).toEqual({
-      operationName: "searchMovie",
+      operationName: "searchMovieQuery",
       operation: "query",
     });
   });
@@ -32,7 +32,7 @@ describe("GraphQL Helpers", () => {
       JSON.stringify([
         {
           query: `
-            mutation createMovie($title: String, $genre: String) {
+            mutation createMovieMutation($title: String, $genre: String) {
               createMovie(title: $title, genre: $genre) {
                 id
                 title
@@ -48,7 +48,7 @@ describe("GraphQL Helpers", () => {
     );
 
     expect(operation).toEqual({
-      operationName: "createMovie",
+      operationName: "createMovieMutation",
       operation: "mutation",
     });
   });
@@ -63,7 +63,7 @@ describe("GraphQL Helpers", () => {
               lastName
             }
 
-            query getMovie($title: String) {
+            query getMovieQuery($title: String) {
               getMovie(title: $title) {
                 id
                 title
@@ -79,7 +79,7 @@ describe("GraphQL Helpers", () => {
     );
 
     expect(operation).toEqual({
-      operationName: "getMovie",
+      operationName: "getMovieQuery",
       operation: "query",
     });
   });

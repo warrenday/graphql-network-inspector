@@ -36,7 +36,7 @@ export const getPrimaryOperation = (
       (selection) => selection.kind === "Field"
     ) as FieldNode;
     const operationName =
-      field?.name.value || firstOperationDefinition.name?.value;
+      firstOperationDefinition.name?.value || field?.name.value;
 
     if (!operationName) {
       throw new Error("Operation name could not be determined");
