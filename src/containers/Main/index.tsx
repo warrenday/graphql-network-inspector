@@ -13,14 +13,14 @@ import { useKeyPress } from "../../hooks/useKeyPress";
 
 const filterNetworkRequests = (
   networkRequests: NetworkRequest[],
-  searchValue: string
+  filterValue: string
 ) => {
-  if (!searchValue) {
+  if (!filterValue) {
     return networkRequests;
   }
   return networkRequests.filter((networkRequest) => {
     const { operationName } = networkRequest.request.primaryOperation;
-    return operationName.toLowerCase().includes(searchValue.toLowerCase());
+    return operationName.toLowerCase().includes(filterValue.toLowerCase());
   });
 };
 
@@ -29,11 +29,11 @@ export const Main = () => {
   const [selectedRowId, setSelectedRowId] = useState<string | number | null>(
     null
   );
-  const [searchValue, setSearchValue] = useState("");
+  const [filterValue, setFilterValue] = useState("");
   const [isPreserveLogs, setIsPreserveLogs] = useState(false);
   const filteredNetworkRequests = filterNetworkRequests(
     networkRequests,
-    searchValue
+    filterValue
   );
   const selectedRequest = networkRequests.find(
     (request) => request.id === selectedRowId
@@ -49,8 +49,8 @@ export const Main = () => {
 
   const ToolbarComponent = (
     <Toolbar
-      searchValue={searchValue}
-      onSearchValueChange={setSearchValue}
+      filterValue={filterValue}
+      onFilterValueChange={setFilterValue}
       preserveLogs={isPreserveLogs}
       onPreserveLogsChange={setIsPreserveLogs}
     />

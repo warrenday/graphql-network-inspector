@@ -9,7 +9,3 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById("root")
 );
-
-chrome.runtime.onMessage.addListener((event) => {
-  console.log(event);
-});
