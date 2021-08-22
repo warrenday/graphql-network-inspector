@@ -103,10 +103,12 @@ describe("Main", () => {
       expect(getByTextWithinTable(/getMovie/i)).toBeInTheDocument();
     });
 
-    const row = queryAllByRoleWithinTable("row")[1];
-    const { queryByTestId: queryByTestIdWithinRow } = within(row);
+    const rows = queryAllByRoleWithinTable("row");
 
-    expect(queryByTestIdWithinRow("column-query")).toHaveTextContent(
+    const firstRow = rows[1];
+    const { queryByTestId: queryByTestIdWithinRow } = within(firstRow);
+
+    expect(queryByTestIdWithinRow("column-operation")).toHaveTextContent(
       "QgetMovie"
     );
     expect(queryByTestIdWithinRow("column-url")).toHaveTextContent(
@@ -115,7 +117,18 @@ describe("Main", () => {
     expect(queryByTestIdWithinRow("column-time")).toHaveTextContent("1s");
     expect(queryByTestIdWithinRow("column-size")).toHaveTextContent("3.36 kB");
     expect(queryByTestIdWithinRow("column-status")).toHaveTextContent("200");
-    expect(queryByTestIdWithinRow("column-error-count")).toHaveTextContent("0");
+
+    const lastRow = rows[rows.length - 1];
+    const operationColumn = within(lastRow).queryByTestId("column-operation");
+    expect(operationColumn).not.toBeNull();
+
+    const errorDot = within(operationColumn!).queryByTestId("dot");
+    expect(errorDot).not.toBeNull();
+    expect(errorDot).toHaveTextContent("1");
+    expect(errorDot).toHaveProperty(
+      "title",
+      "Details for actor with ID 3 could not be fetched"
+    );
   });
 
   it("clears the table of all network data when clicking the clear button", async () => {
