@@ -85,7 +85,7 @@ describe("Main", () => {
       expect(getByText(/getMovie/i)).toBeInTheDocument();
     });
 
-    expect(queryAllByRole("row")).toHaveLength(6);
+    expect(queryAllByRole("row")).toHaveLength(7);
   });
 
   it("renders correct values for each column within the table", async () => {
@@ -114,6 +114,8 @@ describe("Main", () => {
     );
     expect(queryByTestIdWithinRow("column-time")).toHaveTextContent("1s");
     expect(queryByTestIdWithinRow("column-size")).toHaveTextContent("3.36 kB");
+    expect(queryByTestIdWithinRow("column-status")).toHaveTextContent("200");
+    expect(queryByTestIdWithinRow("column-error-count")).toHaveTextContent("0");
   });
 
   it("clears the table of all network data when clicking the clear button", async () => {
@@ -167,7 +169,7 @@ describe("Main", () => {
       triggerOnNavigated();
     });
 
-    expect(queryAllByRole("row")).toHaveLength(6);
+    expect(queryAllByRole("row")).toHaveLength(7);
   });
 
   it("filters network data with the given search query", async () => {

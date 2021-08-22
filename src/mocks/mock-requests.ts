@@ -244,4 +244,33 @@ export const mockRequests = [
       },
     },
   }),
+  createRequest({
+    request: [
+      {
+        query: `
+          query actorDetailsQuery($id: String) {
+            actorDetails(id: $id) {
+              ...actorDetailsData
+              __typename
+            }
+          }
+          fragment actorDetailsData on ActorDetail {
+            id
+            name
+            __typename
+          }
+        `,
+        variables: {
+          id: "3",
+        },
+      },
+    ],
+    response: {
+      errors: [
+        {
+          message: "Details for actor with ID 3 could not be fetched",
+        },
+      ],
+    },
+  }),
 ];

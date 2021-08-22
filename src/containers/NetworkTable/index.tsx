@@ -4,9 +4,10 @@ import prettyMs from "pretty-ms";
 import { Table, TableProps } from "../../components/Table";
 import { BinIcon } from "../../components/Icons/BinIcon";
 import { Badge } from "../../components/Badge";
-import { getStatusColor } from "../../helpers/getStatusColor";
+import { getErrorCountColor, getStatusColor } from "../../helpers/colorHelpers";
 import { NetworkRequest } from "../../hooks/useNetworkMonitor";
 import { useKeyPress } from "../../hooks/useKeyPress";
+import { getErrorMessages } from "../../helpers/graphqlHelpers";
 
 export type NetworkTableProps = {
   data: NetworkRequest[];
@@ -54,6 +55,24 @@ const Query = ({
   </div>
 );
 
+const ResponseErrors = ({ body }: { body: string | undefined }) => {
+  const errorMessages = useMemo(() => getErrorMessages(body), [body]);
+  const countColor = getErrorCountColor(errorMessages?.length);
+  return (
+    <div
+      data-testid="column-error-count"
+      className="flex items-center"
+      title={errorMessages?.join("\n")}
+    >
+      <div
+        className="w-3 h-3 rounded-full mr-2"
+        style={{ backgroundColor: countColor }}
+      />
+      {body ? errorMessages?.length : "pending"}
+    </div>
+  );
+};
+
 const Status = ({ status }: { status?: number }) => {
   const statusColor = getStatusColor(status);
   return (
@@ -61,7 +80,7 @@ const Status = ({ status }: { status?: number }) => {
       <div
         className="w-3 h-3 rounded-full mr-2"
         style={{ backgroundColor: statusColor }}
-      ></div>
+      />
       {status || "pending"}
     </div>
   );
@@ -120,6 +139,10 @@ export const NetworkTable = (props: NetworkTableProps) => {
             />
           );
         },
+      },
+      {
+        Header: "Errors",
+        accessor: (row) => <ResponseErrors body={row.response?.body} />,
       },
       {
         Header: "Status",
