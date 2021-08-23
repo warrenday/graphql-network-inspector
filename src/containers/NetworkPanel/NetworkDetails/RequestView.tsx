@@ -1,8 +1,8 @@
 import React from "react";
 import { Panels, PanelSection } from "./PanelSection";
-import { CodeBlock } from "../../components/CodeBlock";
-import { CopyButton } from "../../components/CopyButton";
-import * as safeJson from "../../helpers/safeJson";
+import { CodeBlock } from "../../../components/CodeBlock";
+import { CopyButton } from "../../../components/CopyButton";
+import * as safeJson from "../../../helpers/safeJson";
 
 interface IRequestViewProps {
   requests: {

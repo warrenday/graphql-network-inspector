@@ -1,60 +1,90 @@
-import React from "react";
-import { Tabs } from "../../components/Tabs";
-import { CloseIcon } from "../../components/Icons/CloseIcon";
+import React, { useState, useEffect } from "react";
+import { SplitPaneLayout } from "../../components/Layout";
+import { NetworkTable } from "./NetworkTable";
+import { NetworkDetails } from "./NetworkDetails";
+import { Toolbar } from "../Toolbar";
 import { NetworkRequest } from "../../hooks/useNetworkMonitor";
-import { HeaderView } from "./HeaderView";
-import { RequestView } from "./RequestView";
-import { ResponseView } from "./ResponseView";
-import { ResponseRawView } from "./ResponseRawView";
+import { onNavigate } from "../../services/networkMonitor";
 
-export type NetworkPanelProps = {
-  data: NetworkRequest;
-  onClose: () => void;
+interface NetworkPanelProps {
+  networkRequests: NetworkRequest[];
+  clearWebRequests: () => void;
+}
+
+const filterNetworkRequests = (
+  networkRequests: NetworkRequest[],
+  filterValue: string
+) => {
+  if (!filterValue) {
+    return networkRequests;
+  }
+  return networkRequests.filter((networkRequest) => {
+    const { operationName } = networkRequest.request.primaryOperation;
+    return operationName.toLowerCase().includes(filterValue.toLowerCase());
+  });
 };
 
 export const NetworkPanel = (props: NetworkPanelProps) => {
-  const { data, onClose } = props;
-  const requestHeaders = data.request.headers;
-  const responseHeaders = data.response?.headers || [];
-  const requestBody = data.request.body;
-  const responseBody = data.response?.body;
+  const { networkRequests, clearWebRequests } = props;
+  const [selectedRowId, setSelectedRowId] = useState<string | number | null>(
+    null
+  );
+  const [filterValue, setFilterValue] = useState("");
+  const [isPreserveLogs, setIsPreserveLogs] = useState(false);
+  const filteredNetworkRequests = filterNetworkRequests(
+    networkRequests,
+    filterValue
+  );
+  const selectedRequest = networkRequests.find(
+    (request) => request.id === selectedRowId
+  );
+
+  useEffect(() => {
+    return onNavigate(() => {
+      if (!isPreserveLogs) {
+        clearWebRequests();
+      }
+    });
+  }, [isPreserveLogs, clearWebRequests]);
 
   return (
-    <Tabs
-      testId="network-tabs"
-      defaultActiveTab={1}
-      leftContent={
-        <button
-          onClick={onClose}
-          className="w-10 flex justify-center items-center opacity-50 hover:opacity-100"
-          data-testid="close-side-panel"
-        >
-          <CloseIcon width="1.5rem" height="1.5rem" />
-        </button>
+    <SplitPaneLayout
+      header={
+        <Toolbar
+          filterValue={filterValue}
+          onFilterValueChange={setFilterValue}
+          preserveLogs={isPreserveLogs}
+          onPreserveLogsChange={setIsPreserveLogs}
+        />
       }
-      tabs={[
-        {
-          title: "Headers",
-          component: (
-            <HeaderView
-              requestHeaders={requestHeaders}
-              responseHeaders={responseHeaders}
+      leftPane={
+        <NetworkTable
+          data={filteredNetworkRequests}
+          selectedRowId={selectedRowId}
+          onRowClick={setSelectedRowId}
+          onRowSelect={setSelectedRowId}
+          showSingleColumn={Boolean(selectedRequest)}
+          onClear={() => {
+            setSelectedRowId(null);
+            clearWebRequests();
+          }}
+        />
+      }
+      rightPane={
+        selectedRequest && (
+          <div
+            className="dark:bg-gray-900 border-l border-gray-300 dark:border-gray-600 h-full"
+            style={{ minWidth: 200 }}
+          >
+            <NetworkDetails
+              data={selectedRequest}
+              onClose={() => {
+                setSelectedRowId(null);
+              }}
             />
-          ),
-        },
-        {
-          title: "Request",
-          component: <RequestView requests={requestBody} />,
-        },
-        {
-          title: "Response",
-          component: <ResponseView response={responseBody} />,
-        },
-        {
-          title: "Response (Raw)",
-          component: <ResponseRawView response={responseBody} />,
-        },
-      ]}
+          </div>
+        )
+      }
     />
   );
 };
