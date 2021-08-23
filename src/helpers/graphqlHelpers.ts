@@ -1,4 +1,4 @@
-import { FieldNode, OperationDefinitionNode } from "graphql";
+import { FieldNode, GraphQLError, OperationDefinitionNode } from "graphql";
 import gql from "graphql-tag";
 
 export type OperationDetails = {
@@ -47,6 +47,25 @@ export const getPrimaryOperation = (
       operation: firstOperationDefinition?.operation,
     };
   } catch (e) {
+    return null;
+  }
+};
+
+export const getErrorMessages = (
+  responseBody: string | undefined
+): string[] | null => {
+  if (!responseBody) {
+    return null;
+  }
+  try {
+    const bodyParsed = JSON.parse(responseBody);
+    if ("errors" in bodyParsed) {
+      return bodyParsed.errors.map(
+        (error: GraphQLError) => error.message || ""
+      );
+    }
+    return [];
+  } catch (error) {
     return null;
   }
 };
