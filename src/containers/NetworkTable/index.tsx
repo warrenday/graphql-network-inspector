@@ -35,9 +35,10 @@ const Operation = ({ request }: { request: NetworkRequest }) => {
   const { operation, operationName } = request.request.primaryOperation;
 
   const responseBody = request.response?.body;
-  const errorMessages = useMemo(() => getErrorMessages(responseBody), [
-    responseBody,
-  ]);
+  const errorMessages = useMemo(
+    () => getErrorMessages(responseBody),
+    [responseBody]
+  );
 
   return (
     <div className="flex items-center gap-2" data-testid="column-operation">
@@ -53,12 +54,14 @@ const Operation = ({ request }: { request: NetworkRequest }) => {
 
       <span className="font-bold">{operationName}</span>
 
-      <div className="ml-auto">
+      <div>
         {totalOperations > 1 && (
           <span className="font-bold opacity-75 mr-2">
             +{totalOperations - 1}
           </span>
         )}
+      </div>
+      <div className="ml-auto mr-1">
         {errorMessages && errorMessages.length > 0 && (
           <Dot title={errorMessages.join("\n")}>{errorMessages.length}</Dot>
         )}
@@ -73,7 +76,11 @@ const Status = ({ status }: { status?: number }) => {
     <div className="flex items-center" data-testid="column-status">
       <div
         className="w-3 h-3 rounded-full mr-2"
-        style={{ backgroundColor: statusColor }}
+        style={{
+          backgroundColor: statusColor,
+          transform: "rotate(0.1deg)",
+          marginTop: "-1px",
+        }}
       />
       {status || "pending"}
     </div>

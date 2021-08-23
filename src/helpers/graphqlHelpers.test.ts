@@ -7,14 +7,14 @@ describe("GraphQL Helpers", () => {
         JSON.stringify([
           {
             query: `
-            query searchMovieQuery($title: String) {
-              searchMovie(title: $title) {
-                id
-                title
-                genre
+              query searchMovieQuery($title: String) {
+                searchMovie(title: $title) {
+                  id
+                  title
+                  genre
+                }
               }
-            }
-          `,
+            `,
             variables: {
               title: "Batman",
             },
@@ -33,14 +33,14 @@ describe("GraphQL Helpers", () => {
         JSON.stringify([
           {
             query: `
-            mutation createMovieMutation($title: String, $genre: String) {
-              createMovie(title: $title, genre: $genre) {
-                id
-                title
-                genre
+              mutation createMovieMutation($title: String, $genre: String) {
+                createMovie(title: $title, genre: $genre) {
+                  id
+                  title
+                  genre
+                }
               }
-            }
-          `,
+            `,
             variables: {
               title: "Batman",
             },
@@ -59,19 +59,19 @@ describe("GraphQL Helpers", () => {
         JSON.stringify([
           {
             query: `
-            fragment NameParts on Person {
-              firstName
-              lastName
-            }
-
-            query getMovieQuery($title: String) {
-              getMovie(title: $title) {
-                id
-                title
-                genre
+              fragment NameParts on Person {
+                firstName
+                lastName
               }
-            }
-          `,
+
+              query getMovieQuery($title: String) {
+                getMovie(title: $title) {
+                  id
+                  title
+                  genre
+                }
+              }
+            `,
             variables: {
               title: "Batman",
             },
@@ -90,14 +90,14 @@ describe("GraphQL Helpers", () => {
         JSON.stringify([
           {
             query: `
-            query {
-              getTopMovie {
-                id
-                title
-                genre
+              query {
+                getTopMovie {
+                  id
+                  title
+                  genre
+                }
               }
-            }
-          `,
+            `,
           },
         ])
       );

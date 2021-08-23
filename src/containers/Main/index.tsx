@@ -9,7 +9,6 @@ import {
   NetworkRequest,
 } from "../../hooks/useNetworkMonitor";
 import { onNavigate } from "../../services/networkMonitor";
-import { useKeyPress } from "../../hooks/useKeyPress";
 
 const filterNetworkRequests = (
   networkRequests: NetworkRequest[],
