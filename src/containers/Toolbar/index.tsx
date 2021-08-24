@@ -1,5 +1,6 @@
 import React from "react";
 import { Checkbox } from "../../components/Checkbox";
+import { Textfield } from "../../components/Textfield";
 
 interface IToolbarProps {
   filterValue: string;
@@ -18,14 +19,11 @@ export const Toolbar = (props: IToolbarProps) => {
 
   return (
     <div className="flex w-full p-2 border-b dark:bg-gray-800 border-gray-300 dark:border-gray-600">
-      <input
-        className="dark:bg-gray-900 border border-gray-300 dark:border-gray-600 px-3 py-1 w-80 rounded-lg"
+      <Textfield
         value={filterValue}
-        onChange={(event) => {
-          onFilterValueChange(event.target.value);
-        }}
+        onChange={onFilterValueChange}
         placeholder="Filter"
-        data-testid="filter-input"
+        testId="filter-input"
       />
       <Checkbox
         id="preserveLog"

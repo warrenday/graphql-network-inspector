@@ -1,11 +1,19 @@
 import React from "react";
+import { Textfield } from "../../components/Textfield";
+import { useSearch } from "../../hooks/useSearch";
 
-interface ISearchPanelProps {
-  query: string;
-}
+export const SearchPanel = () => {
+  const { searchQuery, setSearchQuery } = useSearch();
 
-export const SearchPanel = (props: ISearchPanelProps) => {
-  const { query } = props;
-
-  return <div>search here: {query}</div>;
+  return (
+    <div className="h-full p-2 border-r border-gray-300 dark:border-gray-600">
+      <Textfield
+        value={searchQuery}
+        onChange={setSearchQuery}
+        placeholder="Search"
+        autoFocus
+        className="w-full"
+      />
+    </div>
+  );
 };

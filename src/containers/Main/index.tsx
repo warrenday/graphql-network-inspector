@@ -7,11 +7,11 @@ import { SearchPanel } from "../SearchPanel";
 
 export const Main = () => {
   const [networkRequests, clearWebRequests] = useNetworkMonitor();
-  const { searchQuery } = useSearch();
+  const { isSearchOpen } = useSearch();
 
   return (
     <SplitPaneLayout
-      leftPane={searchQuery ? <SearchPanel query={searchQuery} /> : undefined}
+      leftPane={isSearchOpen ? <SearchPanel /> : undefined}
       rightPane={
         <NetworkPanel
           networkRequests={networkRequests}
