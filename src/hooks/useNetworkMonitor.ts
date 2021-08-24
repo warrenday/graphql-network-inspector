@@ -77,7 +77,10 @@ export const useNetworkMonitor = (): [NetworkRequest[], () => void] => {
         response: {
           headers: details.response.headers,
           headersSize: details.response.headersSize,
-          bodySize: details.response.bodySize,
+          bodySize:
+            details.response.bodySize === -1
+              ? details.response._transferSize || 0
+              : details.response.bodySize,
         },
       });
 
