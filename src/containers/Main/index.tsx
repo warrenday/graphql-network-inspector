@@ -11,7 +11,11 @@ export const Main = () => {
 
   return (
     <SplitPaneLayout
-      leftPane={isSearchOpen ? <SearchPanel /> : undefined}
+      leftPane={
+        isSearchOpen ? (
+          <SearchPanel networkRequests={networkRequests} />
+        ) : undefined
+      }
       rightPane={
         <NetworkPanel
           networkRequests={networkRequests}

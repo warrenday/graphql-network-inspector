@@ -5,6 +5,7 @@ import React, {
   useContext,
   useCallback,
 } from "react";
+import { useKeyPress } from "./useKeyPress";
 
 const useSearchStart = (cb: () => void) => {
   useEffect(() => {
@@ -34,11 +35,13 @@ const useSearchStart = (cb: () => void) => {
 };
 
 const SearchContext = createContext<{
+  activeSearchQuery: string;
   searchQuery: string;
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
   isSearchOpen: boolean;
   setIsSearchOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }>({
+  activeSearchQuery: "",
   searchQuery: "",
   setSearchQuery: () => null,
   isSearchOpen: false,
@@ -47,7 +50,12 @@ const SearchContext = createContext<{
 
 export const SearchProvider: React.FC = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeSearchQuery, setActiveSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  useKeyPress("Enter", () => {
+    setActiveSearchQuery(searchQuery);
+  });
 
   const handleSearchStart = useCallback(() => {
     setIsSearchOpen(true);
@@ -57,6 +65,7 @@ export const SearchProvider: React.FC = ({ children }) => {
   return (
     <SearchContext.Provider
       value={{
+        activeSearchQuery,
         searchQuery,
         setSearchQuery,
         isSearchOpen,
@@ -69,10 +78,16 @@ export const SearchProvider: React.FC = ({ children }) => {
 };
 
 export const useSearch = () => {
-  const { searchQuery, setSearchQuery, isSearchOpen, setIsSearchOpen } =
-    useContext(SearchContext);
+  const {
+    activeSearchQuery,
+    searchQuery,
+    setSearchQuery,
+    isSearchOpen,
+    setIsSearchOpen,
+  } = useContext(SearchContext);
 
   return {
+    activeSearchQuery,
     searchQuery,
     setSearchQuery,
     isSearchOpen,
