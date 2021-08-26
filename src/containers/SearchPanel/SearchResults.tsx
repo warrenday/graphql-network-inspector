@@ -7,22 +7,35 @@ import {
   getResponseSearchContent,
 } from "./getSearchContent";
 
+export type SearchResultType = "header" | "request" | "response";
+
 interface ISearchResultsProps {
   searchQuery: string;
   searchResults: ISearchResult[];
+  onResultClick: (
+    searchResult: ISearchResult,
+    searchResultType: SearchResultType
+  ) => void;
 }
 
 interface ISearchResultEntryProps {
   searchQuery: string;
   searchResult: ISearchResult;
+  onResultClick: (searchResultType: SearchResultType) => void;
 }
 
-const SearchResultEntryRow: React.FC<{ title: string }> = ({
+interface ISearchResultEntryRowProps {
+  title: string;
+  onClick: () => void;
+}
+
+const SearchResultEntryRow: React.FC<ISearchResultEntryRowProps> = ({
   title,
   children,
+  onClick,
 }) => {
   return (
-    <div className="flex hover:bg-gray-700 cursor-pointer" onClick={() => {}}>
+    <div className="flex hover:bg-gray-700 cursor-pointer" onClick={onClick}>
       <div className="mr-3 opacity-70">{title}</div>
       <div className="whitespace-nowrap">{children}</div>
     </div>
@@ -30,7 +43,7 @@ const SearchResultEntryRow: React.FC<{ title: string }> = ({
 };
 
 const SearchResultEntry = (props: ISearchResultEntryProps) => {
-  const { searchQuery, searchResult } = props;
+  const { searchQuery, searchResult, onResultClick } = props;
   const { matches, networkRequest } = searchResult;
   const { operationName } = networkRequest.request.primaryOperation;
 
@@ -38,7 +51,10 @@ const SearchResultEntry = (props: ISearchResultEntryProps) => {
     <div key={searchResult.networkRequest.id}>
       <div className="font-bold mb-1">{operationName}</div>
       {matches.headers && (
-        <SearchResultEntryRow title="Header">
+        <SearchResultEntryRow
+          title="Header"
+          onClick={() => onResultClick("header")}
+        >
           <HighlightedText
             text={getHeaderSearchContent(networkRequest)}
             highlight={searchQuery}
@@ -46,7 +62,10 @@ const SearchResultEntry = (props: ISearchResultEntryProps) => {
         </SearchResultEntryRow>
       )}
       {matches.request && (
-        <SearchResultEntryRow title="Request">
+        <SearchResultEntryRow
+          title="Request"
+          onClick={() => onResultClick("request")}
+        >
           <HighlightedText
             text={getRequestSearchContent(networkRequest)}
             highlight={searchQuery}
@@ -54,7 +73,10 @@ const SearchResultEntry = (props: ISearchResultEntryProps) => {
         </SearchResultEntryRow>
       )}
       {matches.response && (
-        <SearchResultEntryRow title="Response">
+        <SearchResultEntryRow
+          title="Response"
+          onClick={() => onResultClick("response")}
+        >
           <HighlightedText
             text={getResponseSearchContent(networkRequest)}
             highlight={searchQuery}
@@ -66,7 +88,7 @@ const SearchResultEntry = (props: ISearchResultEntryProps) => {
 };
 
 export const SearchResults = (props: ISearchResultsProps) => {
-  const { searchQuery, searchResults } = props;
+  const { searchQuery, searchResults, onResultClick } = props;
   return (
     <div className="pt-0 p-2 space-y-4">
       {searchResults.map((searchResult) => (
@@ -74,6 +96,9 @@ export const SearchResults = (props: ISearchResultsProps) => {
           key={searchResult.networkRequest.id}
           searchQuery={searchQuery}
           searchResult={searchResult}
+          onResultClick={(searchResultType) => {
+            onResultClick(searchResult, searchResultType);
+          }}
         />
       ))}
     </div>

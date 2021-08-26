@@ -7,6 +7,8 @@ import { NetworkRequest } from "../../hooks/useNetworkMonitor";
 import { onNavigate } from "../../services/networkMonitor";
 
 interface NetworkPanelProps {
+  selectedRowId: string | number | null;
+  setSelectedRowId: (selectedRowId: string | number | null) => void;
   networkRequests: NetworkRequest[];
   clearWebRequests: () => void;
 }
@@ -25,10 +27,9 @@ const filterNetworkRequests = (
 };
 
 export const NetworkPanel = (props: NetworkPanelProps) => {
-  const { networkRequests, clearWebRequests } = props;
-  const [selectedRowId, setSelectedRowId] = useState<string | number | null>(
-    null
-  );
+  const { networkRequests, clearWebRequests, selectedRowId, setSelectedRowId } =
+    props;
+
   const [filterValue, setFilterValue] = useState("");
   const [isPreserveLogs, setIsPreserveLogs] = useState(false);
   const filteredNetworkRequests = filterNetworkRequests(
