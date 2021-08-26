@@ -21,7 +21,7 @@ export const Main = () => {
             onResultClick={(searchResult, searchResultType) => {
               setSelectedRowId(searchResult.networkRequest.id);
               // TODO allow tabs to be controlled globally
-              // will need contect for this
+              // will need context for this
             }}
           />
         ) : undefined
