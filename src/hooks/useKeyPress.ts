@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-type Code = "ArrowDown" | "ArrowUp";
+type Code = "ArrowDown" | "ArrowUp" | "Enter";
 
 export const useKeyPress = (code: Code, cb: () => void) => {
   useEffect(() => {

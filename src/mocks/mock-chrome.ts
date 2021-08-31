@@ -1,14 +1,6 @@
 import { mockRequests } from "../mocks/mock-requests";
 
-let listeners: Array<() => void> = [];
-const removeListeners = () => {
-  while (listeners.length) {
-    const listener = listeners.shift();
-    if (listener) {
-      listener();
-    }
-  }
-};
+let removeListeners: Record<string, () => void> = {};
 
 export const mockChrome = {
   devtools: {
@@ -30,12 +22,11 @@ export const mockChrome = {
             }
           };
           window.addEventListener("keydown", handleKeydown);
-          listeners.push(() => {
+          removeListeners.onRequestFinished = () =>
             window.removeEventListener("keydown", handleKeydown);
-          });
         },
         removeListener: (cb) => {
-          removeListeners();
+          removeListeners.onRequestFinished();
         },
       },
       onNavigated: {

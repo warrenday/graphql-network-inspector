@@ -3,7 +3,7 @@ import React from "react";
 interface ICloseIconProps extends React.SVGAttributes<{}> {}
 
 export const CloseIcon = (props: ICloseIconProps) => {
-  const { width = 24, height = 24 } = props;
+  const { width = "1.5rem", height = "1.5rem" } = props;
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

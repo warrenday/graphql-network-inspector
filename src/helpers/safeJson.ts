@@ -3,6 +3,9 @@ export const stringify = (
   replacer?: (this: any, key: string, value: any) => any,
   space?: string | number
 ): string => {
+  if (!value) {
+    return "";
+  }
   try {
     return JSON.stringify(value, replacer, space);
   } catch (e) {
