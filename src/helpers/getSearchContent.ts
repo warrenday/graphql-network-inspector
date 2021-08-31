@@ -1,5 +1,5 @@
-import { stringify } from "../../helpers/safeJson";
-import { Header, NetworkRequest } from "../../hooks/useNetworkMonitor";
+import { stringify } from "./safeJson";
+import { Header, NetworkRequest } from "../hooks/useNetworkMonitor";
 
 const stringifyHeaders = (headers: Header[] = []) => {
   return headers
@@ -22,7 +22,7 @@ export const getRequestSearchContent = (
 ): string => {
   return networkRequest.request.body
     .map((body) => {
-      return body.query + " " + body.variables;
+      return body.query + " " + stringify(body.variables);
     })
     .join(", ");
 };
@@ -30,5 +30,5 @@ export const getRequestSearchContent = (
 export const getResponseSearchContent = (
   networkRequest: NetworkRequest
 ): string => {
-  return stringify(networkRequest.response?.body);
+  return networkRequest.response?.body || "";
 };

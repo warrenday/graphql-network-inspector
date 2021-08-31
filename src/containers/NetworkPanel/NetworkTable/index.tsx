@@ -9,6 +9,7 @@ import { getStatusColor } from "../../../helpers/getStatusColor";
 import { NetworkRequest } from "../../../hooks/useNetworkMonitor";
 import { useKeyPress } from "../../../hooks/useKeyPress";
 import { getErrorMessages } from "../../../helpers/graphqlHelpers";
+import { IconButton } from "../../../components/IconButton";
 
 export type NetworkTableProps = {
   data: NetworkRequest[];
@@ -20,14 +21,13 @@ export type NetworkTableProps = {
 };
 
 const ClearButton = ({ onClick }: { onClick: () => void }) => (
-  <button
-    className="z-20 absolute right-2 top-2 h-6 w-6 border-0 p-0 m-0 bg-none opacity-50 outline-none hover:opacity-100"
-    onClick={onClick}
-    data-testid="clear-network-table"
-    style={{ marginTop: 1 }}
-  >
-    <BinIcon width="1.5rem" height="1.5rem" />
-  </button>
+  <div className="z-20 absolute right-2 top-2" style={{ marginTop: 1 }}>
+    <IconButton
+      onClick={onClick}
+      testId="clear-network-table"
+      icon={<BinIcon />}
+    />
+  </div>
 );
 
 const Operation = ({ request }: { request: NetworkRequest }) => {

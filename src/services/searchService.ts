@@ -1,3 +1,8 @@
+import {
+  getHeaderSearchContent,
+  getRequestSearchContent,
+  getResponseSearchContent,
+} from "../helpers/getSearchContent";
 import { NetworkRequest } from "../hooks/useNetworkMonitor";
 
 export interface ISearchResult {
@@ -9,40 +14,31 @@ export interface ISearchResult {
   networkRequest: NetworkRequest;
 }
 
+const getMatchedHeaders = (
+  searchQuery: string,
+  networkRequests: NetworkRequest
+): boolean => {
+  return getHeaderSearchContent(networkRequests)
+    .toLowerCase()
+    .includes(searchQuery.toLowerCase());
+};
+
 const getMatchedRequest = (
   searchQuery: string,
   networkRequests: NetworkRequest
 ): boolean => {
-  return networkRequests.request.body.some((requestBody) => {
-    return (
-      requestBody.query.toLocaleLowerCase().includes(searchQuery) ||
-      JSON.stringify(requestBody.variables)
-        .toLocaleLowerCase()
-        .includes(searchQuery)
-    );
-  });
+  return getRequestSearchContent(networkRequests)
+    .toLowerCase()
+    .includes(searchQuery.toLowerCase());
 };
 
 const getMatchedResponse = (
   searchQuery: string,
   networkRequests: NetworkRequest
 ): boolean => {
-  const responseBody = networkRequests.response?.body || "";
-  return responseBody.toLocaleLowerCase().includes(searchQuery);
-};
-
-const getMatchedHeaders = (
-  searchQuery: string,
-  networkRequests: NetworkRequest
-): boolean => {
-  return (
-    JSON.stringify(networkRequests.request.headers)
-      .toLowerCase()
-      .includes(searchQuery) ||
-    JSON.stringify(networkRequests.response?.headers || {})
-      .toLowerCase()
-      .includes(searchQuery)
-  );
+  return getResponseSearchContent(networkRequests)
+    .toLowerCase()
+    .includes(searchQuery.toLowerCase());
 };
 
 export const getSearchResults = (

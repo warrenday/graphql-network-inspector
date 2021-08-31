@@ -1,11 +1,12 @@
 import React from "react";
 import { Tabs } from "../../../components/Tabs";
-import { CloseIcon } from "../../../components/Icons/CloseIcon";
 import { NetworkRequest } from "../../../hooks/useNetworkMonitor";
 import { HeaderView } from "./HeaderView";
 import { RequestView } from "./RequestView";
 import { ResponseView } from "./ResponseView";
 import { ResponseRawView } from "./ResponseRawView";
+import { useNetworkTabs } from "../../../hooks/useNetworkTabs";
+import { CloseButton } from "../../../components/CloseButton";
 
 export type NetworkDetailsProps = {
   data: NetworkRequest;
@@ -14,6 +15,7 @@ export type NetworkDetailsProps = {
 
 export const NetworkDetails = (props: NetworkDetailsProps) => {
   const { data, onClose } = props;
+  const { activeTab, setActiveTab } = useNetworkTabs();
   const requestHeaders = data.request.headers;
   const responseHeaders = data.response?.headers || [];
   const requestBody = data.request.body;
@@ -22,18 +24,12 @@ export const NetworkDetails = (props: NetworkDetailsProps) => {
   return (
     <Tabs
       testId="network-tabs"
-      defaultActiveTab={1}
-      leftContent={
-        <button
-          onClick={onClose}
-          className="w-10 flex justify-center items-center opacity-50 hover:opacity-100"
-          data-testid="close-side-panel"
-        >
-          <CloseIcon width="1.5rem" height="1.5rem" />
-        </button>
-      }
+      activeTab={activeTab}
+      onTabClick={setActiveTab}
+      rightContent={<CloseButton onClick={onClose} testId="close-side-panel" />}
       tabs={[
         {
+          id: "headers",
           title: "Headers",
           component: (
             <HeaderView
@@ -43,14 +39,17 @@ export const NetworkDetails = (props: NetworkDetailsProps) => {
           ),
         },
         {
+          id: "request",
           title: "Request",
           component: <RequestView requests={requestBody} />,
         },
         {
+          id: "response",
           title: "Response",
           component: <ResponseView response={responseBody} />,
         },
         {
+          id: "response-raw",
           title: "Response (Raw)",
           component: <ResponseRawView response={responseBody} />,
         },

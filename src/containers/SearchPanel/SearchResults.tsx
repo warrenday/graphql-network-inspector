@@ -5,23 +5,23 @@ import {
   getHeaderSearchContent,
   getRequestSearchContent,
   getResponseSearchContent,
-} from "./getSearchContent";
-
-export type SearchResultType = "header" | "request" | "response";
+} from "../../helpers/getSearchContent";
+import { NetworkTabs } from "../../hooks/useNetworkTabs";
 
 interface ISearchResultsProps {
   searchQuery: string;
   searchResults: ISearchResult[];
   onResultClick: (
     searchResult: ISearchResult,
-    searchResultType: SearchResultType
+    searchResultType: NetworkTabs
   ) => void;
 }
 
 interface ISearchResultEntryProps {
   searchQuery: string;
   searchResult: ISearchResult;
-  onResultClick: (searchResultType: SearchResultType) => void;
+  onResultClick: (searchResultType: NetworkTabs) => void;
+  index: number;
 }
 
 interface ISearchResultEntryRowProps {
@@ -35,7 +35,10 @@ const SearchResultEntryRow: React.FC<ISearchResultEntryRowProps> = ({
   onClick,
 }) => {
   return (
-    <div className="flex hover:bg-gray-700 cursor-pointer" onClick={onClick}>
+    <div
+      className="flex dark:hover:bg-gray-700 hover:bg-gray-300 cursor-pointer -ml-2 -mr-2 px-2"
+      onClick={onClick}
+    >
       <div className="mr-3 opacity-70">{title}</div>
       <div className="whitespace-nowrap">{children}</div>
     </div>
@@ -43,17 +46,17 @@ const SearchResultEntryRow: React.FC<ISearchResultEntryRowProps> = ({
 };
 
 const SearchResultEntry = (props: ISearchResultEntryProps) => {
-  const { searchQuery, searchResult, onResultClick } = props;
+  const { searchQuery, searchResult, onResultClick, index } = props;
   const { matches, networkRequest } = searchResult;
   const { operationName } = networkRequest.request.primaryOperation;
 
   return (
-    <div key={searchResult.networkRequest.id}>
+    <div data-testid={`search-results-${index}`}>
       <div className="font-bold mb-1">{operationName}</div>
       {matches.headers && (
         <SearchResultEntryRow
           title="Header"
-          onClick={() => onResultClick("header")}
+          onClick={() => onResultClick(NetworkTabs.HEADER)}
         >
           <HighlightedText
             text={getHeaderSearchContent(networkRequest)}
@@ -64,7 +67,7 @@ const SearchResultEntry = (props: ISearchResultEntryProps) => {
       {matches.request && (
         <SearchResultEntryRow
           title="Request"
-          onClick={() => onResultClick("request")}
+          onClick={() => onResultClick(NetworkTabs.REQUEST)}
         >
           <HighlightedText
             text={getRequestSearchContent(networkRequest)}
@@ -75,7 +78,7 @@ const SearchResultEntry = (props: ISearchResultEntryProps) => {
       {matches.response && (
         <SearchResultEntryRow
           title="Response"
-          onClick={() => onResultClick("response")}
+          onClick={() => onResultClick(NetworkTabs.RESPONSE_RAW)}
         >
           <HighlightedText
             text={getResponseSearchContent(networkRequest)}
@@ -90,10 +93,11 @@ const SearchResultEntry = (props: ISearchResultEntryProps) => {
 export const SearchResults = (props: ISearchResultsProps) => {
   const { searchQuery, searchResults, onResultClick } = props;
   return (
-    <div className="pt-0 p-2 space-y-4">
-      {searchResults.map((searchResult) => (
+    <div className="pt-0 p-2 space-y-2">
+      {searchResults.map((searchResult, index) => (
         <SearchResultEntry
           key={searchResult.networkRequest.id}
+          index={index}
           searchQuery={searchQuery}
           searchResult={searchResult}
           onResultClick={(searchResultType) => {

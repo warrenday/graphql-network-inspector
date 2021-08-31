@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { SplitPaneLayout } from "../../components/Layout";
 import { useNetworkMonitor } from "../../hooks/useNetworkMonitor";
 import { useSearch } from "../../hooks/useSearch";
+import { useNetworkTabs } from "../../hooks/useNetworkTabs";
 import { NetworkPanel } from "../NetworkPanel";
 import { SearchPanel } from "../SearchPanel";
 
@@ -11,6 +12,7 @@ export const Main = () => {
   );
   const [networkRequests, clearWebRequests] = useNetworkMonitor();
   const { isSearchOpen } = useSearch();
+  const { setActiveTab } = useNetworkTabs();
 
   return (
     <SplitPaneLayout
@@ -18,10 +20,9 @@ export const Main = () => {
         isSearchOpen ? (
           <SearchPanel
             networkRequests={networkRequests}
-            onResultClick={(searchResult, searchResultType) => {
+            onResultClick={(searchResult, networkTab) => {
               setSelectedRowId(searchResult.networkRequest.id);
-              // TODO allow tabs to be controlled globally
-              // will need context for this
+              setActiveTab(networkTab);
             }}
           />
         ) : undefined
