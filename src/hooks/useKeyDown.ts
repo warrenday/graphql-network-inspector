@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 type Code = "ArrowDown" | "ArrowUp" | "Enter";
 
-export const useKeyPress = (code: Code, cb: () => void) => {
+export const useKeyDown = (code: Code, cb: () => void) => {
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       if (event.code === code) {

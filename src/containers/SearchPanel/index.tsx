@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Textfield } from "../../components/Textfield";
-import { useKeyPress } from "../../hooks/useKeyPress";
+import { useKeyDown } from "../../hooks/useKeyDown";
 import { NetworkRequest } from "../../hooks/useNetworkMonitor";
 import { useSearch } from "../../hooks/useSearch";
 import { NetworkTabs } from "../../hooks/useNetworkTabs";
@@ -26,7 +26,7 @@ export const SearchPanel = (props: ISearchPanelProps) => {
     [searchQuery, networkRequests]
   );
 
-  useKeyPress("Enter", () => {
+  useKeyDown("Enter", () => {
     setSearchQuery(searchInput);
   });
 

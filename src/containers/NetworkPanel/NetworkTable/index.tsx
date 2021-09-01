@@ -7,7 +7,7 @@ import { Dot } from "../../../components/Dot";
 import { Badge } from "../../../components/Badge";
 import { getStatusColor } from "../../../helpers/getStatusColor";
 import { NetworkRequest } from "../../../hooks/useNetworkMonitor";
-import { useKeyPress } from "../../../hooks/useKeyPress";
+import { useKeyDown } from "../../../hooks/useKeyDown";
 import { getErrorMessages } from "../../../helpers/graphqlHelpers";
 import { IconButton } from "../../../components/IconButton";
 
@@ -116,11 +116,10 @@ export const NetworkTable = (props: NetworkTableProps) => {
     }
   };
 
-  useKeyPress("ArrowUp", () => {
+  useKeyDown("ArrowUp", () => {
     selectNextRow("up");
   });
-
-  useKeyPress("ArrowDown", () => {
+  useKeyDown("ArrowDown", () => {
     selectNextRow("down");
   });
 
