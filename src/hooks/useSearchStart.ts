@@ -9,19 +9,23 @@ export const useSearchStart = (cb: () => void) => {
       return;
     }
 
-    let commandKeyPressed = false;
+    const getIsCommandKeyPressed = (event: KeyboardEvent) => {
+      return event.code === "MetaLeft" || event.code === "ControlLeft";
+    };
+
+    let isCommandKeyPressed = false;
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.code === "MetaLeft") {
-        commandKeyPressed = true;
-      } else if (event.code === "KeyF" && commandKeyPressed) {
+      if (getIsCommandKeyPressed(event)) {
+        isCommandKeyPressed = true;
+      } else if (event.code === "KeyF" && isCommandKeyPressed) {
         event.preventDefault();
         event.stopPropagation();
         cb();
       }
     };
     const handleKeyUp = (event: KeyboardEvent) => {
-      if (event.code === "MetaLeft") {
-        commandKeyPressed = false;
+      if (getIsCommandKeyPressed(event)) {
+        isCommandKeyPressed = false;
       }
     };
     body.addEventListener("keydown", handleKeyDown);
