@@ -2,33 +2,20 @@ import React, { useMemo } from "react";
 import prettyBytes from "pretty-bytes";
 import prettyMs from "pretty-ms";
 import { Table, TableProps } from "../../../components/Table";
-import { BinIcon } from "../../../components/Icons/BinIcon";
 import { Dot } from "../../../components/Dot";
 import { Badge } from "../../../components/Badge";
 import { getStatusColor } from "../../../helpers/getStatusColor";
 import { NetworkRequest } from "../../../hooks/useNetworkMonitor";
 import { useKeyDown } from "../../../hooks/useKeyDown";
 import { getErrorMessages } from "../../../helpers/graphqlHelpers";
-import { IconButton } from "../../../components/IconButton";
 
 export type NetworkTableProps = {
   data: NetworkRequest[];
   onRowClick: (rowId: string | number, row: NetworkRequest) => void;
   onRowSelect: (rowId: string | number) => void;
-  onClear: () => void;
   selectedRowId?: string | number | null;
   showSingleColumn?: boolean;
 };
-
-const ClearButton = ({ onClick }: { onClick: () => void }) => (
-  <div className="z-20 absolute right-2 top-2" style={{ marginTop: 1 }}>
-    <IconButton
-      onClick={onClick}
-      testId="clear-network-table"
-      icon={<BinIcon />}
-    />
-  </div>
-);
 
 const Operation = ({ request }: { request: NetworkRequest }) => {
   const totalOperations = request.request.body.length;
@@ -102,7 +89,6 @@ export const NetworkTable = (props: NetworkTableProps) => {
     data,
     onRowClick,
     onRowSelect,
-    onClear,
     selectedRowId,
     showSingleColumn,
   } = props;
@@ -156,7 +142,6 @@ export const NetworkTable = (props: NetworkTableProps) => {
       className="w-full relative h-full dark:bg-gray-900"
       data-testid="network-table"
     >
-      <ClearButton onClick={onClear} />
       <Table
         columns={columns}
         data={data}
