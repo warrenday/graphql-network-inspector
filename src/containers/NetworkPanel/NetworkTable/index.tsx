@@ -1,15 +1,15 @@
 import React, { useMemo } from "react";
 import prettyBytes from "pretty-bytes";
 import prettyMs from "pretty-ms";
-import { Table, TableProps } from "../../../components/Table";
-import { BinIcon } from "../../../components/Icons/BinIcon";
-import { Dot } from "../../../components/Dot";
-import { Badge } from "../../../components/Badge";
-import { getStatusColor } from "../../../helpers/getStatusColor";
-import { NetworkRequest } from "../../../hooks/useNetworkMonitor";
-import { useKeyDown } from "../../../hooks/useKeyDown";
-import { getErrorMessages } from "../../../helpers/graphqlHelpers";
-import { IconButton } from "../../../components/IconButton";
+import { Table, TableProps } from "@components/Table";
+import { BinIcon } from "@components/Icons/BinIcon";
+import { Dot } from "@components/Dot";
+import { Badge } from "@components/Badge";
+import { getStatusColor } from "@helpers/getStatusColor";
+import { NetworkRequest } from "@hooks/useNetworkMonitor";
+import { useKeyDown } from "@hooks/useKeyDown";
+import { getErrorMessages } from "@helpers/graphqlHelpers";
+import { IconButton } from "@components/IconButton";
 
 export type NetworkTableProps = {
   data: NetworkRequest[];

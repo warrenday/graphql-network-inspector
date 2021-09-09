@@ -1,9 +1,9 @@
 import React from "react";
-import { Checkbox } from "../../components/Checkbox";
-import { IconButton } from "../../components/IconButton";
-import { SearchIcon } from "../../components/Icons/SearchIcon";
-import { Textfield } from "../../components/Textfield";
-import { useSearch } from "../../hooks/useSearch";
+import { Checkbox } from "@components/Checkbox";
+import { IconButton } from "@components/IconButton";
+import { SearchIcon } from "@components/Icons/SearchIcon";
+import { Textfield } from "@components/Textfield";
+import { useSearch } from "@hooks/useSearch";
 
 interface IToolbarProps {
   filterValue: string;

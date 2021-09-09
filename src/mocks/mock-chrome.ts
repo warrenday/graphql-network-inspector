@@ -1,4 +1,4 @@
-import { mockRequests } from "../mocks/mock-requests";
+import { mockRequests } from "@mocks/mock-requests";
 
 let removeListeners: Record<string, () => void> = {};
 
@@ -30,8 +30,8 @@ export const mockChrome = {
         },
       },
       onNavigated: {
-        addListener: (cb) => {},
-        removeListener: (cb) => {},
+        addListener: (cb) => { },
+        removeListener: (cb) => { },
       },
     },
   },

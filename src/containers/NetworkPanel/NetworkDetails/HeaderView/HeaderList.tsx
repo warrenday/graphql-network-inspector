@@ -1,5 +1,5 @@
 import React from "react";
-import { Header } from "../../../../hooks/useNetworkMonitor";
+import { Header } from "@hooks/useNetworkMonitor";
 
 interface IHeadersProps {
   headers: Header[];

@@ -1,4 +1,4 @@
-import { chromeProvider } from "../services/chromeProvider";
+import { chromeProvider } from "@services/chromeProvider";
 
 export const useDarkTheme = () => {
   const chrome = chromeProvider();
