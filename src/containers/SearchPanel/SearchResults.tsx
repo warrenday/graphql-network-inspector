@@ -1,12 +1,12 @@
 import React from "react";
-import { HighlightedText } from "@components/HighlightedText";
-import { ISearchResult } from "@services/searchService";
+import { HighlightedText } from "components/HighlightedText";
+import { ISearchResult } from "services/searchService";
 import {
   getHeaderSearchContent,
   getRequestSearchContent,
   getResponseSearchContent,
-} from "@helpers/getSearchContent";
-import { NetworkTabs } from "@hooks/useNetworkTabs";
+} from "helpers/getSearchContent";
+import { NetworkTabs } from "hooks/useNetworkTabs";
 
 interface ISearchResultsProps {
   searchQuery: string;

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { SplitPaneLayout } from "@components/Layout";
+import { SplitPaneLayout } from "components/Layout";
 import { NetworkTable } from "./NetworkTable";
 import { NetworkDetails } from "./NetworkDetails";
 import { Toolbar } from "../Toolbar";
-import { NetworkRequest } from "@hooks/useNetworkMonitor";
-import { onNavigate } from "@services/networkMonitor";
+import { NetworkRequest } from "hooks/useNetworkMonitor";
+import { onNavigate } from "services/networkMonitor";
 
 interface NetworkPanelProps {
   selectedRowId: string | number | null;

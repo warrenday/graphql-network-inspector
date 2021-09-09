@@ -2,8 +2,8 @@ import {
   getHeaderSearchContent,
   getRequestSearchContent,
   getResponseSearchContent,
-} from "@helpers/getSearchContent";
-import { NetworkRequest } from "@hooks/useNetworkMonitor";
+} from "helpers/getSearchContent";
+import { NetworkRequest } from "hooks/useNetworkMonitor";
 
 export interface ISearchResult {
   matches: {

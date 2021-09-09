@@ -1,11 +1,11 @@
 import React from "react";
 import { render, fireEvent, within, waitFor } from "@testing-library/react";
 import { Main } from "./index";
-import { chromeProvider } from "@services/chromeProvider";
-import { mockChrome } from "@mocks/mock-chrome";
+import { chromeProvider } from "services/chromeProvider";
+import { mockChrome } from "mocks/mock-chrome";
 import { act } from "react-dom/test-utils";
 
-jest.mock("@services/chromeProvider");
+jest.mock("services/chromeProvider");
 
 const mockChromeProvider = chromeProvider as jest.Mock;
 

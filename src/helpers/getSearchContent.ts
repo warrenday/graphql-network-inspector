@@ -1,5 +1,5 @@
 import { stringify } from "./safeJson";
-import { Header, NetworkRequest } from "@hooks/useNetworkMonitor";
+import { Header, NetworkRequest } from "hooks/useNetworkMonitor";
 
 const stringifyHeaders = (headers: Header[] = []) => {
   return headers

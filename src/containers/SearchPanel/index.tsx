@@ -1,13 +1,13 @@
 import React, { useMemo, useState } from "react";
-import { Textfield } from "@components/Textfield";
-import { useKeyDown } from "@hooks/useKeyDown";
-import { NetworkRequest } from "@hooks/useNetworkMonitor";
-import { useSearch } from "@hooks/useSearch";
-import { NetworkTabs } from "@hooks/useNetworkTabs";
-import { getSearchResults, ISearchResult } from "@services/searchService";
+import { Textfield } from "components/Textfield";
+import { useKeyDown } from "hooks/useKeyDown";
+import { NetworkRequest } from "hooks/useNetworkMonitor";
+import { useSearch } from "hooks/useSearch";
+import { NetworkTabs } from "hooks/useNetworkTabs";
+import { getSearchResults, ISearchResult } from "services/searchService";
 import { SearchResults } from "./SearchResults";
-import { Header } from "@components/Header";
-import { CloseButton } from "@components/CloseButton";
+import { Header } from "components/Header";
+import { CloseButton } from "components/CloseButton";
 
 interface ISearchPanelProps {
   networkRequests: NetworkRequest[];

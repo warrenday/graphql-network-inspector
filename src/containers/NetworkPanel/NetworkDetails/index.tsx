@@ -1,12 +1,12 @@
 import React from "react";
-import { Tabs } from "@components/Tabs";
-import { NetworkRequest } from "@hooks/useNetworkMonitor";
+import { Tabs } from "components/Tabs";
+import { NetworkRequest } from "hooks/useNetworkMonitor";
 import { HeaderView } from "./HeaderView";
 import { RequestView } from "./RequestView";
 import { ResponseView } from "./ResponseView";
 import { ResponseRawView } from "./ResponseRawView";
-import { useNetworkTabs } from "@hooks/useNetworkTabs";
-import { CloseButton } from "@components/CloseButton";
+import { useNetworkTabs } from "hooks/useNetworkTabs";
+import { CloseButton } from "components/CloseButton";
 
 export type NetworkDetailsProps = {
   data: NetworkRequest;

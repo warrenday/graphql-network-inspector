@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import * as safeJson from "@helpers/safeJson";
-import { CodeBlock } from "@components/CodeBlock";
-import { CopyButton } from "@components/CopyButton";
+import * as safeJson from "helpers/safeJson";
+import { CodeBlock } from "components/CodeBlock";
+import { CopyButton } from "components/CopyButton";
 
 interface IResponseRawViewProps {
   response?: string;
