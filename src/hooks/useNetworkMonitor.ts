@@ -36,16 +36,6 @@ export type NetworkRequest = {
 export const useNetworkMonitor = (): [NetworkRequest[], () => void] => {
   const [webRequests, setWebRequests] = useState<NetworkRequest[]>([]);
 
-  const upsertRequest = useCallback(
-    (newWebRequest: DeepPartial<NetworkRequest>) => {
-      setWebRequests((webRequests) => {
-        const newRequests = mergeby(webRequests, newWebRequest, "id", true);
-        return newRequests as NetworkRequest[];
-      });
-    },
-    []
-  );
-
   const handleRequestFinished = useCallback(
     (details: chrome.devtools.network.Request) => {
       const primaryOperation = getPrimaryOperation(
@@ -62,38 +52,48 @@ export const useNetworkMonitor = (): [NetworkRequest[], () => void] => {
         return;
       }
 
-      upsertRequest({
-        id: requestId,
-        status: details.response.status,
-        url: details.request.url,
-        time: details.time,
-        request: {
-          primaryOperation,
-          headers: details.request.headers,
-          body: requestBody,
-          headersSize: details.request.headersSize,
-          bodySize: details.request.bodySize,
-        },
-        response: {
-          headers: details.response.headers,
-          headersSize: details.response.headersSize,
-          bodySize:
-            details.response.bodySize === -1
-              ? details.response._transferSize || 0
-              : details.response.bodySize,
-        },
-      });
+      setWebRequests((webRequests) =>
+        webRequests.concat({
+          id: requestId,
+          status: details.response.status,
+          url: details.request.url,
+          time: details.time === -1 || !details.time ? 0 : details.time,
+          request: {
+            primaryOperation,
+            headers: details.request.headers,
+            body: requestBody,
+            headersSize: details.request.headersSize,
+            bodySize: details.request.bodySize,
+          },
+          response: {
+            headers: details.response.headers,
+            headersSize: details.response.headersSize,
+            bodySize:
+              details.response.bodySize === -1
+                ? details.response._transferSize || 0
+                : details.response.bodySize,
+          },
+        })
+      );
 
       details.getContent((responseBody) => {
-        upsertRequest({
-          id: requestId,
-          response: {
-            body: responseBody || "",
-          },
+        setWebRequests((webRequests) => {
+          return webRequests.map((webRequest) => {
+            if (webRequest.id !== requestId) {
+              return webRequest;
+            }
+            return {
+              ...webRequest,
+              response: {
+                ...webRequest.response,
+                body: responseBody || "",
+              },
+            } as NetworkRequest;
+          });
         });
       });
     },
-    [upsertRequest]
+    [setWebRequests]
   );
 
   const clearWebRequests = () => {
