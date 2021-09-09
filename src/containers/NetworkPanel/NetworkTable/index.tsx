@@ -82,7 +82,7 @@ const Status = ({ status }: { status?: number }) => {
           marginTop: "-1px",
         }}
       />
-      {status || "pending"}
+      {status || "cancelled"}
     </div>
   );
 };
