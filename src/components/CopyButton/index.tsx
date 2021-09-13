@@ -18,7 +18,8 @@ export const CopyButton = (props: CopyButtonProps) => {
         clearTimeout(timeout);
       };
     }
-  });
+  }, [copied]);
+
   return (
     <div className={className}>
       <button
