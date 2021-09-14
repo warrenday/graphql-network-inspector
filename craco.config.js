@@ -1,6 +1,7 @@
 // Custom config on top of CRA see:
 // https://github.com/gsoft-inc/craco/blob/master/packages/craco/README.md#configuration
 
+const path = require("path");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = ({ env }) => {
@@ -15,6 +16,12 @@ module.exports = ({ env }) => {
     webpack: {
       configure: {
         devtool: isEnvDevelopment ? "inline-source-map" : false,
+        resolve: {
+          extensions: [".ts", ".tsx", ".json"],
+          alias: {
+            "@": path.resolve("src"),
+          },
+        },
       },
       plugins: [
         new CopyWebpackPlugin({
