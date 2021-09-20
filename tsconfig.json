@@ -18,10 +18,12 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react",
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": "."
   },
   "include": [
     "src",
     "devtools"
-  ]
+  ],
+  "extends": "./tsconfig.base.json"
 }
