@@ -15,7 +15,7 @@ interface IToolbarProps {
 }
 
 const ClearButton = ({ onClick }: { onClick: () => void }) => (
-  <div className="border-0 rounded-md p-2 opacity-50 outline-none hover:opacity-100">
+  <div className="opacity-50 outline-none hover:opacity-100">
     <IconButton
       onClick={onClick}
       testId="clear-network-table"
@@ -36,7 +36,7 @@ export const Toolbar = (props: IToolbarProps) => {
 
   return (
     <div
-      className="flex w-full p-2 border-b dark:bg-gray-800 border-gray-300 dark:border-gray-600 space-x-6" data-testid="toolbar"
+      className="flex items-center w-full p-2 border-b dark:bg-gray-800 border-gray-300 dark:border-gray-600 space-x-6" data-testid="toolbar"
     >
       <ClearButton onClick={onClear} />
       <Textfield
