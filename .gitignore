@@ -8,6 +8,9 @@
 # testing
 /coverage
 
+# development
+/dist
+
 # production
 /build
 /build.zip
