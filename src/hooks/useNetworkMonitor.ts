@@ -20,7 +20,7 @@ export type NetworkRequest = {
     headers: Header[];
     body: {
       query: string;
-      variables: object;
+      variables?: object;
     }[];
     headersSize: number;
     bodySize: number;
@@ -46,9 +46,11 @@ export const useNetworkMonitor = (): [NetworkRequest[], () => void] => {
       }
 
       const requestId = uuid();
-      const requestBody = parseGraphqlRequest(details.request.postData?.text);
+      const graphqlRequestBody = parseGraphqlRequest(
+        details.request.postData?.text
+      );
 
-      if (!requestBody) {
+      if (!graphqlRequestBody) {
         return;
       }
 
@@ -61,7 +63,7 @@ export const useNetworkMonitor = (): [NetworkRequest[], () => void] => {
           request: {
             primaryOperation,
             headers: details.request.headers,
-            body: requestBody,
+            body: graphqlRequestBody,
             headersSize: details.request.headersSize,
             bodySize: details.request.bodySize,
           },
