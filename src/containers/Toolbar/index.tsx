@@ -14,16 +14,6 @@ interface IToolbarProps {
   onClear: () => void;
 }
 
-const ClearButton = ({ onClick }: { onClick: () => void }) => (
-  <div className="opacity-50 outline-none hover:opacity-100">
-    <IconButton
-      onClick={onClick}
-      testId="clear-network-table"
-      icon={<BinIcon />}
-    />
-  </div>
-);
-
 export const Toolbar = (props: IToolbarProps) => {
   const {
     filterValue,
@@ -38,7 +28,11 @@ export const Toolbar = (props: IToolbarProps) => {
     <div
       className="flex items-center w-full p-2 border-b dark:bg-gray-800 border-gray-300 dark:border-gray-600 space-x-6" data-testid="toolbar"
     >
-      <ClearButton onClick={onClear} />
+      <IconButton
+        icon={<BinIcon />}
+        onClick={onClear}
+        testId="clear-network-table"
+      />
       <Textfield
         value={filterValue}
         onChange={onFilterValueChange}
