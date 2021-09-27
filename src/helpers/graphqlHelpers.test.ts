@@ -1,4 +1,8 @@
-import { getPrimaryOperation, getErrorMessages } from "./graphqlHelpers";
+import {
+  getPrimaryOperation,
+  getErrorMessages,
+  parseGraphqlRequest,
+} from "./graphqlHelpers";
 
 describe("GraphQL Helpers", () => {
   describe("getPrimaryOperation", () => {
@@ -119,6 +123,77 @@ describe("GraphQL Helpers", () => {
       );
 
       expect(operation).toEqual(null);
+    });
+  });
+
+  describe("parseGraphqlRequest", () => {
+    it("returns an array of objects when the string given parses to an array", () => {
+      const res = parseGraphqlRequest(
+        JSON.stringify([
+          {
+            query: "",
+            variables: {},
+          },
+          {
+            query: "",
+            variables: {},
+          },
+        ])
+      );
+
+      expect(res).toMatchObject([
+        {
+          query: "",
+          variables: {},
+        },
+        {
+          query: "",
+          variables: {},
+        },
+      ]);
+    });
+
+    it("returns an array of objects when the string given parses to a single object", () => {
+      const res = parseGraphqlRequest(
+        JSON.stringify({
+          query: "",
+          variables: {},
+        })
+      );
+
+      expect(res).toMatchObject([
+        {
+          query: "",
+          variables: {},
+        },
+      ]);
+    });
+
+    it("returns null if the parsed string does not contain the query key", () => {
+      const res = parseGraphqlRequest(
+        JSON.stringify({
+          variables: {},
+        })
+      );
+
+      expect(res).toBeNull();
+    });
+
+    it("returns null if the parsed string does not contain a bad variables key", () => {
+      const res = parseGraphqlRequest(
+        JSON.stringify({
+          query: "",
+          variables: 2,
+        })
+      );
+
+      expect(res).toBeNull();
+    });
+
+    it("returns null if the parsed string is malformed", () => {
+      const res = parseGraphqlRequest("bad json");
+
+      expect(res).toBeNull();
     });
   });
 
