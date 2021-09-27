@@ -132,9 +132,9 @@ describe("Main", () => {
   });
 
   it("clears the table of all network data when clicking the clear button", async () => {
-    const { queryByTestId } = render(<Main />);
+    const { queryByTestId, getByTestId } = render(<Main />);
     const table = queryByTestId("network-table");
-    const { getByTestId, queryAllByRole, getByText } = within(table!);
+    const { queryAllByRole, getByText } = within(table!);
 
     await waitFor(() => {
       expect(getByText(/getMovie/i)).toBeInTheDocument();

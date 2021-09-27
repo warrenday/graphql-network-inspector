@@ -56,6 +56,10 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
           onFilterValueChange={setFilterValue}
           preserveLogs={isPreserveLogs}
           onPreserveLogsChange={setIsPreserveLogs}
+          onClear={() => {
+            setSelectedRowId(null);
+            clearWebRequests();
+          }}
         />
       }
       leftPane={
@@ -65,10 +69,6 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
           onRowClick={setSelectedRowId}
           onRowSelect={setSelectedRowId}
           showSingleColumn={Boolean(selectedRequest)}
-          onClear={() => {
-            setSelectedRowId(null);
-            clearWebRequests();
-          }}
         />
       }
       rightPane={
