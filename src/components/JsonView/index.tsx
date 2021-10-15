@@ -1,5 +1,5 @@
 import React from "react";
-import ReactJson from "react-json-view";
+import ReactJson from "@notdutzi/react-json-view";
 import { useDarkTheme } from "../../hooks/useTheme";
 
 type JsonViewProps = {
