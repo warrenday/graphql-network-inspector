@@ -1,6 +1,6 @@
 {
   "name": "my-app",
-  "version": "2.3.4",
+  "version": "2.4.0",
   "private": true,
   "dependencies": {
     "@notdutzi/react-json-view": "^1.21.8",
