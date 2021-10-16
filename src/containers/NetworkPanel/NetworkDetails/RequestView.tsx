@@ -23,7 +23,7 @@ export const RequestView = (props: IRequestViewProps) => {
           <PanelSection key={request.query} className="relative">
             <CopyButton
               textToCopy={request.query}
-              className="absolute right-6 top-6 z-10"
+              className="absolute right-3 top-3 z-10"
             />
             <CodeBlock text={request.query} language={"graphql"} />
             {isVariablesPopulated(request) && (

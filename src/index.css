@@ -87,7 +87,12 @@ button {
 }
 
 .react-json-view *:focus {
-  outline: 2px solid #3a4351;
   border-radius: 3px;
+  outline: 2px solid #d4d4d4;
+  background-color: #d4d4d4;
+}
+
+.dark .react-json-view *:focus {
+  outline: 2px solid #3a4351;
   background-color: #3a4351;
 }

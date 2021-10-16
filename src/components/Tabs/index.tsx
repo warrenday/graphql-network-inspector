@@ -28,8 +28,8 @@ export const Tabs = (props: TabsProps) => {
             <button
               key={i}
               className={cx("px-4 py-2 bg-none whitespace-nowrap", {
-                "bg-gray-300 dark:bg-gray-700": isActive,
                 "text-gray-500 dark:text-gray-400": !isActive,
+                "bg-gray-300 dark:bg-gray-700": isActive,
               })}
               onClick={() => onTabClick(i)}
               role="tab"

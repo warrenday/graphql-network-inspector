@@ -1,6 +1,6 @@
 import React from "react";
 import { Checkbox } from "../../components/Checkbox";
-import { IconButton } from "../../components/IconButton";
+import { Button } from "../../components/Button";
 import { BinIcon } from "../../components/Icons/BinIcon";
 import { SearchIcon } from "../../components/Icons/SearchIcon";
 import { Textfield } from "../../components/Textfield";
@@ -26,12 +26,14 @@ export const Toolbar = (props: IToolbarProps) => {
 
   return (
     <div
-      className="flex items-center w-full p-2 border-b dark:bg-gray-800 border-gray-300 dark:border-gray-600 space-x-6" data-testid="toolbar"
+      className="flex items-center w-full p-2 border-b dark:bg-gray-800 border-gray-300 dark:border-gray-600 space-x-6"
+      data-testid="toolbar"
     >
-      <IconButton
+      <Button
         icon={<BinIcon />}
         onClick={onClear}
         testId="clear-network-table"
+        className="-mr-3"
       />
       <Textfield
         value={filterValue}
@@ -46,13 +48,13 @@ export const Toolbar = (props: IToolbarProps) => {
         onChange={onPreserveLogsChange}
         testId="preserve-log-checkbox"
       />
-      <IconButton
+      <Button
         icon={<SearchIcon />}
         onClick={() => setIsSearchOpen(true)}
         testId="search-button"
       >
         Search
-      </IconButton>
+      </Button>
     </div>
   );
 };

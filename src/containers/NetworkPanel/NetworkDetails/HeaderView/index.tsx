@@ -23,14 +23,14 @@ export const HeaderView = (props: IHeaderViewProps) => {
       <PanelSection title="Request Headers" className="relative">
         <CopyButton
           textToCopy={headerStrings.requestHeaders}
-          className="absolute right-6 top-6 z-10"
+          className="absolute right-3 top-3 z-10"
         />
         <HeaderList headers={requestHeaders} />
       </PanelSection>
       <PanelSection title="Response Headers" className="relative">
         <CopyButton
           textToCopy={headerStrings.responseHeaders}
-          className="absolute right-6 top-6 z-10"
+          className="absolute right-3 top-3 z-10"
         />
         <HeaderList headers={responseHeaders} />
       </PanelSection>

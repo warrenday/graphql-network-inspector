@@ -36,7 +36,12 @@ export const SearchPanel = (props: ISearchPanelProps) => {
       data-testid="search-panel"
     >
       <Header
-        rightContent={<CloseButton onClick={() => setIsSearchOpen(false)} />}
+        rightContent={
+          <CloseButton
+            onClick={() => setIsSearchOpen(false)}
+            className="mr-2"
+          />
+        }
       >
         <div className="flex items-center pl-2" style={{ height: "3.5rem" }}>
           <h2 className="font-bold">Search</h2>
