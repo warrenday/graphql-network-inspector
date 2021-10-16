@@ -1558,10 +1558,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@notdutzi/react-json-view@^1.21.8":
-  version "1.21.8"
-  resolved "https://registry.yarnpkg.com/@notdutzi/react-json-view/-/react-json-view-1.21.8.tgz#0e5946d18f478e5ef8aa2e215522a95cc57f7d10"
-  integrity sha512-MhTbMhaqo9F2khVFcQM3qrOkr8JfaQVPZdc74binonz84rSWQdcT6ZQL2mx3EeBlvJ+Xl+ogxJoI+GB4H8/Z0Q==
+"@notdutzi/react-json-view@^1.21.12":
+  version "1.21.12"
+  resolved "https://registry.yarnpkg.com/@notdutzi/react-json-view/-/react-json-view-1.21.12.tgz#909a42149b7f46373c5b55e0424f31fd70762783"
+  integrity sha512-S9UxJu8khXqAP//BkfBNpwaIFhiNIlvLhZN06LVePOrZEKeZI/qrumSYqrWm6K5HhhpmYu/jJ3jm2hqdV5SshA==
   dependencies:
     flux "^4.0.1"
     react-base16-styling "^0.6.0"

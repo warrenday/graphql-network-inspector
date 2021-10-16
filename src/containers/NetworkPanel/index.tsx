@@ -5,6 +5,8 @@ import { NetworkDetails } from "./NetworkDetails";
 import { Toolbar } from "../Toolbar";
 import { NetworkRequest } from "../../hooks/useNetworkMonitor";
 import { onNavigate } from "../../services/networkMonitor";
+import { useNetworkTabs } from "../../hooks/useNetworkTabs";
+import { useAutoFocusResponse } from "../../hooks/useAutoFocusResponse";
 
 interface NetworkPanelProps {
   selectedRowId: string | number | null;
@@ -39,6 +41,8 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
   const selectedRequest = networkRequests.find(
     (request) => request.id === selectedRowId
   );
+  const { setActiveTab } = useNetworkTabs();
+  const { setAutoFocusResponse } = useAutoFocusResponse();
 
   useEffect(() => {
     return onNavigate(() => {
@@ -47,6 +51,22 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
       }
     });
   }, [isPreserveLogs, clearWebRequests]);
+
+  function handleRowClick(rowId: string | number) {
+    setAutoFocusResponse(false);
+    setSelectedRowId(rowId);
+  }
+
+  function handleRowDoubleClick(rowId: string | number) {
+    setAutoFocusResponse(true);
+    setSelectedRowId(rowId);
+    setActiveTab(2);
+
+    // Problem: when double clicking over text, the word the mouse hovered
+    // gets selected, we want to deselect it.
+    //
+    window.getSelection()?.removeAllRanges();
+  }
 
   return (
     <SplitPaneLayout
@@ -66,7 +86,8 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
         <NetworkTable
           data={filteredNetworkRequests}
           selectedRowId={selectedRowId}
-          onRowClick={setSelectedRowId}
+          onRowClick={handleRowClick}
+          onRowDoubleClick={handleRowDoubleClick}
           onRowSelect={setSelectedRowId}
           showSingleColumn={Boolean(selectedRequest)}
         />

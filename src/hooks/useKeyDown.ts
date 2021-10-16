@@ -1,6 +1,12 @@
 import { useEffect } from "react";
 
-type Code = "ArrowDown" | "ArrowUp" | "Enter";
+type Code =
+  | "ArrowDown"
+  | "ArrowUp"
+  | "ArrowLeft"
+  | "ArrowRight"
+  | "Enter"
+  | "Escape";
 
 export const useKeyDown = (code: Code, cb: () => void) => {
   useEffect(() => {

@@ -3,7 +3,7 @@
   "version": "2.3.4",
   "private": true,
   "dependencies": {
-    "@notdutzi/react-json-view": "^1.21.8",
+    "@notdutzi/react-json-view": "^1.21.12",
     "classnames": "^2.3.1",
     "copy-to-clipboard": "^3.3.1",
     "graphql": "^15.3.0",

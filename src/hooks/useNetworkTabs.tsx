@@ -7,6 +7,8 @@ export enum NetworkTabs {
   RESPONSE_RAW,
 }
 
+export const NUM_TABS = 4;
+
 const NetworkTabsContext = createContext<{
   activeTab: number;
   setActiveTab: React.Dispatch<React.SetStateAction<number>>;

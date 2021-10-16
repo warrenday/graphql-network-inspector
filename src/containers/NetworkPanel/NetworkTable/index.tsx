@@ -8,10 +8,13 @@ import { getStatusColor } from "../../../helpers/getStatusColor";
 import { NetworkRequest } from "../../../hooks/useNetworkMonitor";
 import { useKeyDown } from "../../../hooks/useKeyDown";
 import { getErrorMessages } from "../../../helpers/graphqlHelpers";
+import { useAutoFocusResponse } from "../../../hooks/useAutoFocusResponse";
+import { NUM_TABS, useNetworkTabs } from "../../../hooks/useNetworkTabs";
 
 export type NetworkTableProps = {
   data: NetworkRequest[];
   onRowClick: (rowId: string | number, row: NetworkRequest) => void;
+  onRowDoubleClick: (rowId: string | number, row: NetworkRequest) => void;
   onRowSelect: (rowId: string | number) => void;
   selectedRowId?: string | number | null;
   showSingleColumn?: boolean;
@@ -88,15 +91,21 @@ export const NetworkTable = (props: NetworkTableProps) => {
   const {
     data,
     onRowClick,
+    onRowDoubleClick,
     onRowSelect,
     selectedRowId,
     showSingleColumn,
   } = props;
 
+  const { setAutoFocusResponse } = useAutoFocusResponse();
+  const { activeTab, setActiveTab } = useNetworkTabs();
+
   const selectNextRow = (direction: "up" | "down") => {
     const directionCount = direction === "up" ? -1 : 1;
     const selectedRowIndex = data.findIndex((row) => row.id === selectedRowId);
     const nextRow = data[selectedRowIndex + directionCount];
+    setAutoFocusResponse(false);
+
     if (nextRow) {
       onRowSelect(nextRow.id);
     }
@@ -107,6 +116,23 @@ export const NetworkTable = (props: NetworkTableProps) => {
   });
   useKeyDown("ArrowDown", () => {
     selectNextRow("down");
+  });
+
+  useKeyDown("ArrowLeft", () => {
+    if (!selectedRowId) {
+      return;
+    }
+    setActiveTab(Math.max(0, activeTab - 1));
+  });
+  useKeyDown("ArrowRight", () => {
+    if (!selectedRowId) {
+      return;
+    }
+    setActiveTab(Math.min(NUM_TABS - 1, activeTab + 1));
+  });
+
+  useKeyDown("Enter", () => {
+    setAutoFocusResponse(true);
   });
 
   const columns = useMemo(() => {
@@ -146,6 +172,7 @@ export const NetworkTable = (props: NetworkTableProps) => {
         columns={columns}
         data={data}
         onRowClick={onRowClick}
+        onRowDoubleClick={onRowDoubleClick}
         selectedRowId={selectedRowId}
         isScollBottomMaintained
       />

@@ -12,12 +12,14 @@ type RowId = string | number;
 
 export type TableProps<T extends {}> = TableOptions<T> & {
   onRowClick?: (rowId: RowId, data: Row<T>["original"]) => void;
+  onRowDoubleClick?: (rowId: RowId, data: Row<T>["original"]) => void;
   selectedRowId?: RowId | null;
   isScollBottomMaintained?: boolean;
 };
 
 type TableBodyProps<T extends {}> = TableInstance<T> & {
   onRowClick?: (data: Row<T>) => void;
+  onRowDoubleClick?: (data: Row<T>) => void;
   selectedRowId?: RowId | null;
 };
 
@@ -51,6 +53,7 @@ const TableBody = <T extends BaseRowData>({
   getTableBodyProps,
   prepareRow,
   onRowClick,
+  onRowDoubleClick,
   selectedRowId,
 }: TableBodyProps<T>) => (
   <tbody {...getTableBodyProps()}>
@@ -72,6 +75,9 @@ const TableBody = <T extends BaseRowData>({
             <td
               {...cell.getCellProps()}
               onClick={onRowClick ? () => onRowClick(row) : undefined}
+              onDoubleClick={
+                onRowDoubleClick ? () => onRowDoubleClick(row) : undefined
+              }
               className="p-2 border-r border-gray-300 dark:border-gray-600 last:border-r-0"
             >
               {cell.render("Cell")}
@@ -84,8 +90,14 @@ const TableBody = <T extends BaseRowData>({
 );
 
 export const Table = <T extends BaseRowData>(props: TableProps<T>) => {
-  const { columns, data, onRowClick, selectedRowId, isScollBottomMaintained } =
-    props;
+  const {
+    columns,
+    data,
+    onRowClick,
+    onRowDoubleClick,
+    selectedRowId,
+    isScollBottomMaintained,
+  } = props;
   const tableInstance = useTable({ columns, data });
   const { getTableProps, headerGroups } = tableInstance;
   const ref = useMaintainScrollBottom({
@@ -110,6 +122,11 @@ export const Table = <T extends BaseRowData>(props: TableProps<T>) => {
           onRowClick={(row) => {
             if (onRowClick) {
               onRowClick(row.original.id, row.original);
+            }
+          }}
+          onRowDoubleClick={(row) => {
+            if (onRowDoubleClick) {
+              onRowDoubleClick(row.original.id, row.original);
             }
           }}
           selectedRowId={selectedRowId}
