@@ -18,7 +18,7 @@ const filterNetworkRequests = (
   networkRequests: NetworkRequest[],
   filterValue: string,
   isRegexActive: boolean
-) => {
+): NetworkRequest[] => {
   if (!filterValue) {
     return networkRequests;
   }
