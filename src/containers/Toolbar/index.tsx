@@ -10,9 +10,9 @@ interface IToolbarProps {
   filterValue: string;
   onFilterValueChange: (filterValue: string) => void;
   preserveLogs: boolean;
-  regex: boolean;
+  isRegex: boolean;
   onPreserveLogsChange: (preserveLogs: boolean) => void;
-  onRegexChange: (regex: boolean) => void;
+  onRegexChange: (isRegex: boolean) => void;
   onClear: () => void;
 }
 
@@ -22,7 +22,7 @@ export const Toolbar = (props: IToolbarProps) => {
     onFilterValueChange,
     preserveLogs,
     onPreserveLogsChange,
-    regex,
+    isRegex,
     onRegexChange,
     onClear,
   } = props;
@@ -55,7 +55,7 @@ export const Toolbar = (props: IToolbarProps) => {
       <Checkbox
         id="regex"
         label="Regex"
-        checked={regex}
+        checked={isRegex}
         onChange={onRegexChange}
         testId="regex-checkbox"
       />
