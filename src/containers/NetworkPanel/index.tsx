@@ -15,13 +15,17 @@ interface NetworkPanelProps {
 
 const filterNetworkRequests = (
   networkRequests: NetworkRequest[],
-  filterValue: string
+  filterValue: string,
+  isRegexActive: boolean
 ) => {
   if (!filterValue) {
     return networkRequests;
   }
   return networkRequests.filter((networkRequest) => {
     const { operationName } = networkRequest.request.primaryOperation;
+    if (isRegexActive) {
+      return !!operationName.match(filterValue);
+    }
     return operationName.toLowerCase().includes(filterValue.toLowerCase());
   });
 };
@@ -32,9 +36,11 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
 
   const [filterValue, setFilterValue] = useState("");
   const [isPreserveLogs, setIsPreserveLogs] = useState(false);
+  const [regex, setIsRegex] = useState(false);
   const filteredNetworkRequests = filterNetworkRequests(
     networkRequests,
-    filterValue
+    filterValue,
+    regex
   );
   const selectedRequest = networkRequests.find(
     (request) => request.id === selectedRowId
@@ -56,6 +62,8 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
           onFilterValueChange={setFilterValue}
           preserveLogs={isPreserveLogs}
           onPreserveLogsChange={setIsPreserveLogs}
+          regex={regex}
+          onRegexChange={setIsRegex}
           onClear={() => {
             setSelectedRowId(null);
             clearWebRequests();
