@@ -21,15 +21,15 @@ const filterNetworkRequests = (
   if (!filterValue) {
     return networkRequests;
   }
-  if (isInverted) {
-    return networkRequests.filter((networkRequest) => {
-      const { operationName } = networkRequest.request.primaryOperation;
-      return !operationName.toLowerCase().includes(filterValue.toLowerCase());
-    });
-  }
   return networkRequests.filter((networkRequest) => {
     const { operationName } = networkRequest.request.primaryOperation;
-    return operationName.toLowerCase().includes(filterValue.toLowerCase());
+    const isIncluded = operationName
+      .toLowerCase()
+      .includes(filterValue.toLowerCase());
+    if (isInverted) {
+      return !isIncluded;
+    }
+    return isIncluded;
   });
 };
 
