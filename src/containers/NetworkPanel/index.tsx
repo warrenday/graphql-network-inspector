@@ -19,6 +19,10 @@ const filterNetworkRequests = (
   filterValue: string,
   isRegexActive: boolean
 ): NetworkRequest[] => {
+  if (!networkRequests?.length) {
+    return [];
+  }
+
   if (!filterValue) {
     return networkRequests;
   }
