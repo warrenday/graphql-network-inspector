@@ -5,6 +5,7 @@ import { NetworkDetails } from "./NetworkDetails";
 import { Toolbar } from "../Toolbar";
 import { NetworkRequest } from "../../hooks/useNetworkMonitor";
 import { onNavigate } from "../../services/networkMonitor";
+const RegexParser = require("regex-parser");
 
 interface NetworkPanelProps {
   selectedRowId: string | number | null;
@@ -21,10 +22,12 @@ const filterNetworkRequests = (
   if (!filterValue) {
     return networkRequests;
   }
+
   return networkRequests.filter((networkRequest) => {
     const { operationName } = networkRequest.request.primaryOperation;
     if (isRegexActive) {
-      return !!operationName.match(filterValue);
+      const regex = RegexParser(filterValue);
+      return !!operationName.match(regex);
     }
     return operationName.toLowerCase().includes(filterValue.toLowerCase());
   });
