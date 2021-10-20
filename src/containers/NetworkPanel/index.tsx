@@ -39,11 +39,11 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
 
   const [filterValue, setFilterValue] = useState("");
   const [isPreserveLogs, setIsPreserveLogs] = useState(false);
-  const [regex, setIsRegex] = useState(false);
+  const [isRegex, setIsRegex] = useState(false);
   const filteredNetworkRequests = filterNetworkRequests(
     networkRequests,
     filterValue,
-    regex
+    isRegex
   );
   const selectedRequest = networkRequests.find(
     (request) => request.id === selectedRowId
@@ -65,7 +65,7 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
           onFilterValueChange={setFilterValue}
           preserveLogs={isPreserveLogs}
           onPreserveLogsChange={setIsPreserveLogs}
-          regex={regex}
+          isRegex={isRegex}
           onRegexChange={setIsRegex}
           onClear={() => {
             setSelectedRowId(null);
