@@ -23,11 +23,22 @@ const filterNetworkRequests = (
     return networkRequests;
   }
 
+  let regex: string;
+  let isRegexValid = false;
+
+  if (isRegexActive) {
+    try {
+      regex = RegexParser(filterValue);
+      isRegexValid = true;
+    } catch {
+      return networkRequests;
+    }
+  }
+
   return networkRequests.filter((networkRequest) => {
     const { operationName } = networkRequest.request.primaryOperation;
-    if (isRegexActive) {
-      const regex = RegexParser(filterValue);
-      return !!operationName.match(regex);
+    if (isRegexActive && isRegexValid) {
+      return operationName.match(regex);
     }
     return operationName.toLowerCase().includes(filterValue.toLowerCase());
   });
