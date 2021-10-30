@@ -1,0 +1,1 @@
+export const nsToMs = (ns: number) => Math.round(ns / 10000) / 100;
