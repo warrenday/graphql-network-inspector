@@ -16,7 +16,7 @@ export const TracingView = (props: ITracingViewProps) => {
   }, [response]);
 
   return (
-    <div className="relative p-4 whitespace-nowrap">
+    <div className="relative p-4">
       {tracing ? (
         <TracingVisualization tracing={tracing} />
       ) : (

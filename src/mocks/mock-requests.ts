@@ -161,6 +161,50 @@ export const mockRequests = [
           genre: "Action",
         },
       },
+      extensions: {
+        tracing: {
+          version: 1,
+          startTime: "2021-01-01T00:00:00.000Z",
+          endTime: "2021-01-01T00:00:00.100Z",
+          duration: 100 * 1000000,
+          execution: {
+            resolvers: [
+              {
+                path: ["createMovie"],
+                parentType: "Mutation",
+                fieldName: "createMovie",
+                returnType: "Movie",
+                startOffset: 10 * 1000000,
+                duration: 5 * 1000000,
+              },
+              {
+                path: ["createMovie", "id"],
+                parentType: "Movie",
+                fieldName: "id",
+                returnType: "ID!",
+                startOffset: 15 * 1000000,
+                duration: 15 * 1000000,
+              },
+              {
+                path: ["createMovie", "title"],
+                parentType: "Movie",
+                fieldName: "title",
+                returnType: "String",
+                startOffset: 15 * 1000000,
+                duration: 75 * 1000000,
+              },
+              {
+                path: ["createMovie", "genre"],
+                parentType: "Movie",
+                fieldName: "genre",
+                returnType: "String",
+                startOffset: 15 * 1000000,
+                duration: 80 * 1000000,
+              },
+            ],
+          },
+        },
+      },
     },
   }),
   createRequest({

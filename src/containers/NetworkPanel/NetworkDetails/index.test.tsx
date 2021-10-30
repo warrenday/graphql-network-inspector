@@ -40,7 +40,8 @@ describe('NetworkDetails - TracingView', () => {
       <TracingView response={withTracingResponse} />
     )
 
-    expect(getByText('Total: 24.09 ms')).toBeVisible();
+    expect(getByText('Total')).toBeVisible();
+    expect(getByText('24.09 ms')).toBeVisible();
   })
 
   it("visualize the execution trace", async () => {
@@ -92,9 +93,16 @@ describe('NetworkDetails - TracingView', () => {
       <TracingView response={withTracingResponse} />
     )
 
-    expect(getByText('signedInUser-0.15 ms')).toBeVisible();
-    expect(getByText('signedInUser.id-0.1 ms')).toBeVisible();
-    expect(getByText('signedInUser.firstName---------------------------------------------0.7 ms')).toBeVisible();
-    expect(getByText('signedInUser.lastName--------------------------------------------------0.75 ms')).toBeVisible();
+    expect(getByText('signedInUser')).toBeVisible();
+    expect(getByText('0.15 ms')).toBeVisible();
+
+    expect(getByText('signedInUser.id')).toBeVisible();
+    expect(getByText('0.1 ms')).toBeVisible();
+
+    expect(getByText('signedInUser.firstName')).toBeVisible();
+    expect(getByText('0.7 ms')).toBeVisible();
+
+    expect(getByText('signedInUser.lastName')).toBeVisible();
+    expect(getByText('0.75 ms')).toBeVisible();
   })
 })
