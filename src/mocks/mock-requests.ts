@@ -289,7 +289,7 @@ export const mockRequests = [
                 fieldName: "id",
                 returnType: "ID!",
                 startOffset: 85 * 1000000,
-                duration: 1 * 1000000,
+                duration: 1 * 10000,
               },
               {
                 path: ["listCategories", 0, "name"],
@@ -297,7 +297,7 @@ export const mockRequests = [
                 fieldName: "name",
                 returnType: "String",
                 startOffset: 85 * 1000000,
-                duration: 1 * 1000000,
+                duration: 1 * 10000,
               },
               {
                 path: ["listCategories", 1, "id"],
@@ -393,6 +393,26 @@ export const mockRequests = [
     response: {
       data: {
         actorDetails: [],
+      },
+      extensions: {
+        tracing: {
+          version: 1,
+          startTime: "2021-01-01T00:00:00.000Z",
+          endTime: "2021-01-01T00:00:00.010Z",
+          duration: 1173.12 * 1000000,
+          execution: {
+            resolvers: [
+              {
+                path: ["actorDetails"],
+                parentType: "Query",
+                fieldName: "actorDetails",
+                returnType: "ActorDetail",
+                startOffset: 1.187133 * 1000000,
+                duration: 1171.787124 * 1000000,
+              },
+            ],
+          },
+        },
       },
     },
   }),
