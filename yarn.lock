@@ -6680,6 +6680,11 @@ istanbul-reports@^3.0.2:
     html-escaper "^2.0.0"
     istanbul-lib-report "^3.0.0"
 
+javascript-debounce@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/javascript-debounce/-/javascript-debounce-1.0.1.tgz#bca6b6a99475927a39910d3ff70a67dce10c6462"
+  integrity sha512-3IkTDsqLkrOEfLjTl2rNvPDtjVriwRbWQ+KcKawXnYwqiZMjEwLTp+X8zzDkGONnKlH4gsorF0NHvowV1zhmsQ==
+
 jest-changed-files@^26.6.2:
   version "26.6.2"
   resolved "https://registry.yarnpkg.com/jest-changed-files/-/jest-changed-files-26.6.2.tgz#f6198479e1cc66f22f9ae1e22acaa0b429c042d0"

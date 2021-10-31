@@ -1,6 +1,6 @@
-import { useContainerDimensions } from "@/hooks/useContainerDimensions";
-import React, { useMemo } from "react";
+import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { nsToMs } from "../../helpers/nsToMs";
+import * as debounce from 'javascript-debounce';
 
 interface ITracingVizualizationRowProps {
   name?: string;
@@ -15,7 +15,22 @@ export const TracingVisualizationRow = (props: ITracingVizualizationRowProps) =>
   const { name, total, offset, duration, type, color } = props;
 
   const backgroundColorCss = getBackgroundColors(color || type);
-  const { container, width } = useContainerDimensions();
+
+  const container = useRef<HTMLDivElement>(null)
+  const [width, setWidth] = useState(250);
+  useLayoutEffect(() => {
+    const updateContainerWidth = debounce(() => {
+      if (container.current) {
+        const { width } = container.current.getBoundingClientRect();
+        setWidth(width);
+      }
+    }, 600);
+
+    window.addEventListener('resize', updateContainerWidth);
+
+    return () => window.removeEventListener('resize', updateContainerWidth);
+  }, [])
+
   const {
     marginLeftPercentage,
     marginLeftCss,
@@ -26,7 +41,7 @@ export const TracingVisualizationRow = (props: ITracingVizualizationRowProps) =>
     const percentage = 100 / (width || 1);
     const marginLeftPercentage = ((offset || 0) / total) * 100;
     const widthPercentage = (duration / total) * 100;
-    const isAt100 = (marginLeftPercentage + percentage) > 100
+    const isAt100 = (marginLeftPercentage + percentage) >= 100
     const marginLeftCss = isAt100 ? `calc(${marginLeftPercentage}% - 1px)` : `${marginLeftPercentage}%`;
     const widthPercentageCss = widthPercentage <= percentage ? "1px" : `${widthPercentage}%`;
 
