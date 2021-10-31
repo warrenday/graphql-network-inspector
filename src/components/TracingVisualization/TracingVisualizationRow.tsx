@@ -1,6 +1,6 @@
+import { debounce } from "ts-debounce";
 import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { nsToMs } from "../../helpers/nsToMs";
-import * as debounce from 'javascript-debounce';
 
 interface ITracingVizualizationRowProps {
   name?: string;
