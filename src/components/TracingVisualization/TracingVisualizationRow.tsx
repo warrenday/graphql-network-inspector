@@ -1,4 +1,5 @@
-import React from "react";
+import { useContainerDimensions } from "@/hooks/useContainerDimensions";
+import React, { useMemo } from "react";
 import { nsToMs } from "../../helpers/nsToMs";
 
 interface ITracingVizualizationRowProps {
@@ -13,19 +14,38 @@ interface ITracingVizualizationRowProps {
 export const TracingVisualizationRow = (props: ITracingVizualizationRowProps) => {
   const { name, total, offset, duration, type, color } = props;
 
-  const backgroundColors = getBackgroundColors(color || type);
+  const backgroundColorCss = getBackgroundColors(color || type);
+  const { container, width } = useContainerDimensions();
+  const {
+    marginLeftPercentage,
+    marginLeftCss,
+    showBeforeDuration,
+    showAllBeforeDuration,
+    widthPercentageCss,
+  } = useMemo(() => {
+    const percentage = 100 / (width || 1);
+    const marginLeftPercentage = ((offset || 0) / total) * 100;
+    const widthPercentage = (duration / total) * 100;
+    const isAt100 = (marginLeftPercentage + percentage) > 100
+    const marginLeftCss = isAt100 ? `calc(${marginLeftPercentage}% - 1px)` : `${marginLeftPercentage}%`;
+    const widthPercentageCss = widthPercentage <= percentage ? "1px" : `${widthPercentage}%`;
 
-  const marginLeftPercentage = ((offset || 0) / total) * 100;
-  const widthPercentage = (duration / total) * 100;
-  const cleanWidthPercentage = widthPercentage < 1 ? 1 : widthPercentage
+    const showBeforeDuration = widthPercentage <= 50 && marginLeftPercentage >= 50;
+    const showAllBeforeDuration = showBeforeDuration && marginLeftPercentage > 90;
 
-  const showBeforeDuration = cleanWidthPercentage <= 50 && marginLeftPercentage >= 50;
-  const showAllBeforeDuration = showBeforeDuration && marginLeftPercentage > 90;
+    return {
+      marginLeftPercentage,
+      marginLeftCss,
+      showBeforeDuration,
+      showAllBeforeDuration,
+      widthPercentageCss,
+    }
+  }, [width])
 
   return (
-    <div className={`w-full mb-1 whitespace-nowrap`}>
+    <div ref={container} className={`w-full mb-1 whitespace-nowrap`}>
       {marginLeftPercentage > 0 && (
-        <div className="inline-block text-right" style={{ width: `${marginLeftPercentage}%` }}>
+        <div className="inline-block text-right" style={{ width: marginLeftCss }}>
           {showBeforeDuration && (
             <span className="pr-2">
               {name || ''}
@@ -41,7 +61,7 @@ export const TracingVisualizationRow = (props: ITracingVizualizationRowProps) =>
       )}
 
 
-      <div className={`inline-block ${backgroundColors}`} style={{ width: `${cleanWidthPercentage}%` }}>
+      <div className={`inline-block ${backgroundColorCss}`} style={{ width: widthPercentageCss }}>
         <div className="flex justify-between">
           {!showBeforeDuration && (
             <span className="pl-2">
