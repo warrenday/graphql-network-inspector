@@ -13,22 +13,46 @@ interface ITracingVizualizationRowProps {
 export const TracingVisualizationRow = (props: ITracingVizualizationRowProps) => {
   const { name, total, offset, duration, type, color } = props;
 
-  const formatting = "flex justify-between pr-2 pl-2 mb-1 whitespace-nowrap"
   const backgroundColors = getBackgroundColors(color || type);
-  const style = {
-    marginLeft: `${((offset || 0) / total) * 100}%`,
-    width: `${(duration / total) * 100}%`,
-  }
+
+  const marginLeftPercentage = ((offset || 0) / total) * 100;
+  const widthPercentage = (duration / total) * 100;
+
+  const showBeforeDuration = widthPercentage <= 50 && marginLeftPercentage >= 50;
+  const showAllBeforeDuration = showBeforeDuration && marginLeftPercentage > 90;
 
   return (
-    <div className={`${formatting} ${backgroundColors}`} style={style}>
-      <span>
-        {name || ''}
-      </span>
+    <div className={`w-full mb-1 whitespace-nowrap`}>
+      {marginLeftPercentage > 0 && (
+        <div className="inline-block text-right pr-2" style={{ width: `${marginLeftPercentage}%` }}>
+          {showBeforeDuration && (name || '')}
 
-      <span className="pl-2">
-        {nsToMs(duration)} ms
-      </span>
+          {showAllBeforeDuration && (
+            <span className="pl-2">
+              {nsToMs(duration)} ms
+            </span>
+          )}
+        </div>
+      )}
+
+
+      <div className={`inline-block ${backgroundColors}`} style={{ width: `${widthPercentage}%` }}>
+        <div className="flex justify-between">
+          {!showBeforeDuration && (
+            <span className="pl-2">
+              {(name || '')}
+            </span>
+          )}
+
+          {showAllBeforeDuration ? (
+            <>&nbsp;</>
+          ) : (
+            <span className="pr-2 pl-2">
+              {nsToMs(duration)} ms
+            </span>
+          )}
+        </div>
+      </div>
     </div>
   )
 }
