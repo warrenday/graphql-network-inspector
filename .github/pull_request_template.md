@@ -8,5 +8,5 @@ Provide a screenshot or gif of the new feature in both dark and light mode.
 
 ## Checklist
 
-[ ] Displays correctly with both dark and light mode (see useTheme.ts)
+[ ] Displays correctly with both dark and light mode (see useTheme.ts)  
 [ ] Unit/Integration tests added
