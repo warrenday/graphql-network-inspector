@@ -10,7 +10,7 @@ For product updates follow me on Twitter [@warrenjday](https://twitter.com/warre
 
 ## Contribute
 
-PRs are welcome! :D
+PRs are welcome! If you want to add a large feature please first raise an issue to discuss. This avoids waisted effort.
 
 ## License
 
