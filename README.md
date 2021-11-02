@@ -10,7 +10,9 @@ For product updates follow me on Twitter [@warrenjday](https://twitter.com/warre
 
 ## Contribute
 
-PRs are welcome! :D
+PRs are welcome! The best way to do this is to first fork the repository, create a branch and open a pull request back to this repository.
+
+If you want to add a large feature please first raise an issue to discuss. This avoids waisted effort.
 
 ## License
 
