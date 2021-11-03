@@ -170,6 +170,9 @@ describe("GraphQL Helpers", () => {
     });
 
     it("returns null if the parsed string does not contain the query key", () => {
+      const consoleError = jest.spyOn(console, 'error')
+      consoleError.mockImplementationOnce(() => { })
+
       const res = parseGraphqlRequest(
         JSON.stringify({
           variables: {},
@@ -177,9 +180,14 @@ describe("GraphQL Helpers", () => {
       );
 
       expect(res).toBeNull();
+
+      consoleError.mockRestore()
     });
 
     it("returns null if the parsed string does not contain a bad variables key", () => {
+      const consoleError = jest.spyOn(console, 'error')
+      consoleError.mockImplementationOnce(() => { })
+
       const res = parseGraphqlRequest(
         JSON.stringify({
           query: "",
@@ -188,12 +196,19 @@ describe("GraphQL Helpers", () => {
       );
 
       expect(res).toBeNull();
+
+      consoleError.mockRestore()
     });
 
     it("returns null if the parsed string is malformed", () => {
+      const consoleError = jest.spyOn(console, 'error')
+      consoleError.mockImplementationOnce(() => { })
+
       const res = parseGraphqlRequest("bad json");
 
       expect(res).toBeNull();
+
+      consoleError.mockRestore()
     });
   });
 
