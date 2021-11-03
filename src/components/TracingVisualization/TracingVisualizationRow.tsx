@@ -1,6 +1,6 @@
-import { debounce } from "ts-debounce";
-import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
-import { nsToMs } from "../../helpers/nsToMs";
+import React, { useMemo } from "react";
+import { nsToMs } from "@/helpers/nsToMs";
+import { useBoundingRect } from "@/hooks/useBoundingRect";
 
 interface ITracingVizualizationRowProps {
   name?: string;
@@ -16,21 +16,7 @@ export const TracingVisualizationRow = (props: ITracingVizualizationRowProps) =>
 
   const backgroundColorCss = getBackgroundColors(color || type);
 
-  const container = useRef<HTMLDivElement>(null)
-  const [width, setWidth] = useState(250);
-  useLayoutEffect(() => {
-    const updateContainerWidth = debounce(() => {
-      if (container.current) {
-        const { width } = container.current.getBoundingClientRect();
-        setWidth(width);
-      }
-    }, 600);
-
-    window.addEventListener('resize', updateContainerWidth);
-
-    return () => window.removeEventListener('resize', updateContainerWidth);
-  }, [])
-
+  const { container, width } = useBoundingRect()
   const {
     marginLeftPercentage,
     marginLeftCss,
@@ -55,7 +41,7 @@ export const TracingVisualizationRow = (props: ITracingVizualizationRowProps) =>
       showAllBeforeDuration,
       widthPercentageCss,
     }
-  }, [width])
+  }, [width, duration, offset, total])
 
   return (
     <div ref={container} className={`w-full mb-1 whitespace-nowrap`}>
