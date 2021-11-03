@@ -17,7 +17,7 @@ const filterNetworkRequests = (
   networkRequests: NetworkRequest[],
   filterValue: string
 ) => {
-  if (!filterValue) {
+  if (!filterValue?.trim()?.length) {
     return networkRequests;
   }
   return networkRequests.filter((networkRequest) => {
