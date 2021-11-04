@@ -210,4 +210,33 @@ describe("Main", () => {
       }
     });
   });
+  it.only("filters network data with the given search query inverted", async () => {
+    const { getByTestId, queryByTestId } = render(<Main />);
+    const table = queryByTestId("network-table");
+    const { queryAllByRole, getByText } = within(table!);
+    const filterInput = getByTestId("filter-input") as HTMLInputElement;
+
+    await waitFor(() => {
+      expect(getByText(/getMovie/i)).toBeInTheDocument();
+    });
+
+    act(() => {
+      fireEvent.click(getByTestId("is-inverted-checkbox"));
+    });
+
+    act(() => {
+      fireEvent.change(filterInput, {
+        target: { value: "getmovie" },
+      });
+    });
+
+    expect(filterInput.value).toBe("getmovie");
+    expect(queryAllByRole("row")).toHaveLength(6);
+    queryAllByRole("row").forEach((row, i) => {
+      // First row is header
+      if (i !== 0) {
+        expect(row).not.toHaveTextContent("getMovie");
+      }
+    });
+  });
 });
