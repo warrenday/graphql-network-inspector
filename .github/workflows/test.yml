@@ -31,6 +31,6 @@ jobs:
       - name: yarn install and test
         run: |
           yarn install
-          yarn test
+          yarn test --verbose
         env:
           CI: true
