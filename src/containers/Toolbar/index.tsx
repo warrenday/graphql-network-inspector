@@ -45,15 +45,13 @@ export const Toolbar = (props: IToolbarProps) => {
         placeholder="Filter"
         testId="filter-input"
       />
-      {!!filterValue.trim().length && (
-        <Checkbox
-          id="invert"
-          label="Invert"
-          checked={isInverted}
-          onChange={onIsInvertedChange}
-          testId="is-inverted-checkbox"
-        />
-      )}
+      <Checkbox
+        id="invert"
+        label="Invert"
+        checked={isInverted}
+        onChange={onIsInvertedChange}
+        testId="is-inverted-checkbox"
+      />
       <Checkbox
         id="preserveLog"
         label="Preserve Log"
