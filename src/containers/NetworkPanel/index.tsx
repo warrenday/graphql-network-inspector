@@ -18,7 +18,7 @@ const filterNetworkRequests = (
   filterValue: string,
   isInverted: boolean
 ) => {
-  if (!filterValue) {
+  if (!filterValue?.trim()?.length) {
     return networkRequests;
   }
   return networkRequests.filter((networkRequest) => {
