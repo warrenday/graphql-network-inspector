@@ -22,7 +22,8 @@ const filterNetworkRequests = (
     return networkRequests;
   }
   return networkRequests.filter((networkRequest) => {
-    const { operationName } = networkRequest.request.primaryOperation;
+    const { operationName = "" } = networkRequest.request.primaryOperation;
+
     const isIncluded = operationName
       .toLowerCase()
       .includes(filterValue.toLowerCase());
