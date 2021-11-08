@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { nsToMs } from "@/helpers/nsToMs";
 import { useBoundingRect } from "@/hooks/useBoundingRect";
 
-interface ITracingVizualizationRowProps {
+interface ITracingVisualizationRowProps {
   name?: string;
   type?: string;
   color?: 'green' | 'purple' | 'indigo';
@@ -11,7 +11,7 @@ interface ITracingVizualizationRowProps {
   duration: number;
 }
 
-export const TracingVisualizationRow = (props: ITracingVizualizationRowProps) => {
+export const TracingVisualizationRow = (props: ITracingVisualizationRowProps) => {
   const { name, total, offset, duration, type, color } = props;
 
   const backgroundColorCss = getBackgroundColors(color || type);
@@ -87,14 +87,14 @@ const getBackgroundColors = (type: string = "") => {
   switch (type.toUpperCase()) {
     case "GREEN":
     case "TOTAL":
-      return "bg-green-300 dark:bg-green-700";
+      return "bg-green-400 dark:bg-green-700";
     case "PURPLE":
     case "QUERY":
     case "MUTATION":
     case "SUBSCRIPTION":
-      return "bg-purple-300 dark:bg-purple-700";
+      return "bg-purple-400 dark:bg-purple-700";
     default:
     case "INDIGO":
-      return "bg-indigo-300 dark:bg-indigo-700";
+      return "bg-indigo-400 dark:bg-indigo-700";
   }
 }

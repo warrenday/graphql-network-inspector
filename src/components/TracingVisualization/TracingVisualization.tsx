@@ -2,11 +2,11 @@ import React from "react";
 import { IApolloServerTracing } from "@/types";
 import { TracingVisualizationRow } from ".";
 
-interface ITracingVizualizationProps {
+interface ITracingVisualizationProps {
   tracing?: IApolloServerTracing;
 }
 
-export const TracingVisualization = (props: ITracingVizualizationProps) => {
+export const TracingVisualization = (props: ITracingVisualizationProps) => {
   const { tracing } = props;
   const totalTimeNs = tracing?.duration || 0;
 

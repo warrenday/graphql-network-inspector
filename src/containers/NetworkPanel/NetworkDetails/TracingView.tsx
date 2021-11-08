@@ -20,7 +20,7 @@ export const TracingView = (props: ITracingViewProps) => {
       {tracing ? (
         <TracingVisualization tracing={tracing} />
       ) : (
-        <>No tracing found.</>
+        <p>No tracing found.</p>
       )}
     </div >
   );
