@@ -7,6 +7,7 @@ import { ResponseView } from "./ResponseView";
 import { ResponseRawView } from "./ResponseRawView";
 import { useNetworkTabs } from "../../../hooks/useNetworkTabs";
 import { CloseButton } from "../../../components/CloseButton";
+import { TracingView } from "./TracingView";
 
 export type NetworkDetailsProps = {
   data: NetworkRequest;
@@ -52,6 +53,11 @@ export const NetworkDetails = (props: NetworkDetailsProps) => {
           id: "response-raw",
           title: "Response (Raw)",
           component: <ResponseRawView response={responseBody} />,
+        },
+        {
+          id: "tracing",
+          title: "Tracing",
+          component: <TracingView response={responseBody} />,
         },
       ]}
     />
