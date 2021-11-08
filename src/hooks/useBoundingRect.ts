@@ -8,17 +8,22 @@ export const useBoundingRect = () => {
   const [height, setHeight] = useState(0)
 
   useLayoutEffect(() => {
-    const updateContainerWidth = debounce(() => {
+    const instantUpdate = () => {
       if (container.current) {
         const { width, height } = container.current.getBoundingClientRect();
         setWidth(width);
         setHeight(height);
       }
-    }, 600);
+    }
 
-    window.addEventListener('resize', updateContainerWidth);
+    // initialize
+    instantUpdate()
 
-    return () => window.removeEventListener('resize', updateContainerWidth);
+    // on resize
+    const debouncedUpdate = debounce(instantUpdate, 600);
+    window.addEventListener('resize', debouncedUpdate);
+
+    return () => window.removeEventListener('resize', debouncedUpdate);
   }, [])
 
   return {
