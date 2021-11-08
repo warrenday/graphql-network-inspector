@@ -210,7 +210,7 @@ describe("Main", () => {
       }
     });
   });
-  it.only("filters network data with the given search query inverted", async () => {
+  it("filters network data with the given search query inverted", async () => {
     const { getByTestId, queryByTestId } = render(<Main />);
     const table = queryByTestId("network-table");
     const { queryAllByRole, getByText } = within(table!);
