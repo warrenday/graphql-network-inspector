@@ -1,7 +1,14 @@
 {
-  "name": "my-app",
+  "name": "graphql-network-inspector",
   "version": "2.4.0",
   "private": true,
+  "scripts": {
+    "start": "craco start",
+    "build": "INLINE_RUNTIME_CHUNK=false craco build",
+    "postbuild": "node ./scripts/set-manifest-version.js",
+    "test": "craco test",
+    "eject": "react-scripts eject"
+  },
   "dependencies": {
     "@notdutzi/react-json-view": "^1.21.8",
     "classnames": "^2.3.1",
@@ -18,28 +25,6 @@
     "react-table": "^7.5.0",
     "ts-debounce": "^3.0.0",
     "uuid": "^8.3.0"
-  },
-  "scripts": {
-    "start": "craco start",
-    "build": "INLINE_RUNTIME_CHUNK=false craco build",
-    "postbuild": "node ./scripts/set-manifest-version.js",
-    "test": "craco test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
   },
   "devDependencies": {
     "@craco/craco": "^6.2.0",
@@ -62,6 +47,21 @@
     "react-scripts": "^4.0.3",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat",
     "typescript": "^4.0.3"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
   "jest": {
     "moduleNameMapper": {
