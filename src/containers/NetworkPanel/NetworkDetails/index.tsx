@@ -7,6 +7,7 @@ import { ResponseRawView } from "./ResponseRawView";
 import { useNetworkTabs } from "../../../hooks/useNetworkTabs";
 import { CloseButton } from "../../../components/CloseButton";
 import { TracingView } from "./TracingView";
+import { useApolloTracing } from "@/hooks/useApolloTracing";
 
 export type NetworkDetailsProps = {
   data: NetworkRequest;
@@ -20,6 +21,7 @@ export const NetworkDetails = (props: NetworkDetailsProps) => {
   const responseHeaders = data.response?.headers || [];
   const requestBody = data.request.body;
   const responseBody = data.response?.body;
+  const tracing = useApolloTracing(responseBody);
 
   return (
     <Tabs
@@ -53,11 +55,15 @@ export const NetworkDetails = (props: NetworkDetailsProps) => {
           title: "Response (Raw)",
           component: <ResponseRawView response={responseBody} />,
         },
-        {
-          id: "tracing",
-          title: "Tracing",
-          component: <TracingView response={responseBody} />,
-        },
+        ...(tracing
+          ? [
+              {
+                id: "tracing",
+                title: "Tracing",
+                component: <TracingView response={responseBody} />,
+              },
+            ]
+          : []),
       ]}
     />
   );

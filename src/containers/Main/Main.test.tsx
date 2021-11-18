@@ -20,7 +20,7 @@ const mockOnNavigated = () => {
           addListener: (cb: any) => {
             triggerOnNavigated = cb;
           },
-          removeListener: () => { },
+          removeListener: () => {},
         },
       },
     },
@@ -209,6 +209,7 @@ describe("Main", () => {
       }
     });
   });
+
   it("filters network data with the given search query inverted", async () => {
     const { getByTestId, queryByTestId } = render(<Main />);
     const table = queryByTestId("network-table");
@@ -220,7 +221,7 @@ describe("Main", () => {
     });
 
     act(() => {
-      fireEvent.click(getByTestId("is-inverted-checkbox"));
+      fireEvent.click(getByTestId("inverted-checkbox"));
     });
 
     act(() => {

@@ -66,8 +66,8 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
           onFilterValueChange={setFilterValue}
           preserveLogs={isPreserveLogs}
           onPreserveLogsChange={setIsPreserveLogs}
-          isInverted={isInverted}
-          onIsInvertedChange={setIsInverted}
+          inverted={isInverted}
+          onInvertedChange={setIsInverted}
           onClear={() => {
             setSelectedRowId(null);
             clearWebRequests();

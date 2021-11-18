@@ -10,8 +10,8 @@ interface IToolbarProps {
   onFilterValueChange: (filterValue: string) => void;
   preserveLogs: boolean;
   onPreserveLogsChange: (preserveLogs: boolean) => void;
-  isInverted: boolean;
-  onIsInvertedChange: (isInverted: boolean) => void;
+  inverted: boolean;
+  onInvertedChange: (isInverted: boolean) => void;
   onClear: () => void;
 }
 
@@ -21,8 +21,8 @@ export const Toolbar = (props: IToolbarProps) => {
     onFilterValueChange,
     preserveLogs,
     onPreserveLogsChange,
-    isInverted,
-    onIsInvertedChange,
+    inverted,
+    onInvertedChange,
     onClear,
   } = props;
   const { setIsSearchOpen } = useSearch();
@@ -47,9 +47,9 @@ export const Toolbar = (props: IToolbarProps) => {
       <Checkbox
         id="invert"
         label="Invert"
-        checked={isInverted}
-        onChange={onIsInvertedChange}
-        testId="is-inverted-checkbox"
+        checked={inverted}
+        onChange={onInvertedChange}
+        testId="inverted-checkbox"
       />
       <Checkbox
         id="preserveLog"

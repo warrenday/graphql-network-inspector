@@ -2,7 +2,7 @@ import { render } from "@testing-library/react";
 import { TracingView } from "./TracingView";
 import * as safeJson from "../../../helpers/safeJson";
 
-describe('NetworkDetails - TracingView', () => {
+describe("NetworkDetails - TracingView", () => {
   it("show 'No tracing' message when the tracing object is null", async () => {
     const noTracingResponse = safeJson.stringify({
       data: {
@@ -10,16 +10,16 @@ describe('NetworkDetails - TracingView', () => {
           id: "1",
           firstName: "Test",
           lastName: "User",
-        }
-      }
-    })
+        },
+      },
+    });
 
     const { queryByText } = render(
       <TracingView response={noTracingResponse} />
-    )
+    );
 
-    expect(queryByText('No tracing found.')).toBeVisible();
-  })
+    expect(queryByText("No tracing found.")).toBeVisible();
+  });
 
   it("show total request time", async () => {
     const withTracingResponse = safeJson.stringify({
@@ -33,15 +33,15 @@ describe('NetworkDetails - TracingView', () => {
           },
         },
       },
-    })
+    });
 
     const { getByText } = render(
       <TracingView response={withTracingResponse} />
-    )
+    );
 
-    expect(getByText('Total')).toBeVisible();
-    expect(getByText('24.09 ms')).toBeVisible();
-  })
+    expect(getByText("Total")).toBeVisible();
+    expect(getByText("24.09 ms")).toBeVisible();
+  });
 
   it("visualize the execution trace", async () => {
     const withTracingResponse = safeJson.stringify({
@@ -86,22 +86,22 @@ describe('NetworkDetails - TracingView', () => {
           },
         },
       },
-    })
+    });
 
     const { getByText } = render(
       <TracingView response={withTracingResponse} />
-    )
+    );
 
-    expect(getByText('signedInUser')).toBeVisible();
-    expect(getByText('0.15 ms')).toBeVisible();
+    expect(getByText("signedInUser")).toBeVisible();
+    expect(getByText("0.15 ms")).toBeVisible();
 
-    expect(getByText('signedInUser.id')).toBeVisible();
-    expect(getByText('0.1 ms')).toBeVisible();
+    expect(getByText("signedInUser.id")).toBeVisible();
+    expect(getByText("0.1 ms")).toBeVisible();
 
-    expect(getByText('signedInUser.firstName')).toBeVisible();
-    expect(getByText('0.7 ms')).toBeVisible();
+    expect(getByText("signedInUser.firstName")).toBeVisible();
+    expect(getByText("0.7 ms")).toBeVisible();
 
-    expect(getByText('signedInUser.lastName')).toBeVisible();
-    expect(getByText('0.75 ms')).toBeVisible();
-  })
-})
+    expect(getByText("signedInUser.lastName")).toBeVisible();
+    expect(getByText("0.75 ms")).toBeVisible();
+  });
+});

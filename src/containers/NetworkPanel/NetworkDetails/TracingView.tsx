@@ -2,6 +2,7 @@ import { TracingVisualization } from "@/components/TracingVisualization";
 import { IResponseBody } from "@/types";
 import { useMemo } from "react";
 import * as safeJson from "@/helpers/safeJson";
+import { useApolloTracing } from "@/hooks/useApolloTracing";
 
 interface ITracingViewProps {
   response?: string;
@@ -9,11 +10,7 @@ interface ITracingViewProps {
 
 export const TracingView = (props: ITracingViewProps) => {
   const { response } = props;
-  const tracing = useMemo(() => {
-    const parsedResponse = safeJson.parse<IResponseBody>(response) || {};
-    const tracing = parsedResponse?.extensions?.tracing;
-    return tracing;
-  }, [response]);
+  const tracing = useApolloTracing(response);
 
   return (
     <div className="relative p-4">
@@ -22,6 +19,6 @@ export const TracingView = (props: ITracingViewProps) => {
       ) : (
         <p>No tracing found.</p>
       )}
-    </div >
+    </div>
   );
 };
