@@ -15,14 +15,22 @@ interface NetworkPanelProps {
 
 const filterNetworkRequests = (
   networkRequests: NetworkRequest[],
-  filterValue: string
+  filterValue: string,
+  isInverted: boolean
 ) => {
   if (!filterValue?.trim()?.length) {
     return networkRequests;
   }
   return networkRequests.filter((networkRequest) => {
-    const { operationName } = networkRequest.request.primaryOperation;
-    return operationName.toLowerCase().includes(filterValue.toLowerCase());
+    const { operationName = "" } = networkRequest.request.primaryOperation;
+
+    const isIncluded = operationName
+      .toLowerCase()
+      .includes(filterValue.toLowerCase());
+    if (isInverted) {
+      return !isIncluded;
+    }
+    return isIncluded;
   });
 };
 
@@ -32,9 +40,11 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
 
   const [filterValue, setFilterValue] = useState("");
   const [isPreserveLogs, setIsPreserveLogs] = useState(false);
+  const [isInverted, setIsInverted] = useState(false);
   const filteredNetworkRequests = filterNetworkRequests(
     networkRequests,
-    filterValue
+    filterValue,
+    isInverted
   );
   const selectedRequest = networkRequests.find(
     (request) => request.id === selectedRowId
@@ -56,6 +66,8 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
           onFilterValueChange={setFilterValue}
           preserveLogs={isPreserveLogs}
           onPreserveLogsChange={setIsPreserveLogs}
+          isInverted={isInverted}
+          onIsInvertedChange={setIsInverted}
           onClear={() => {
             setSelectedRowId(null);
             clearWebRequests();
