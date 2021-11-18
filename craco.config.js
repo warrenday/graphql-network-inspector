@@ -1,11 +1,11 @@
 // Custom config on top of CRA see:
 // https://github.com/gsoft-inc/craco/blob/master/packages/craco/README.md#configuration
 
-const path = require("path");
-const CopyWebpackPlugin = require("copy-webpack-plugin");
+const path = require("path")
+const CopyWebpackPlugin = require("copy-webpack-plugin")
 
 module.exports = ({ env }) => {
-  const isEnvDevelopment = env === "development";
+  const isEnvDevelopment = env === "development"
 
   return {
     style: {
@@ -39,5 +39,5 @@ module.exports = ({ env }) => {
     devServer: {
       writeToDisk: true,
     },
-  };
-};
+  }
+}

@@ -1,1 +1,1 @@
-export { debounce } from 'ts-debounce';
+export { debounce } from "ts-debounce"

@@ -1,29 +1,29 @@
-import { ReactNode } from "react";
-import cx from "classnames";
-import { Header } from "../Header";
+import { ReactNode } from "react"
+import cx from "classnames"
+import { Header } from "../Header"
 
 export type Tab = {
-  id?: string;
-  title: string;
-  component: ReactNode;
-};
+  id?: string
+  title: string
+  component: ReactNode
+}
 
 export type TabsProps = {
-  tabs: Tab[];
-  rightContent?: ReactNode;
-  activeTab: number;
-  onTabClick: (activeTab: number) => void;
-  testId?: string;
-};
+  tabs: Tab[]
+  rightContent?: ReactNode
+  activeTab: number
+  onTabClick: (activeTab: number) => void
+  testId?: string
+}
 
 export const Tabs = (props: TabsProps) => {
-  const { tabs, rightContent, activeTab, onTabClick, testId } = props;
+  const { tabs, rightContent, activeTab, onTabClick, testId } = props
 
   return (
     <div className="flex flex-col h-full" data-testid={testId}>
       <Header rightContent={rightContent}>
         {tabs.map((tab, i) => {
-          const isActive = i === activeTab;
+          const isActive = i === activeTab
           return (
             <button
               key={i}
@@ -38,12 +38,12 @@ export const Tabs = (props: TabsProps) => {
             >
               <h2 className="font-bold">{tab.title}</h2>
             </button>
-          );
+          )
         })}
       </Header>
       <div className="overflow-y-scroll scroll">
         {tabs[activeTab].component}
       </div>
     </div>
-  );
-};
+  )
+}

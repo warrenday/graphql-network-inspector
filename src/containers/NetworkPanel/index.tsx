@@ -1,16 +1,16 @@
-import { useState, useEffect } from "react";
-import { SplitPaneLayout } from "../../components/Layout";
-import { NetworkTable } from "./NetworkTable";
-import { NetworkDetails } from "./NetworkDetails";
-import { Toolbar } from "../Toolbar";
-import { NetworkRequest } from "../../hooks/useNetworkMonitor";
-import { onNavigate } from "../../services/networkMonitor";
+import { useState, useEffect } from "react"
+import { SplitPaneLayout } from "../../components/Layout"
+import { NetworkTable } from "./NetworkTable"
+import { NetworkDetails } from "./NetworkDetails"
+import { Toolbar } from "../Toolbar"
+import { NetworkRequest } from "../../hooks/useNetworkMonitor"
+import { onNavigate } from "../../services/networkMonitor"
 
 interface NetworkPanelProps {
-  selectedRowId: string | number | null;
-  setSelectedRowId: (selectedRowId: string | number | null) => void;
-  networkRequests: NetworkRequest[];
-  clearWebRequests: () => void;
+  selectedRowId: string | number | null
+  setSelectedRowId: (selectedRowId: string | number | null) => void
+  networkRequests: NetworkRequest[]
+  clearWebRequests: () => void
 }
 
 const filterNetworkRequests = (
@@ -19,44 +19,44 @@ const filterNetworkRequests = (
   isInverted: boolean
 ) => {
   if (!filterValue?.trim()?.length) {
-    return networkRequests;
+    return networkRequests
   }
   return networkRequests.filter((networkRequest) => {
-    const { operationName = "" } = networkRequest.request.primaryOperation;
+    const { operationName = "" } = networkRequest.request.primaryOperation
 
     const isIncluded = operationName
       .toLowerCase()
-      .includes(filterValue.toLowerCase());
+      .includes(filterValue.toLowerCase())
     if (isInverted) {
-      return !isIncluded;
+      return !isIncluded
     }
-    return isIncluded;
-  });
-};
+    return isIncluded
+  })
+}
 
 export const NetworkPanel = (props: NetworkPanelProps) => {
   const { networkRequests, clearWebRequests, selectedRowId, setSelectedRowId } =
-    props;
+    props
 
-  const [filterValue, setFilterValue] = useState("");
-  const [isPreserveLogs, setIsPreserveLogs] = useState(false);
-  const [isInverted, setIsInverted] = useState(false);
+  const [filterValue, setFilterValue] = useState("")
+  const [isPreserveLogs, setIsPreserveLogs] = useState(false)
+  const [isInverted, setIsInverted] = useState(false)
   const filteredNetworkRequests = filterNetworkRequests(
     networkRequests,
     filterValue,
     isInverted
-  );
+  )
   const selectedRequest = networkRequests.find(
     (request) => request.id === selectedRowId
-  );
+  )
 
   useEffect(() => {
     return onNavigate(() => {
       if (!isPreserveLogs) {
-        clearWebRequests();
+        clearWebRequests()
       }
-    });
-  }, [isPreserveLogs, clearWebRequests]);
+    })
+  }, [isPreserveLogs, clearWebRequests])
 
   return (
     <SplitPaneLayout
@@ -69,8 +69,8 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
           inverted={isInverted}
           onInvertedChange={setIsInverted}
           onClear={() => {
-            setSelectedRowId(null);
-            clearWebRequests();
+            setSelectedRowId(null)
+            clearWebRequests()
           }}
         />
       }
@@ -92,12 +92,12 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
             <NetworkDetails
               data={selectedRequest}
               onClose={() => {
-                setSelectedRowId(null);
+                setSelectedRowId(null)
               }}
             />
           </div>
         )
       }
     />
-  );
-};
+  )
+}

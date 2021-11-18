@@ -1,27 +1,27 @@
-import { Tabs } from "../../../components/Tabs";
-import { NetworkRequest } from "../../../hooks/useNetworkMonitor";
-import { HeaderView } from "./HeaderView";
-import { RequestView } from "./RequestView";
-import { ResponseView } from "./ResponseView";
-import { ResponseRawView } from "./ResponseRawView";
-import { useNetworkTabs } from "../../../hooks/useNetworkTabs";
-import { CloseButton } from "../../../components/CloseButton";
-import { TracingView } from "./TracingView";
-import { useApolloTracing } from "@/hooks/useApolloTracing";
+import { Tabs } from "../../../components/Tabs"
+import { NetworkRequest } from "../../../hooks/useNetworkMonitor"
+import { HeaderView } from "./HeaderView"
+import { RequestView } from "./RequestView"
+import { ResponseView } from "./ResponseView"
+import { ResponseRawView } from "./ResponseRawView"
+import { useNetworkTabs } from "../../../hooks/useNetworkTabs"
+import { CloseButton } from "../../../components/CloseButton"
+import { TracingView } from "./TracingView"
+import { useApolloTracing } from "@/hooks/useApolloTracing"
 
 export type NetworkDetailsProps = {
-  data: NetworkRequest;
-  onClose: () => void;
-};
+  data: NetworkRequest
+  onClose: () => void
+}
 
 export const NetworkDetails = (props: NetworkDetailsProps) => {
-  const { data, onClose } = props;
-  const { activeTab, setActiveTab } = useNetworkTabs();
-  const requestHeaders = data.request.headers;
-  const responseHeaders = data.response?.headers || [];
-  const requestBody = data.request.body;
-  const responseBody = data.response?.body;
-  const tracing = useApolloTracing(responseBody);
+  const { data, onClose } = props
+  const { activeTab, setActiveTab } = useNetworkTabs()
+  const requestHeaders = data.request.headers
+  const responseHeaders = data.response?.headers || []
+  const requestBody = data.request.body
+  const responseBody = data.response?.body
+  const tracing = useApolloTracing(responseBody)
 
   return (
     <Tabs
@@ -66,5 +66,5 @@ export const NetworkDetails = (props: NetworkDetailsProps) => {
           : []),
       ]}
     />
-  );
-};
+  )
+}

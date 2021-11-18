@@ -1,22 +1,22 @@
-import { useMemo } from "react";
-import { Header } from "../../../../hooks/useNetworkMonitor";
-import { Panels, PanelSection } from "../PanelSection";
-import { CopyButton } from "../../../../components/CopyButton";
-import { HeaderList } from "./HeaderList";
+import { useMemo } from "react"
+import { Header } from "../../../../hooks/useNetworkMonitor"
+import { Panels, PanelSection } from "../PanelSection"
+import { CopyButton } from "../../../../components/CopyButton"
+import { HeaderList } from "./HeaderList"
 
 interface IHeaderViewProps {
-  requestHeaders: Header[];
-  responseHeaders: Header[];
+  requestHeaders: Header[]
+  responseHeaders: Header[]
 }
 
 export const HeaderView = (props: IHeaderViewProps) => {
-  const { requestHeaders, responseHeaders } = props;
+  const { requestHeaders, responseHeaders } = props
   const headerStrings = useMemo(() => {
     return {
       requestHeaders: JSON.stringify(requestHeaders),
       responseHeaders: JSON.stringify(responseHeaders),
-    };
-  }, [requestHeaders, responseHeaders]);
+    }
+  }, [requestHeaders, responseHeaders])
 
   return (
     <Panels>
@@ -35,5 +35,5 @@ export const HeaderView = (props: IHeaderViewProps) => {
         <HeaderList headers={responseHeaders} />
       </PanelSection>
     </Panels>
-  );
-};
+  )
+}

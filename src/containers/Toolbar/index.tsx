@@ -1,18 +1,18 @@
-import { Checkbox } from "../../components/Checkbox";
-import { Button } from "../../components/Button";
-import { BinIcon } from "../../components/Icons/BinIcon";
-import { SearchIcon } from "../../components/Icons/SearchIcon";
-import { Textfield } from "../../components/Textfield";
-import { useSearch } from "../../hooks/useSearch";
+import { Checkbox } from "../../components/Checkbox"
+import { Button } from "../../components/Button"
+import { BinIcon } from "../../components/Icons/BinIcon"
+import { SearchIcon } from "../../components/Icons/SearchIcon"
+import { Textfield } from "../../components/Textfield"
+import { useSearch } from "../../hooks/useSearch"
 
 interface IToolbarProps {
-  filterValue: string;
-  onFilterValueChange: (filterValue: string) => void;
-  preserveLogs: boolean;
-  onPreserveLogsChange: (preserveLogs: boolean) => void;
-  inverted: boolean;
-  onInvertedChange: (isInverted: boolean) => void;
-  onClear: () => void;
+  filterValue: string
+  onFilterValueChange: (filterValue: string) => void
+  preserveLogs: boolean
+  onPreserveLogsChange: (preserveLogs: boolean) => void
+  inverted: boolean
+  onInvertedChange: (isInverted: boolean) => void
+  onClear: () => void
 }
 
 export const Toolbar = (props: IToolbarProps) => {
@@ -24,8 +24,8 @@ export const Toolbar = (props: IToolbarProps) => {
     inverted,
     onInvertedChange,
     onClear,
-  } = props;
-  const { setIsSearchOpen } = useSearch();
+  } = props
+  const { setIsSearchOpen } = useSearch()
 
   return (
     <div
@@ -66,5 +66,5 @@ export const Toolbar = (props: IToolbarProps) => {
         Search
       </Button>
     </div>
-  );
-};
+  )
+}

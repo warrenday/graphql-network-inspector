@@ -1,11 +1,11 @@
-import { Header } from "../../../../hooks/useNetworkMonitor";
+import { Header } from "../../../../hooks/useNetworkMonitor"
 
 interface IHeadersProps {
-  headers: Header[];
+  headers: Header[]
 }
 
 export const HeaderList = (props: IHeadersProps) => {
-  const { headers } = props;
+  const { headers } = props
   return (
     <ul className="list-none m-0">
       {headers.map((header) => (
@@ -18,5 +18,5 @@ export const HeaderList = (props: IHeadersProps) => {
         </li>
       ))}
     </ul>
-  );
-};
+  )
+}

@@ -1,13 +1,13 @@
-import { FC, ReactNode } from "react";
+import { FC, ReactNode } from "react"
 
 interface IHeaderProps {
-  leftContent?: ReactNode;
-  rightContent?: ReactNode;
-  className?: string;
+  leftContent?: ReactNode
+  rightContent?: ReactNode
+  className?: string
 }
 
 export const Header: FC<IHeaderProps> = (props) => {
-  const { rightContent, leftContent, children, className } = props;
+  const { rightContent, leftContent, children, className } = props
 
   return (
     <div
@@ -19,5 +19,5 @@ export const Header: FC<IHeaderProps> = (props) => {
         <div className="ml-auto flex items-center">{rightContent}</div>
       )}
     </div>
-  );
-};
+  )
+}
