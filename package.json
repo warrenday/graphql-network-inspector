@@ -8,6 +8,7 @@
     "postbuild": "node ./scripts/set-manifest-version.js",
     "test": "craco test",
     "eject": "react-scripts eject",
+    "lint": "eslint --max-warnings=0 src",
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
