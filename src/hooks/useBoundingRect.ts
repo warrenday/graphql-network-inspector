@@ -8,7 +8,7 @@ export const useBoundingRect = () => {
   const [height, setHeight] = useState(0)
 
   useLayoutEffect(() => {
-    const instantUpdate = () => {
+    const instantUpdate = (_?: UIEvent) => {
       if (container.current) {
         const { width, height } = container.current.getBoundingClientRect();
         setWidth(width);
