@@ -14,7 +14,7 @@
     "@notdutzi/react-json-view": "^1.21.8",
     "classnames": "^2.3.1",
     "copy-to-clipboard": "^3.3.1",
-    "graphql": "^15.3.0",
+    "graphql": "^16.0.1",
     "graphql-tag": "^2.11.0",
     "mergeby": "^2.0.1",
     "pretty-bytes": "^5.6.0",
