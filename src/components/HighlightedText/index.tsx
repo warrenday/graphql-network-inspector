@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { searchString } from "../../helpers/searchString";
 
 interface IHighlightedTextProps {

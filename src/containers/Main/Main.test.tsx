@@ -1,4 +1,3 @@
-import React from "react";
 import { render, fireEvent, within, waitFor } from "@testing-library/react";
 import { Main } from "./index";
 import { chromeProvider } from "../../services/chromeProvider";
@@ -21,7 +20,7 @@ const mockOnNavigated = () => {
           addListener: (cb: any) => {
             triggerOnNavigated = cb;
           },
-          removeListener: () => {},
+          removeListener: () => { },
         },
       },
     },

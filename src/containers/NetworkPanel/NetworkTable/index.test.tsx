@@ -1,4 +1,3 @@
-import React from "react";
 import { NetworkTable } from "./index";
 import { render, fireEvent } from "@testing-library/react";
 

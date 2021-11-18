@@ -1,4 +1,3 @@
-import React from "react";
 import ReactJson from "@notdutzi/react-json-view";
 import { useDarkTheme } from "../../hooks/useTheme";
 

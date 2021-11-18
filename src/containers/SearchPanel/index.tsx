@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Textfield } from "../../components/Textfield";
 import { useKeyDown } from "../../hooks/useKeyDown";
 import { NetworkRequest } from "../../hooks/useNetworkMonitor";

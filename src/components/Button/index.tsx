@@ -1,8 +1,8 @@
-import React from "react";
+import { ReactElement, FC } from "react";
 import cx from "classnames";
 
 interface IButtonProps {
-  icon?: React.ReactElement;
+  icon?: ReactElement;
   onClick: () => void;
   className?: string;
   variant?: "default" | "contained";
@@ -23,7 +23,7 @@ const containedVariantStyle = `
   p-2 px-2.5
 `;
 
-export const Button: React.FC<IButtonProps> = (props) => {
+export const Button: FC<IButtonProps> = (props) => {
   const {
     children,
     icon,

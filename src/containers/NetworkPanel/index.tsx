@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { SplitPaneLayout } from "../../components/Layout";
 import { NetworkTable } from "./NetworkTable";
 import { NetworkDetails } from "./NetworkDetails";

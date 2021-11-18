@@ -1,6 +1,6 @@
 import { TracingVisualization } from "@/components/TracingVisualization";
 import { IResponseBody } from "@/types";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import * as safeJson from "@/helpers/safeJson";
 
 interface ITracingViewProps {

@@ -1,4 +1,3 @@
-import React from "react";
 import { render } from "@testing-library/react";
 import { TracingView } from "./TracingView";
 import * as safeJson from "../../../helpers/safeJson";

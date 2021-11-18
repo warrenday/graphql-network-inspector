@@ -1,16 +1,16 @@
-import React from "react";
+import { ReactNode } from "react";
 import cx from "classnames";
 import { Header } from "../Header";
 
 export type Tab = {
   id?: string;
   title: string;
-  component: React.ReactNode;
+  component: ReactNode;
 };
 
 export type TabsProps = {
   tabs: Tab[];
-  rightContent?: React.ReactNode;
+  rightContent?: ReactNode;
   activeTab: number;
   onTabClick: (activeTab: number) => void;
   testId?: string;

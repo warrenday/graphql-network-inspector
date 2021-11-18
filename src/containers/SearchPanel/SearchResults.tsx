@@ -1,4 +1,4 @@
-import React from "react";
+import { FC } from "react";
 import { HighlightedText } from "../../components/HighlightedText";
 import { ISearchResult } from "../../services/searchService";
 import {
@@ -29,7 +29,7 @@ interface ISearchResultEntryRowProps {
   onClick: () => void;
 }
 
-const SearchResultEntryRow: React.FC<ISearchResultEntryRowProps> = ({
+const SearchResultEntryRow: FC<ISearchResultEntryRowProps> = ({
   title,
   children,
   onClick,

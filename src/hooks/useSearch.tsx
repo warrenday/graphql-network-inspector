@@ -1,4 +1,4 @@
-import React, { useState, createContext, useContext, useCallback } from "react";
+import { useState, createContext, useContext, useCallback } from "react";
 import { useSearchStart } from "./useSearchStart";
 
 const SearchContext = createContext<{

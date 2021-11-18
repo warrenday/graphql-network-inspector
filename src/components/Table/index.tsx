@@ -1,4 +1,3 @@
-import React from "react";
 import {
   useTable,
   HeaderGroup,
@@ -61,11 +60,10 @@ const TableBody = <T extends BaseRowData>({
       return (
         <tr
           {...row.getRowProps()}
-          className={`${
-            isSelected
-              ? "bg-blue-500 dark:bg-blue-600"
-              : "even:bg-gray-200 dark:even:bg-gray-900 odd:bg-gray-100 dark:odd:bg-gray-800 hover:bg-blue-300 dark:hover:bg-blue-900"
-          } cursor-pointer `}
+          className={`${isSelected
+            ? "bg-blue-500 dark:bg-blue-600"
+            : "even:bg-gray-200 dark:even:bg-gray-900 odd:bg-gray-100 dark:odd:bg-gray-800 hover:bg-blue-300 dark:hover:bg-blue-900"
+            } cursor-pointer `}
           aria-selected={isSelected}
         >
           {row.cells.map((cell) => (

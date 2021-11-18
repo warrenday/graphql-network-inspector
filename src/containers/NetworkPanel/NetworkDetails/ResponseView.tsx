@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import * as safeJson from "../../../helpers/safeJson";
 import { JsonView } from "../../../components/JsonView";
 import { CopyButton } from "../../../components/CopyButton";

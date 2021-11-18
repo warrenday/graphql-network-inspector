@@ -1,4 +1,3 @@
-import React from "react";
 import { Panels, PanelSection } from "./PanelSection";
 import { CodeBlock } from "../../../components/CodeBlock";
 import { CopyButton } from "../../../components/CopyButton";

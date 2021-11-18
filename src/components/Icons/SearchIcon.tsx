@@ -1,6 +1,6 @@
-import React from "react";
+import { SVGAttributes } from "react";
 
-interface ISearchIconProps extends React.SVGAttributes<{}> {}
+interface ISearchIconProps extends SVGAttributes<{}> { }
 
 export const SearchIcon = (props: ISearchIconProps) => {
   const { width = "1.5rem", height = "1.5rem" } = props;

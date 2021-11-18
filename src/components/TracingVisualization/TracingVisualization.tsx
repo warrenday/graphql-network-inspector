@@ -1,4 +1,3 @@
-import React from "react";
 import { IApolloServerTracing } from "@/types";
 import { TracingVisualizationRow } from ".";
 

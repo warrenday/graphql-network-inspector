@@ -1,4 +1,3 @@
-import React from "react";
 import { Checkbox } from "../../components/Checkbox";
 import { Button } from "../../components/Button";
 import { BinIcon } from "../../components/Icons/BinIcon";
