@@ -1,5 +1,3 @@
-import React from "react";
-
 interface ITextfieldProps {
   value: string;
   onChange: (value: string) => void;

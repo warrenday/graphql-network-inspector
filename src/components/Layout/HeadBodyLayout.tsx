@@ -1,8 +1,8 @@
-import React from "react";
+import { ReactNode } from "react";
 
 interface IHeadBodyLayoutProps {
-  header: React.ReactNode;
-  body: React.ReactNode;
+  header: ReactNode;
+  body: ReactNode;
 }
 
 export const HeadBodyLayout = (props: IHeadBodyLayoutProps) => {

@@ -1,8 +1,8 @@
-import React from "react";
+import { FC } from "react";
 
-interface IBadgeProps {}
+interface IBadgeProps { }
 
-export const Badge: React.FunctionComponent<IBadgeProps> = (props) => {
+export const Badge: FC<IBadgeProps> = (props) => {
   const { children } = props;
 
   return (

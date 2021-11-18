@@ -1,12 +1,12 @@
-import React from "react";
+import { FC, ReactNode } from "react";
 
 interface IHeaderProps {
-  leftContent?: React.ReactNode;
-  rightContent?: React.ReactNode;
+  leftContent?: ReactNode;
+  rightContent?: ReactNode;
   className?: string;
 }
 
-export const Header: React.FC<IHeaderProps> = (props) => {
+export const Header: FC<IHeaderProps> = (props) => {
   const { rightContent, leftContent, children, className } = props;
 
   return (

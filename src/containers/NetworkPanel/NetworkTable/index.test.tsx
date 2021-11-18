@@ -1,4 +1,3 @@
-import React from "react";
 import { NetworkTable } from "./index";
 import { render, fireEvent } from "@testing-library/react";
 
@@ -38,9 +37,8 @@ test("Selects next row when pressing the down arrow", () => {
   const { getByTestId } = render(
     <NetworkTable
       data={data}
-      onRowClick={() => {}}
+      onRowClick={() => { }}
       onRowSelect={mockOnRowSelect}
-      onClear={() => {}}
       selectedRowId="2"
     />
   );
@@ -56,9 +54,8 @@ test("Selects previous row when pressing the up arrow", () => {
   const { getByTestId } = render(
     <NetworkTable
       data={data}
-      onRowClick={() => {}}
+      onRowClick={() => { }}
       onRowSelect={mockOnRowSelect}
-      onClear={() => {}}
       selectedRowId="2"
     />
   );
@@ -74,9 +71,8 @@ test("Remains on bottom row when pressing the down arrow", () => {
   const { getByTestId } = render(
     <NetworkTable
       data={data}
-      onRowClick={() => {}}
+      onRowClick={() => { }}
       onRowSelect={mockOnRowSelect}
-      onClear={() => {}}
       selectedRowId="3"
     />
   );
@@ -92,9 +88,8 @@ test("Remains on top row when pressing the up arrow", () => {
   const { getByTestId } = render(
     <NetworkTable
       data={data}
-      onRowClick={() => {}}
+      onRowClick={() => { }}
       onRowSelect={mockOnRowSelect}
-      onClear={() => {}}
       selectedRowId="1"
     />
   );

@@ -1,6 +1,6 @@
-import React from "react";
+import { SVGAttributes } from "react";
 
-interface IBinIconProps extends React.SVGAttributes<{}> {}
+interface IBinIconProps extends SVGAttributes<{}> { }
 
 export const BinIcon = (props: IBinIconProps) => {
   const { width = "1.5rem", height = "1.5rem" } = props;

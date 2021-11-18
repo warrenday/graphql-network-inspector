@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { nsToMs } from "@/helpers/nsToMs";
 import { useBoundingRect } from "@/hooks/useBoundingRect";
 

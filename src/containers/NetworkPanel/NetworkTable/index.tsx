@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import prettyBytes from "pretty-bytes";
 import prettyMs from "pretty-ms";
 import { Table, TableProps } from "../../../components/Table";

@@ -1,4 +1,3 @@
-import mergeby from "mergeby";
 import { useCallback, useEffect, useState } from "react";
 import { v4 as uuid } from "uuid";
 import {
@@ -7,7 +6,6 @@ import {
   OperationDetails,
 } from "../helpers/graphqlHelpers";
 import { onRequestFinished, getHAR } from "../services/networkMonitor";
-import { DeepPartial } from "../types";
 
 export type Header = { name: string; value?: string };
 export type NetworkRequest = {

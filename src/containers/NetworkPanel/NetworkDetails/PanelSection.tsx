@@ -1,6 +1,6 @@
-import React from "react";
+import { FC } from "react";
 
-export const Panels: React.FunctionComponent = (props) => {
+export const Panels: FC = (props) => {
   const { children } = props;
 
   return (
@@ -13,7 +13,7 @@ interface IPanelSectionProps {
   className?: string;
 }
 
-export const PanelSection: React.FunctionComponent<IPanelSectionProps> = (
+export const PanelSection: FC<IPanelSectionProps> = (
   props
 ) => {
   const { title, children, className } = props;

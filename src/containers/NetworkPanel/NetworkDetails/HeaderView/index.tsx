@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { Header } from "../../../../hooks/useNetworkMonitor";
 import { Panels, PanelSection } from "../PanelSection";
 import { CopyButton } from "../../../../components/CopyButton";

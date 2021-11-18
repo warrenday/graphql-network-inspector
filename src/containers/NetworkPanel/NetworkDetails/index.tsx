@@ -1,4 +1,3 @@
-import React from "react";
 import { Tabs } from "../../../components/Tabs";
 import { NetworkRequest } from "../../../hooks/useNetworkMonitor";
 import { HeaderView } from "./HeaderView";

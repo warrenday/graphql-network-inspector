@@ -1,30 +1,53 @@
 {
-  "name": "my-app",
+  "name": "graphql-network-inspector",
   "version": "2.4.0",
   "private": true,
-  "dependencies": {
-    "@notdutzi/react-json-view": "^1.21.8",
-    "classnames": "^2.3.1",
-    "copy-to-clipboard": "^3.3.1",
-    "graphql": "^15.3.0",
-    "graphql-tag": "^2.11.0",
-    "mergeby": "^2.0.1",
-    "pretty-bytes": "^5.6.0",
-    "pretty-ms": "^7.0.1",
-    "react": "^16.13.1",
-    "react-code-blocks": "^0.0.8",
-    "react-dom": "^16.13.1",
-    "react-split-pane": "^0.1.92",
-    "react-table": "^7.5.0",
-    "ts-debounce": "^3.0.0",
-    "uuid": "^8.3.0"
-  },
   "scripts": {
     "start": "craco start",
     "build": "INLINE_RUNTIME_CHUNK=false craco build",
     "postbuild": "node ./scripts/set-manifest-version.js",
     "test": "craco test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint --max-warnings=0 src",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@notdutzi/react-json-view": "^1.21.8",
+    "classnames": "^2.3.1",
+    "copy-to-clipboard": "^3.3.1",
+    "graphql": "^16.0.1",
+    "graphql-tag": "^2.11.0",
+    "mergeby": "^2.0.1",
+    "pretty-bytes": "^5.6.0",
+    "pretty-ms": "^7.0.1",
+    "react": "^17.0.2",
+    "react-code-blocks": "^0.0.9-0",
+    "react-dom": "^17.0.2",
+    "react-split-pane": "^0.1.92",
+    "react-table": "^7.5.0",
+    "ts-debounce": "^4.0.0",
+    "uuid": "^8.3.0"
+  },
+  "devDependencies": {
+    "@craco/craco": "^6.2.0",
+    "@tailwindcss/forms": "^0.3.3",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^12.1.2",
+    "@types/chrome": "^0.0.154",
+    "@types/dedent": "^0.7.0",
+    "@types/graphql": "^14.5.0",
+    "@types/jest": "^26.0.24",
+    "@types/react": "^17.0.35",
+    "@types/react-dom": "^17.0.11",
+    "@types/react-table": "^7.0.22",
+    "@types/uuid": "^8.3.0",
+    "autoprefixer": "^9",
+    "copy-webpack-plugin": "^6.4.1",
+    "dedent": "^0.7.0",
+    "postcss": "^7",
+    "react-scripts": "^4.0.3",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat",
+    "typescript": "^4.0.3"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -40,28 +63,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@craco/craco": "^6.2.0",
-    "@tailwindcss/forms": "^0.3.3",
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.0.4",
-    "@types/chrome": "^0.0.154",
-    "@types/dedent": "^0.7.0",
-    "@types/graphql": "^14.5.0",
-    "@types/jest": "^24.0.0",
-    "@types/node": "^12.0.0",
-    "@types/react": "^16.9.0",
-    "@types/react-dom": "^16.9.0",
-    "@types/react-table": "^7.0.22",
-    "@types/uuid": "^8.3.0",
-    "autoprefixer": "^9",
-    "copy-webpack-plugin": "^6.4.1",
-    "dedent": "^0.7.0",
-    "postcss": "^7",
-    "react-scripts": "^4.0.3",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat",
-    "typescript": "^4.0.3"
   },
   "jest": {
     "moduleNameMapper": {

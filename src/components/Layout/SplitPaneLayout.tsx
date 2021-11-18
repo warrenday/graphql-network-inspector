@@ -1,11 +1,11 @@
-import React from "react";
+import { ReactElement } from "react";
 import SplitPane from "react-split-pane";
 import { HeadBodyLayout } from "./HeadBodyLayout";
 
 interface ISplitPaneLayoutProps {
-  header?: React.ReactElement;
-  leftPane?: React.ReactElement;
-  rightPane?: React.ReactElement;
+  header?: ReactElement;
+  leftPane?: ReactElement;
+  rightPane?: ReactElement;
 }
 
 export const SplitPaneLayout = (props: ISplitPaneLayoutProps) => {

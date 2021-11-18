@@ -1,6 +1,6 @@
-import React from "react";
+import { SVGAttributes } from "react";
 
-interface ICloseIconProps extends React.SVGAttributes<{}> {}
+interface ICloseIconProps extends SVGAttributes<{}> { }
 
 export const CloseIcon = (props: ICloseIconProps) => {
   const { width = "1.5rem", height = "1.5rem" } = props;
