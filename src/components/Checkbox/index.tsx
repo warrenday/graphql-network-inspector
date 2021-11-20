@@ -5,10 +5,11 @@ interface ICheckboxProps {
   checked: boolean;
   onChange: (value: boolean) => void;
   testId?: string;
+  disabled?: boolean;
 }
 
 export const Checkbox = (props: ICheckboxProps) => {
-  const { id, label, className, onChange, checked, testId } = props;
+  const { id, label, className, onChange, checked, testId, disabled } = props;
 
   const toggleChecked = () => {
     onChange(!checked);
@@ -24,6 +25,7 @@ export const Checkbox = (props: ICheckboxProps) => {
         id={id}
         type="checkbox"
         checked={checked}
+        disabled={disabled}
         onChange={toggleChecked}
         onKeyPress={(e) => e.key === "Enter" && toggleChecked()}
         className="dark:bg-gray-900 form-checkbox rounded-md w-5 h-5"
