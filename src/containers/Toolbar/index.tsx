@@ -12,6 +12,8 @@ interface IToolbarProps {
   onPreserveLogsChange: (preserveLogs: boolean) => void;
   inverted: boolean;
   onInvertedChange: (isInverted: boolean) => void;
+  isRegexActive: boolean;
+  setIsRegexActive: (isRegexActive: boolean) => void;
   onClear: () => void;
 }
 
@@ -23,6 +25,8 @@ export const Toolbar = (props: IToolbarProps) => {
     onPreserveLogsChange,
     inverted,
     onInvertedChange,
+    isRegexActive,
+    setIsRegexActive,
     onClear,
   } = props;
   const { setIsSearchOpen } = useSearch();
@@ -41,15 +45,24 @@ export const Toolbar = (props: IToolbarProps) => {
       <Textfield
         value={filterValue}
         onChange={onFilterValueChange}
-        placeholder="Filter"
+        placeholder={isRegexActive ? "/ab+c/" : "Filter"}
         testId="filter-input"
       />
       <Checkbox
         id="invert"
         label="Invert"
         checked={inverted}
+        disabled={isRegexActive}
         onChange={onInvertedChange}
         testId="inverted-checkbox"
+      />
+      <Checkbox
+        id="regex"
+        label="Regex"
+        disabled={inverted}
+        checked={isRegexActive}
+        onChange={setIsRegexActive}
+        testId="regex-checkbox"
       />
       <Checkbox
         id="preserveLog"
