@@ -31,7 +31,10 @@ const filterNetworkRequests = (
     const { operationName = "" } = networkRequest.request.primaryOperation;
 
     if (isRegexActive && regex) {
-      return !!operationName.match(regex);
+      if (isInverted) {
+        return !operationName.match(regex);
+      }
+      return operationName.match(regex);
     }
 
     const isIncluded = operationName
