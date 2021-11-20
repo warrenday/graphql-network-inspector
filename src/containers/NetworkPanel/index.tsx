@@ -6,6 +6,8 @@ import { Toolbar } from "../Toolbar";
 import { NetworkRequest } from "../../hooks/useNetworkMonitor";
 import { onNavigate } from "../../services/networkMonitor";
 
+const RegexParser = require("regex-parser");
+
 interface NetworkPanelProps {
   selectedRowId: string | number | null;
   setSelectedRowId: (selectedRowId: string | number | null) => void;
@@ -16,13 +18,21 @@ interface NetworkPanelProps {
 const filterNetworkRequests = (
   networkRequests: NetworkRequest[],
   filterValue: string,
-  isInverted: boolean
+  isInverted: boolean,
+  isRegexActive: boolean
 ) => {
   if (!filterValue?.trim()?.length) {
     return networkRequests;
   }
+
+  const regex = RegexParser(filterValue);
+
   return networkRequests.filter((networkRequest) => {
     const { operationName = "" } = networkRequest.request.primaryOperation;
+
+    if (isRegexActive && regex) {
+      return !!operationName.match(regex);
+    }
 
     const isIncluded = operationName
       .toLowerCase()
@@ -41,10 +51,12 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
   const [filterValue, setFilterValue] = useState("");
   const [isPreserveLogs, setIsPreserveLogs] = useState(false);
   const [isInverted, setIsInverted] = useState(false);
+  const [isRegexActive, setIsRegexActive] = useState(false);
   const filteredNetworkRequests = filterNetworkRequests(
     networkRequests,
     filterValue,
-    isInverted
+    isInverted,
+    isRegexActive
   );
   const selectedRequest = networkRequests.find(
     (request) => request.id === selectedRowId
@@ -68,6 +80,8 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
           onPreserveLogsChange={setIsPreserveLogs}
           inverted={isInverted}
           onInvertedChange={setIsInverted}
+          isRegexActive={isRegexActive}
+          setIsRegexActive={setIsRegexActive}
           onClear={() => {
             setSelectedRowId(null);
             clearWebRequests();
