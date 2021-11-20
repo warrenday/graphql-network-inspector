@@ -52,14 +52,12 @@ export const Toolbar = (props: IToolbarProps) => {
         id="invert"
         label="Invert"
         checked={inverted}
-        disabled={isRegexActive}
         onChange={onInvertedChange}
         testId="inverted-checkbox"
       />
       <Checkbox
         id="regex"
         label="Regex"
-        disabled={inverted}
         checked={isRegexActive}
         onChange={setIsRegexActive}
         testId="regex-checkbox"
