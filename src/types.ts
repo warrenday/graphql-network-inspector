@@ -1,30 +1,31 @@
-import { ExecutionResult } from "graphql";
+import { ExecutionResult } from "graphql"
 
 export type DeepPartial<T> = {
-  [P in keyof T]?: DeepPartial<T[P]>;
-};
+  [P in keyof T]?: DeepPartial<T[P]>
+}
 
-export interface IResponseBody extends ExecutionResult<unknown, IApolloServerExtensions> { }
+export interface IResponseBody
+  extends ExecutionResult<unknown, IApolloServerExtensions> {}
 
 export interface IApolloServerExtensions {
-  tracing?: IApolloServerTracing;
+  tracing?: IApolloServerTracing
 }
 
 export interface IApolloServerTracing {
-  version: number;
-  startTime: string;
-  endTime: string;
-  duration: number;
+  version: number
+  startTime: string
+  endTime: string
+  duration: number
   execution: {
-    resolvers: IApolloServerTracingResolvers[];
+    resolvers: IApolloServerTracingResolvers[]
   }
 }
 
 export interface IApolloServerTracingResolvers {
-  path: Array<string | number>;
-  parentType: string;
-  fieldName: string;
-  returnType: string;
-  startOffset: number;
-  duration: number;
+  path: Array<string | number>
+  parentType: string
+  fieldName: string
+  returnType: string
+  startOffset: number
+  duration: number
 }

@@ -4,22 +4,22 @@ export const stringify = (
   space?: string | number
 ): string => {
   if (!value) {
-    return "";
+    return ""
   }
   try {
-    return JSON.stringify(value, replacer, space);
+    return JSON.stringify(value, replacer, space)
   } catch (e) {
-    return "{}";
+    return "{}"
   }
-};
+}
 
 export const parse = <T extends {}>(
   text?: string,
   reviver?: (this: any, key: string, value: any) => any
 ): T | null => {
   try {
-    return JSON.parse(text as string, reviver);
+    return JSON.parse(text as string, reviver)
   } catch (e) {
-    return null;
+    return null
   }
-};
+}

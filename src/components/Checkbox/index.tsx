@@ -1,18 +1,18 @@
 interface ICheckboxProps {
-  id?: string;
-  label: string;
-  className?: string;
-  checked: boolean;
-  onChange: (value: boolean) => void;
-  testId?: string;
+  id?: string
+  label: string
+  className?: string
+  checked: boolean
+  onChange: (value: boolean) => void
+  testId?: string
 }
 
 export const Checkbox = (props: ICheckboxProps) => {
-  const { id, label, className, onChange, checked, testId } = props;
+  const { id, label, className, onChange, checked, testId } = props
 
   const toggleChecked = () => {
-    onChange(!checked);
-  };
+    onChange(!checked)
+  }
 
   return (
     <label
@@ -32,5 +32,5 @@ export const Checkbox = (props: ICheckboxProps) => {
         {label}
       </span>
     </label>
-  );
-};
+  )
+}

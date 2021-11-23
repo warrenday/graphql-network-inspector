@@ -1,6 +1,6 @@
-import { mockRequests } from "../mocks/mock-requests";
+import { mockRequests } from "../mocks/mock-requests"
 
-let removeListeners: Record<string, () => void> = {};
+let removeListeners: Record<string, () => void> = {}
 
 export const mockChrome = {
   devtools: {
@@ -9,7 +9,7 @@ export const mockChrome = {
     },
     network: {
       getHAR: (cb) => {
-        cb({ entries: mockRequests } as any);
+        cb({ entries: mockRequests } as any)
       },
       onRequestFinished: {
         addListener: (cb) => {
@@ -17,16 +17,16 @@ export const mockChrome = {
           const handleKeydown = (e: KeyboardEvent) => {
             if (e.code === "Digit1") {
               mockRequests.forEach((mockRequest) => {
-                cb(mockRequest as any);
-              });
+                cb(mockRequest as any)
+              })
             }
-          };
-          window.addEventListener("keydown", handleKeydown);
+          }
+          window.addEventListener("keydown", handleKeydown)
           removeListeners.onRequestFinished = () =>
-            window.removeEventListener("keydown", handleKeydown);
+            window.removeEventListener("keydown", handleKeydown)
         },
         removeListener: (cb) => {
-          removeListeners.onRequestFinished();
+          removeListeners.onRequestFinished()
         },
       },
       onNavigated: {
@@ -35,4 +35,4 @@ export const mockChrome = {
       },
     },
   },
-} as typeof chrome;
+} as typeof chrome

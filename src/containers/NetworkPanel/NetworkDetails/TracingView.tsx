@@ -1,13 +1,13 @@
-import { TracingVisualization } from "@/components/TracingVisualization";
-import { useApolloTracing } from "@/hooks/useApolloTracing";
+import { TracingVisualization } from "@/components/TracingVisualization"
+import { useApolloTracing } from "@/hooks/useApolloTracing"
 
 interface ITracingViewProps {
-  response?: string;
+  response?: string
 }
 
 export const TracingView = (props: ITracingViewProps) => {
-  const { response } = props;
-  const tracing = useApolloTracing(response);
+  const { response } = props
+  const tracing = useApolloTracing(response)
 
   return (
     <div className="relative p-4">
@@ -17,5 +17,5 @@ export const TracingView = (props: ITracingViewProps) => {
         <p>No tracing found.</p>
       )}
     </div>
-  );
-};
+  )
+}

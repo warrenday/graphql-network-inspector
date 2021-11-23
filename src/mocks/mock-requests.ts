@@ -1,16 +1,16 @@
-import dedent from "dedent";
+import dedent from "dedent"
 
-const url = "http://graphql-network-monitor.com/graphql";
+const url = "http://graphql-network-monitor.com/graphql"
 
 const createRequest = ({
   request,
   response,
 }: {
   request: {
-    query: string;
-    variables: object;
-  }[];
-  response: object;
+    query: string
+    variables: object
+  }[]
+  response: object
 }) => {
   return {
     time: 1099.4580000406131,
@@ -59,10 +59,10 @@ const createRequest = ({
       bodySize: 3364,
     },
     getContent: (cb: Function) => {
-      cb(JSON.stringify(response));
+      cb(JSON.stringify(response))
     },
-  };
-};
+  }
+}
 
 export const mockRequests = [
   createRequest({
@@ -453,4 +453,4 @@ export const mockRequests = [
       ],
     },
   }),
-];
+]

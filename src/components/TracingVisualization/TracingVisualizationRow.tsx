@@ -1,20 +1,22 @@
-import { useMemo } from "react";
-import { nsToMs } from "@/helpers/nsToMs";
-import { useBoundingRect } from "@/hooks/useBoundingRect";
+import { useMemo } from "react"
+import { nsToMs } from "@/helpers/nsToMs"
+import { useBoundingRect } from "@/hooks/useBoundingRect"
 
 interface ITracingVisualizationRowProps {
-  name?: string;
-  type?: string;
-  color?: 'green' | 'purple' | 'indigo';
-  total: number;
-  offset?: number;
-  duration: number;
+  name?: string
+  type?: string
+  color?: "green" | "purple" | "indigo"
+  total: number
+  offset?: number
+  duration: number
 }
 
-export const TracingVisualizationRow = (props: ITracingVisualizationRowProps) => {
-  const { name, total, offset, duration, type, color } = props;
+export const TracingVisualizationRow = (
+  props: ITracingVisualizationRowProps
+) => {
+  const { name, total, offset, duration, type, color } = props
 
-  const backgroundColorCss = getBackgroundColors(color || type);
+  const backgroundColorCss = getBackgroundColors(color || type)
 
   const { container, width } = useBoundingRect()
   const {
@@ -24,15 +26,20 @@ export const TracingVisualizationRow = (props: ITracingVisualizationRowProps) =>
     showAllBeforeDuration,
     widthPercentageCss,
   } = useMemo(() => {
-    const percentage = 100 / (width || 1);
-    const marginLeftPercentage = ((offset || 0) / total) * 100;
-    const widthPercentage = (duration / total) * 100;
-    const isAt100 = (marginLeftPercentage + percentage) >= 100
-    const marginLeftCss = isAt100 ? `calc(${marginLeftPercentage}% - 1px)` : `${marginLeftPercentage}%`;
-    const widthPercentageCss = widthPercentage <= percentage ? "1px" : `${widthPercentage}%`;
+    const percentage = 100 / (width || 1)
+    const marginLeftPercentage = ((offset || 0) / total) * 100
+    const widthPercentage = (duration / total) * 100
+    const isAt100 = marginLeftPercentage + percentage >= 100
+    const marginLeftCss = isAt100
+      ? `calc(${marginLeftPercentage}% - 1px)`
+      : `${marginLeftPercentage}%`
+    const widthPercentageCss =
+      widthPercentage <= percentage ? "1px" : `${widthPercentage}%`
 
-    const showBeforeDuration = widthPercentage <= 50 && marginLeftPercentage >= 50;
-    const showAllBeforeDuration = showBeforeDuration && marginLeftPercentage > 90;
+    const showBeforeDuration =
+      widthPercentage <= 50 && marginLeftPercentage >= 50
+    const showAllBeforeDuration =
+      showBeforeDuration && marginLeftPercentage > 90
 
     return {
       marginLeftPercentage,
@@ -46,36 +53,29 @@ export const TracingVisualizationRow = (props: ITracingVisualizationRowProps) =>
   return (
     <div ref={container} className={`w-full mb-1 whitespace-nowrap`}>
       {marginLeftPercentage > 0 && (
-        <div className="inline-block text-right" style={{ width: marginLeftCss }}>
-          {showBeforeDuration && (
-            <span className="pr-2">
-              {name || ''}
-            </span>
-          )}
+        <div
+          className="inline-block text-right"
+          style={{ width: marginLeftCss }}
+        >
+          {showBeforeDuration && <span className="pr-2">{name || ""}</span>}
 
           {showAllBeforeDuration && (
-            <span className="pr-2">
-              {nsToMs(duration)} ms
-            </span>
+            <span className="pr-2">{nsToMs(duration)} ms</span>
           )}
         </div>
       )}
 
-
-      <div className={`inline-block ${backgroundColorCss}`} style={{ width: widthPercentageCss }}>
+      <div
+        className={`inline-block ${backgroundColorCss}`}
+        style={{ width: widthPercentageCss }}
+      >
         <div className="flex justify-between">
-          {!showBeforeDuration && (
-            <span className="pl-2">
-              {(name || '')}
-            </span>
-          )}
+          {!showBeforeDuration && <span className="pl-2">{name || ""}</span>}
 
           {showAllBeforeDuration ? (
             <>&nbsp;</>
           ) : (
-            <span className="pr-2 pl-2">
-              {nsToMs(duration)} ms
-            </span>
+            <span className="pr-2 pl-2">{nsToMs(duration)} ms</span>
           )}
         </div>
       </div>
@@ -87,14 +87,14 @@ const getBackgroundColors = (type: string = "") => {
   switch (type.toUpperCase()) {
     case "GREEN":
     case "TOTAL":
-      return "bg-green-400 dark:bg-green-700";
+      return "bg-green-400 dark:bg-green-700"
     case "PURPLE":
     case "QUERY":
     case "MUTATION":
     case "SUBSCRIPTION":
-      return "bg-purple-400 dark:bg-purple-700";
+      return "bg-purple-400 dark:bg-purple-700"
     default:
     case "INDIGO":
-      return "bg-indigo-400 dark:bg-indigo-700";
+      return "bg-indigo-400 dark:bg-indigo-700"
   }
 }
