@@ -239,4 +239,34 @@ describe("Main", () => {
       }
     })
   })
+
+  it("filters network data with the given regex query", async () => {
+    const { getByTestId, queryByTestId } = render(<Main />)
+    const table = queryByTestId("network-table")
+    const { queryAllByRole, getByText } = within(table!)
+    const filterInput = getByTestId("filter-input") as HTMLInputElement
+
+    await waitFor(() => {
+      expect(getByText(/getMovie/i)).toBeInTheDocument()
+    })
+
+    act(() => {
+      fireEvent.click(getByTestId("regex-checkbox"))
+    })
+
+    act(() => {
+      fireEvent.change(filterInput, {
+        target: { value: "/getMovie/" },
+      })
+    })
+
+    expect(filterInput.value).toBe("/getMovie/")
+    expect(queryAllByRole("row")).toHaveLength(2)
+    queryAllByRole("row").forEach((row, i) => {
+      // First row is header
+      if (i !== 0) {
+        expect(row).toHaveTextContent("getMovie")
+      }
+    })
+  })
 })

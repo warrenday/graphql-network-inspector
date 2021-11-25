@@ -6,6 +6,8 @@ import { Toolbar } from "../Toolbar"
 import { NetworkRequest } from "../../hooks/useNetworkMonitor"
 import { onNavigate } from "../../services/networkMonitor"
 
+const RegexParser = require("regex-parser");
+
 interface NetworkPanelProps {
   selectedRowId: string | number | null
   setSelectedRowId: (selectedRowId: string | number | null) => void
@@ -16,13 +18,24 @@ interface NetworkPanelProps {
 const filterNetworkRequests = (
   networkRequests: NetworkRequest[],
   filterValue: string,
-  isInverted: boolean
+  isInverted: boolean,
+  regexActive: boolean
 ) => {
   if (!filterValue?.trim()?.length) {
     return networkRequests
   }
+
+  const regex = RegexParser(filterValue);
+
   return networkRequests.filter((networkRequest) => {
     const { operationName = "" } = networkRequest.request.primaryOperation
+
+    if (regexActive && regex) {
+      if (isInverted) {
+        return !operationName.match(regex);
+      }
+      return operationName.match(regex);
+    }
 
     const isIncluded = operationName
       .toLowerCase()
@@ -38,14 +51,17 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
   const { networkRequests, clearWebRequests, selectedRowId, setSelectedRowId } =
     props
 
-  const [filterValue, setFilterValue] = useState("")
-  const [isPreserveLogs, setIsPreserveLogs] = useState(false)
-  const [isInverted, setIsInverted] = useState(false)
+  const [filterValue, setFilterValue] = useState("");
+  const [isPreserveLogs, setIsPreserveLogs] = useState(false);
+  const [isInverted, setIsInverted] = useState(false);
+  const [regexActive, onRegexActiveChange] = useState(false);
   const filteredNetworkRequests = filterNetworkRequests(
     networkRequests,
     filterValue,
-    isInverted
-  )
+    isInverted,
+    regexActive
+  );
+        
   const selectedRequest = networkRequests.find(
     (request) => request.id === selectedRowId
   )
@@ -68,6 +84,8 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
           onPreserveLogsChange={setIsPreserveLogs}
           inverted={isInverted}
           onInvertedChange={setIsInverted}
+          regexActive={regexActive}
+          onRegexActiveChange={onRegexActiveChange}
           onClear={() => {
             setSelectedRowId(null)
             clearWebRequests()
