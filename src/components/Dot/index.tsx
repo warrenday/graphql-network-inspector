@@ -1,11 +1,11 @@
-import { FC } from "react";
+import { FC } from "react"
 
 interface IDotProps {
-  title?: string;
+  title?: string
 }
 
 export const Dot: FC<IDotProps> = (props) => {
-  const { title, children } = props;
+  const { title, children } = props
 
   return (
     <div
@@ -16,5 +16,5 @@ export const Dot: FC<IDotProps> = (props) => {
     >
       {children}
     </div>
-  );
-};
+  )
+}

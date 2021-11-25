@@ -1,18 +1,18 @@
-import { ReactElement, FC } from "react";
-import cx from "classnames";
+import { ReactElement, FC } from "react"
+import cx from "classnames"
 
 interface IButtonProps {
-  icon?: ReactElement;
-  onClick: () => void;
-  className?: string;
-  variant?: "default" | "contained";
-  testId?: string;
+  icon?: ReactElement
+  onClick: () => void
+  className?: string
+  variant?: "default" | "contained"
+  testId?: string
 }
 
 const defaultVariantStyle = `
   text-gray-500 hover:text-gray-700
   dark:text-gray-400 dark:hover:text-gray-300
-`;
+`
 
 const containedVariantStyle = `
   text-gray-500 hover:text-gray-400
@@ -21,7 +21,7 @@ const containedVariantStyle = `
   dark:text-gray-400 dark:hover:text-white
   dark:bg-gray-700 dark:hover:bg-gray-600
   p-2 px-2.5
-`;
+`
 
 export const Button: FC<IButtonProps> = (props) => {
   const {
@@ -31,7 +31,7 @@ export const Button: FC<IButtonProps> = (props) => {
     variant = "default",
     className,
     testId,
-  } = props;
+  } = props
 
   return (
     <button
@@ -49,5 +49,5 @@ export const Button: FC<IButtonProps> = (props) => {
       {icon && <span>{icon}</span>}
       {children && <span className={icon && "pl-2"}>{children}</span>}
     </button>
-  );
-};
+  )
+}

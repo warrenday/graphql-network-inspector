@@ -1,13 +1,13 @@
-import { IApolloServerTracing } from "@/types";
-import { TracingVisualizationRow } from ".";
+import { IApolloServerTracing } from "@/types"
+import { TracingVisualizationRow } from "."
 
 interface ITracingVisualizationProps {
-  tracing?: IApolloServerTracing;
+  tracing?: IApolloServerTracing
 }
 
 export const TracingVisualization = (props: ITracingVisualizationProps) => {
-  const { tracing } = props;
-  const totalTimeNs = tracing?.duration || 0;
+  const { tracing } = props
+  const totalTimeNs = tracing?.duration || 0
 
   return (
     <>
@@ -18,11 +18,11 @@ export const TracingVisualization = (props: ITracingVisualizationProps) => {
         duration={totalTimeNs}
       />
 
-      {tracing?.execution.resolvers.map(a => (
+      {tracing?.execution.resolvers.map((a) => (
         <TracingVisualizationRow
-          key={a.path.join('.')}
+          key={a.path.join(".")}
           type={a.parentType}
-          name={a.path.join('.')}
+          name={a.path.join(".")}
           total={totalTimeNs}
           offset={a.startOffset}
           duration={a.duration}

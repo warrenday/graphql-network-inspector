@@ -1,29 +1,29 @@
-import { chromeProvider } from "./chromeProvider";
+import { chromeProvider } from "./chromeProvider"
 
 export const getHAR = async (): Promise<chrome.devtools.network.HARLog> => {
-  const chrome = chromeProvider();
+  const chrome = chromeProvider()
   return new Promise((resolve) => {
     chrome.devtools.network.getHAR((harLog) => {
-      resolve(harLog);
-    });
-  });
-};
+      resolve(harLog)
+    })
+  })
+}
 
 export const onRequestFinished = (
   cb: (e: chrome.devtools.network.Request) => void
 ) => {
-  const chrome = chromeProvider();
+  const chrome = chromeProvider()
 
-  chrome.devtools.network.onRequestFinished.addListener(cb);
+  chrome.devtools.network.onRequestFinished.addListener(cb)
   return () => {
-    chrome.devtools.network.onRequestFinished.removeListener(cb);
-  };
-};
+    chrome.devtools.network.onRequestFinished.removeListener(cb)
+  }
+}
 
 export const onNavigate = (cb: () => void) => {
-  const chrome = chromeProvider();
-  chrome.devtools.network.onNavigated.addListener(cb);
+  const chrome = chromeProvider()
+  chrome.devtools.network.onNavigated.addListener(cb)
   return () => {
-    chrome.devtools.network.onNavigated.removeListener(cb);
-  };
-};
+    chrome.devtools.network.onNavigated.removeListener(cb)
+  }
+}

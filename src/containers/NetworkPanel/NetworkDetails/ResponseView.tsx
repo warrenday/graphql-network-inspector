@@ -1,21 +1,21 @@
-import { useMemo } from "react";
-import * as safeJson from "../../../helpers/safeJson";
-import { JsonView } from "../../../components/JsonView";
-import { CopyButton } from "../../../components/CopyButton";
+import { useMemo } from "react"
+import * as safeJson from "../../../helpers/safeJson"
+import { JsonView } from "../../../components/JsonView"
+import { CopyButton } from "../../../components/CopyButton"
 
 interface IResponseViewProps {
-  response?: string;
+  response?: string
 }
 
 export const ResponseView = (props: IResponseViewProps) => {
-  const { response } = props;
+  const { response } = props
   const { formattedJson, parsedResponse } = useMemo(() => {
-    const parsedResponse = safeJson.parse(response) || {};
+    const parsedResponse = safeJson.parse(response) || {}
     return {
       formattedJson: safeJson.stringify(parsedResponse, undefined, 2),
       parsedResponse,
-    };
-  }, [response]);
+    }
+  }, [response])
 
   return (
     <div className="relative p-4">
@@ -25,5 +25,5 @@ export const ResponseView = (props: IResponseViewProps) => {
       />
       <JsonView src={parsedResponse} />
     </div>
-  );
-};
+  )
+}

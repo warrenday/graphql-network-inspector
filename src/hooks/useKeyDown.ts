@@ -1,18 +1,18 @@
-import { useEffect } from "react";
+import { useEffect } from "react"
 
-type Code = "ArrowDown" | "ArrowUp" | "Enter";
+type Code = "ArrowDown" | "ArrowUp" | "Enter"
 
 export const useKeyDown = (code: Code, cb: () => void) => {
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       if (event.code === code) {
-        cb();
+        cb()
       }
-    };
-    window.addEventListener("keydown", handleKeyPress);
+    }
+    window.addEventListener("keydown", handleKeyPress)
 
     return () => {
-      window.removeEventListener("keydown", handleKeyPress);
-    };
-  }, [code, cb]);
-};
+      window.removeEventListener("keydown", handleKeyPress)
+    }
+  }, [code, cb])
+}

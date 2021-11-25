@@ -1,19 +1,19 @@
-import { Panels, PanelSection } from "./PanelSection";
-import { CodeBlock } from "../../../components/CodeBlock";
-import { CopyButton } from "../../../components/CopyButton";
-import * as safeJson from "../../../helpers/safeJson";
-import { IGraphqlRequestBody } from "../../../helpers/graphqlHelpers";
+import { Panels, PanelSection } from "./PanelSection"
+import { CodeBlock } from "../../../components/CodeBlock"
+import { CopyButton } from "../../../components/CopyButton"
+import * as safeJson from "../../../helpers/safeJson"
+import { IGraphqlRequestBody } from "../../../helpers/graphqlHelpers"
 
 interface IRequestViewProps {
-  requests: IGraphqlRequestBody[];
+  requests: IGraphqlRequestBody[]
 }
 
 const isVariablesPopulated = (request: IGraphqlRequestBody) => {
-  return Object.keys(request.variables || {}).length > 0;
-};
+  return Object.keys(request.variables || {}).length > 0
+}
 
 export const RequestView = (props: IRequestViewProps) => {
-  const { requests } = props;
+  const { requests } = props
 
   return (
     <Panels>
@@ -34,8 +34,8 @@ export const RequestView = (props: IRequestViewProps) => {
               </div>
             )}
           </PanelSection>
-        );
+        )
       })}
     </Panels>
-  );
-};
+  )
+}
