@@ -19,7 +19,7 @@ const filterNetworkRequests = (
   networkRequests: NetworkRequest[],
   filterValue: string,
   isInverted: boolean,
-  isRegexActive: boolean
+  regexActive: boolean
 ) => {
   if (!filterValue?.trim()?.length) {
     return networkRequests
@@ -30,7 +30,7 @@ const filterNetworkRequests = (
   return networkRequests.filter((networkRequest) => {
     const { operationName = "" } = networkRequest.request.primaryOperation
 
-    if (isRegexActive && regex) {
+    if (regexActive && regex) {
       if (isInverted) {
         return !operationName.match(regex);
       }
@@ -54,12 +54,12 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
   const [filterValue, setFilterValue] = useState("");
   const [isPreserveLogs, setIsPreserveLogs] = useState(false);
   const [isInverted, setIsInverted] = useState(false);
-  const [isRegexActive, setIsRegexActive] = useState(false);
+  const [regexActive, onRegexActiveChange] = useState(false);
   const filteredNetworkRequests = filterNetworkRequests(
     networkRequests,
     filterValue,
     isInverted,
-    isRegexActive
+    regexActive
   );
         
   const selectedRequest = networkRequests.find(
@@ -84,8 +84,8 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
           onPreserveLogsChange={setIsPreserveLogs}
           inverted={isInverted}
           onInvertedChange={setIsInverted}
-          isRegexActive={isRegexActive}
-          setIsRegexActive={setIsRegexActive}
+          regexActive={regexActive}
+          onRegexActiveChange={onRegexActiveChange}
           onClear={() => {
             setSelectedRowId(null)
             clearWebRequests()
