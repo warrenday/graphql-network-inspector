@@ -26,7 +26,7 @@ export const Checkbox = (props: ICheckboxProps) => {
         checked={checked}
         onChange={toggleChecked}
         onKeyPress={(e) => e.key === "Enter" && toggleChecked()}
-        className="dark:bg-gray-900 form-checkbox rounded-md w-5 h-5"
+        className="form-checkbox dark:bg-gray-900 rounded-md w-5 h-5"
       />
       <span className="pl-3 text-gray-500 dark:text-gray-400 font-bold">
         {label}

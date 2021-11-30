@@ -6,15 +6,15 @@ import { Textfield } from "../../components/Textfield"
 import { useSearch } from "../../hooks/useSearch"
 
 interface IToolbarProps {
-  filterValue: string;
-  onFilterValueChange: (filterValue: string) => void;
-  preserveLogs: boolean;
-  onPreserveLogsChange: (preserveLogs: boolean) => void;
-  inverted: boolean;
-  onInvertedChange: (isInverted: boolean) => void;
-  regexActive: boolean;
-  onRegexActiveChange: (regexActive: boolean) => void;
-  onClear: () => void;
+  filterValue: string
+  onFilterValueChange: (filterValue: string) => void
+  preserveLogs: boolean
+  onPreserveLogsChange: (preserveLogs: boolean) => void
+  inverted: boolean
+  onInvertedChange: (inverted: boolean) => void
+  regexActive: boolean
+  onRegexActiveChange: (regexActive: boolean) => void
+  onClear: () => void
 }
 
 export const Toolbar = (props: IToolbarProps) => {
