@@ -4,6 +4,7 @@ import { useDarkTheme } from "../../hooks/useTheme";
 
 type JsonViewProps = {
   src: object;
+  collapsed?: number;
 };
 
 export const JsonView = (props: JsonViewProps) => {
@@ -18,7 +19,7 @@ export const JsonView = (props: JsonViewProps) => {
         enableClipboard={false}
         displayDataTypes={false}
         displayObjectSize={true}
-        collapsed={2}
+        collapsed={props.collapsed || 2}
       />
     </div>
   );

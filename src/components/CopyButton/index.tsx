@@ -2,13 +2,15 @@ import React, { useState, useEffect } from "react";
 import copy from "copy-to-clipboard";
 
 type CopyButtonProps = {
+  label?: string;
   textToCopy: string;
   className?: string;
 };
 
 export const CopyButton = (props: CopyButtonProps) => {
-  const { textToCopy, className } = props;
+  const { label, textToCopy, className } = props;
   const [copied, setCopied] = useState(false);
+  const buttonLabel = label || "Copy";
 
   useEffect(() => {
     if (copied) {
@@ -30,7 +32,7 @@ export const CopyButton = (props: CopyButtonProps) => {
           setCopied(true);
         }}
       >
-        {copied ? "Copied!" : "Copy"}
+        {copied ? "Copied!" : buttonLabel}
       </button>
     </div>
   );

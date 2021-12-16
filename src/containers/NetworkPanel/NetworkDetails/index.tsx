@@ -20,6 +20,7 @@ export const NetworkDetails = (props: NetworkDetailsProps) => {
   const responseHeaders = data.response?.headers || [];
   const requestBody = data.request.body;
   const responseBody = data.response?.body;
+  const responseCollapsedCount = requestBody.length > 1 ? 3 : 2;
 
   return (
     <Tabs
@@ -46,7 +47,12 @@ export const NetworkDetails = (props: NetworkDetailsProps) => {
         {
           id: "response",
           title: "Response",
-          component: <ResponseView response={responseBody} />,
+          component: (
+            <ResponseView
+              response={responseBody}
+              collapsed={responseCollapsedCount}
+            />
+          ),
         },
         {
           id: "response-raw",

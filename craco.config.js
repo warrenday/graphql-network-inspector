@@ -15,6 +15,9 @@ module.exports = ({ env }) => {
     },
     webpack: {
       configure: {
+        // To access source maps during development as an unpacked extension
+        // we need source maps to be inline, otherwise chrome will not load
+        // them corretly.
         devtool: isEnvDevelopment ? "inline-source-map" : false,
         resolve: {
           extensions: [".ts", ".tsx", ".json"],
@@ -37,6 +40,9 @@ module.exports = ({ env }) => {
       ],
     },
     devServer: {
+      // This allows use to develop via an unpacked extension in chrome
+      // During development changes are written to disk, so we can see changes
+      // within the loaded extension within needing to re-build the entire bundle
       writeToDisk: true,
     },
   };

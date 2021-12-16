@@ -5,10 +5,11 @@ import { CopyButton } from "../../../components/CopyButton";
 
 interface IResponseViewProps {
   response?: string;
+  collapsed?: number;
 }
 
 export const ResponseView = (props: IResponseViewProps) => {
-  const { response } = props;
+  const { response, collapsed } = props;
   const { formattedJson, parsedResponse } = useMemo(() => {
     const parsedResponse = safeJson.parse(response) || {};
     return {
@@ -23,7 +24,7 @@ export const ResponseView = (props: IResponseViewProps) => {
         textToCopy={formattedJson}
         className="absolute right-6 top-6 z-10"
       />
-      <JsonView src={parsedResponse} />
+      <JsonView src={parsedResponse} collapsed={collapsed} />
     </div>
   );
 };

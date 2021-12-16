@@ -25,6 +25,13 @@ export const RequestView = (props: IRequestViewProps) => {
               textToCopy={request.query}
               className="absolute right-6 top-6 z-10"
             />
+            {isVariablesPopulated(request) && (
+              <CopyButton
+                label="Copy Vars"
+                textToCopy={safeJson.stringify(request.variables, undefined, 2)}
+                className="absolute right-6 top-6 z-10 mt-12"
+              />
+            )}
             <CodeBlock text={request.query} language={"graphql"} />
             {isVariablesPopulated(request) && (
               <div className="bg-gray-200 dark:bg-gray-800 rounded-lg">
