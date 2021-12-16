@@ -1,34 +1,34 @@
-import React, { useMemo, useState } from "react";
-import { Textfield } from "../../components/Textfield";
-import { useKeyDown } from "../../hooks/useKeyDown";
-import { NetworkRequest } from "../../hooks/useNetworkMonitor";
-import { useSearch } from "../../hooks/useSearch";
-import { NetworkTabs } from "../../hooks/useNetworkTabs";
-import { getSearchResults, ISearchResult } from "../../services/searchService";
-import { SearchResults } from "./SearchResults";
-import { Header } from "../../components/Header";
-import { CloseButton } from "../../components/CloseButton";
+import { useMemo, useState } from "react"
+import { Textfield } from "../../components/Textfield"
+import { useKeyDown } from "../../hooks/useKeyDown"
+import { NetworkRequest } from "../../hooks/useNetworkMonitor"
+import { useSearch } from "../../hooks/useSearch"
+import { NetworkTabs } from "../../hooks/useNetworkTabs"
+import { getSearchResults, ISearchResult } from "../../services/searchService"
+import { SearchResults } from "./SearchResults"
+import { Header } from "../../components/Header"
+import { CloseButton } from "../../components/CloseButton"
 
 interface ISearchPanelProps {
-  networkRequests: NetworkRequest[];
+  networkRequests: NetworkRequest[]
   onResultClick: (
     searchResult: ISearchResult,
     searchResultType: NetworkTabs
-  ) => void;
+  ) => void
 }
 
 export const SearchPanel = (props: ISearchPanelProps) => {
-  const { networkRequests, onResultClick } = props;
-  const [searchInput, setSearchInput] = useState("");
-  const { searchQuery, setSearchQuery, setIsSearchOpen } = useSearch();
+  const { networkRequests, onResultClick } = props
+  const [searchInput, setSearchInput] = useState("")
+  const { searchQuery, setSearchQuery, setIsSearchOpen } = useSearch()
   const searchResults = useMemo(
     () => getSearchResults(searchQuery, networkRequests),
     [searchQuery, networkRequests]
-  );
+  )
 
   useKeyDown("Enter", () => {
-    setSearchQuery(searchInput);
-  });
+    setSearchQuery(searchInput)
+  })
 
   return (
     <div
@@ -36,7 +36,12 @@ export const SearchPanel = (props: ISearchPanelProps) => {
       data-testid="search-panel"
     >
       <Header
-        rightContent={<CloseButton onClick={() => setIsSearchOpen(false)} />}
+        rightContent={
+          <CloseButton
+            onClick={() => setIsSearchOpen(false)}
+            className="mr-2"
+          />
+        }
       >
         <div className="flex items-center pl-2" style={{ height: "3.5rem" }}>
           <h2 className="font-bold">Search</h2>
@@ -62,5 +67,5 @@ export const SearchPanel = (props: ISearchPanelProps) => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}

@@ -9,7 +9,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.4.x]
+        node-version: [16]
 
     steps:
       - name: Cancel Previous Runs
@@ -28,9 +28,20 @@ jobs:
         run: |
           npm install yarn -g
 
-      - name: yarn install and test
+      - name: install
         run: |
           yarn install
+
+      - name: check types
+        run: |
+          yarn check-types
+
+      - name: lint
+        run: |
+          yarn lint
+
+      - name: test
+        run: |
           yarn test
         env:
           CI: true

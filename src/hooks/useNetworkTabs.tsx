@@ -1,4 +1,4 @@
-import React, { useState, createContext, useContext } from "react";
+import { useState, createContext, useContext } from "react"
 
 export enum NetworkTabs {
   HEADER,
@@ -8,15 +8,15 @@ export enum NetworkTabs {
 }
 
 const NetworkTabsContext = createContext<{
-  activeTab: number;
-  setActiveTab: React.Dispatch<React.SetStateAction<number>>;
+  activeTab: number
+  setActiveTab: React.Dispatch<React.SetStateAction<number>>
 }>({
   activeTab: 1,
   setActiveTab: () => null,
-});
+})
 
 export const NetworkTabsProvider: React.FC = ({ children }) => {
-  const [activeTab, setActiveTab] = useState(NetworkTabs.REQUEST);
+  const [activeTab, setActiveTab] = useState(NetworkTabs.REQUEST)
 
   return (
     <NetworkTabsContext.Provider
@@ -27,14 +27,14 @@ export const NetworkTabsProvider: React.FC = ({ children }) => {
     >
       {children}
     </NetworkTabsContext.Provider>
-  );
-};
+  )
+}
 
 export const useNetworkTabs = () => {
-  const { activeTab, setActiveTab } = useContext(NetworkTabsContext);
+  const { activeTab, setActiveTab } = useContext(NetworkTabsContext)
 
   return {
     activeTab,
     setActiveTab,
-  };
-};
+  }
+}

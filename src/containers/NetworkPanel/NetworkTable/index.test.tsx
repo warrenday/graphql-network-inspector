@@ -1,6 +1,5 @@
-import React from "react";
-import { NetworkTable } from "./index";
-import { render, fireEvent } from "@testing-library/react";
+import { NetworkTable } from "./index"
+import { render, fireEvent } from "@testing-library/react"
 
 const request = {
   time: 1000,
@@ -16,7 +15,7 @@ const request = {
   response: {
     bodySize: 1000,
   },
-};
+}
 
 const data = [
   {
@@ -31,76 +30,72 @@ const data = [
     id: "3",
     ...request,
   },
-] as any[];
+] as any[]
 
 test("Selects next row when pressing the down arrow", () => {
-  const mockOnRowSelect = jest.fn();
+  const mockOnRowSelect = jest.fn()
   const { getByTestId } = render(
     <NetworkTable
       data={data}
       onRowClick={() => {}}
       onRowSelect={mockOnRowSelect}
-      onClear={() => {}}
       selectedRowId="2"
     />
-  );
-  const table = getByTestId("network-table");
+  )
+  const table = getByTestId("network-table")
 
-  fireEvent.keyDown(table, { code: "ArrowDown" });
+  fireEvent.keyDown(table, { code: "ArrowDown" })
 
-  expect(mockOnRowSelect).toHaveBeenCalledWith("3");
-});
+  expect(mockOnRowSelect).toHaveBeenCalledWith("3")
+})
 
 test("Selects previous row when pressing the up arrow", () => {
-  const mockOnRowSelect = jest.fn();
+  const mockOnRowSelect = jest.fn()
   const { getByTestId } = render(
     <NetworkTable
       data={data}
       onRowClick={() => {}}
       onRowSelect={mockOnRowSelect}
-      onClear={() => {}}
       selectedRowId="2"
     />
-  );
-  const table = getByTestId("network-table");
+  )
+  const table = getByTestId("network-table")
 
-  fireEvent.keyDown(table, { code: "ArrowUp" });
+  fireEvent.keyDown(table, { code: "ArrowUp" })
 
-  expect(mockOnRowSelect).toHaveBeenCalledWith("1");
-});
+  expect(mockOnRowSelect).toHaveBeenCalledWith("1")
+})
 
 test("Remains on bottom row when pressing the down arrow", () => {
-  const mockOnRowSelect = jest.fn();
+  const mockOnRowSelect = jest.fn()
   const { getByTestId } = render(
     <NetworkTable
       data={data}
       onRowClick={() => {}}
       onRowSelect={mockOnRowSelect}
-      onClear={() => {}}
       selectedRowId="3"
     />
-  );
-  const table = getByTestId("network-table");
+  )
+  const table = getByTestId("network-table")
 
-  fireEvent.keyDown(table, { code: "ArrowDown" });
+  fireEvent.keyDown(table, { code: "ArrowDown" })
 
-  expect(mockOnRowSelect).not.toHaveBeenCalled();
-});
+  expect(mockOnRowSelect).not.toHaveBeenCalled()
+})
 
 test("Remains on top row when pressing the up arrow", () => {
-  const mockOnRowSelect = jest.fn();
+  const mockOnRowSelect = jest.fn()
   const { getByTestId } = render(
     <NetworkTable
       data={data}
       onRowClick={() => {}}
       onRowSelect={mockOnRowSelect}
-      onClear={() => {}}
       selectedRowId="1"
     />
-  );
-  const table = getByTestId("network-table");
+  )
+  const table = getByTestId("network-table")
 
-  fireEvent.keyDown(table, { code: "ArrowUp" });
+  fireEvent.keyDown(table, { code: "ArrowUp" })
 
-  expect(mockOnRowSelect).not.toHaveBeenCalled();
-});
+  expect(mockOnRowSelect).not.toHaveBeenCalled()
+})

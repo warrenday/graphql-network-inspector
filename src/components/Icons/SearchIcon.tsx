@@ -1,9 +1,9 @@
-import React from "react";
+import { SVGAttributes } from "react"
 
-interface ISearchIconProps extends React.SVGAttributes<{}> {}
+interface ISearchIconProps extends SVGAttributes<{}> {}
 
 export const SearchIcon = (props: ISearchIconProps) => {
-  const { width = "1.5rem", height = "1.5rem" } = props;
+  const { width = "1.5rem", height = "1.5rem" } = props
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -21,5 +21,5 @@ export const SearchIcon = (props: ISearchIconProps) => {
         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
       />
     </svg>
-  );
-};
+  )
+}

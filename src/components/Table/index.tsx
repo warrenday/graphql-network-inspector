@@ -1,34 +1,33 @@
-import React from "react";
 import {
   useTable,
   HeaderGroup,
   TableInstance,
   TableOptions,
   Row,
-} from "react-table";
-import { useMaintainScrollBottom } from "../../hooks/useMaintainScrollBottom";
+} from "react-table"
+import { useMaintainScrollBottom } from "../../hooks/useMaintainScrollBottom"
 
-type RowId = string | number;
+type RowId = string | number
 
 export type TableProps<T extends {}> = TableOptions<T> & {
-  onRowClick?: (rowId: RowId, data: Row<T>["original"]) => void;
-  selectedRowId?: RowId | null;
-  isScollBottomMaintained?: boolean;
-};
+  onRowClick?: (rowId: RowId, data: Row<T>["original"]) => void
+  selectedRowId?: RowId | null
+  isScollBottomMaintained?: boolean
+}
 
 type TableBodyProps<T extends {}> = TableInstance<T> & {
-  onRowClick?: (data: Row<T>) => void;
-  selectedRowId?: RowId | null;
-};
+  onRowClick?: (data: Row<T>) => void
+  selectedRowId?: RowId | null
+}
 
 type BaseRowData = {
-  id: RowId;
-};
+  id: RowId
+}
 
 const TableHead = <T extends {}>({
   headerGroups,
 }: {
-  headerGroups: HeaderGroup<T>[];
+  headerGroups: HeaderGroup<T>[]
 }) => (
   <thead>
     {headerGroups.map(({ getHeaderGroupProps, headers }) => (
@@ -44,7 +43,7 @@ const TableHead = <T extends {}>({
       </tr>
     ))}
   </thead>
-);
+)
 
 const TableBody = <T extends BaseRowData>({
   rows,
@@ -55,9 +54,9 @@ const TableBody = <T extends BaseRowData>({
 }: TableBodyProps<T>) => (
   <tbody {...getTableBodyProps()}>
     {rows.map((row) => {
-      prepareRow(row);
+      prepareRow(row)
 
-      const isSelected = row.original.id === selectedRowId;
+      const isSelected = row.original.id === selectedRowId
       return (
         <tr
           {...row.getRowProps()}
@@ -78,20 +77,20 @@ const TableBody = <T extends BaseRowData>({
             </td>
           ))}
         </tr>
-      );
+      )
     })}
   </tbody>
-);
+)
 
 export const Table = <T extends BaseRowData>(props: TableProps<T>) => {
   const { columns, data, onRowClick, selectedRowId, isScollBottomMaintained } =
-    props;
-  const tableInstance = useTable({ columns, data });
-  const { getTableProps, headerGroups } = tableInstance;
+    props
+  const tableInstance = useTable({ columns, data })
+  const { getTableProps, headerGroups } = tableInstance
   const ref = useMaintainScrollBottom({
     totalEntries: data.length,
     isActive: isScollBottomMaintained,
-  });
+  })
 
   return (
     <div
@@ -109,7 +108,7 @@ export const Table = <T extends BaseRowData>(props: TableProps<T>) => {
           {...tableInstance}
           onRowClick={(row) => {
             if (onRowClick) {
-              onRowClick(row.original.id, row.original);
+              onRowClick(row.original.id, row.original)
             }
           }}
           selectedRowId={selectedRowId}
@@ -121,5 +120,5 @@ export const Table = <T extends BaseRowData>(props: TableProps<T>) => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}

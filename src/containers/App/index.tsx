@@ -1,11 +1,10 @@
-import React from "react";
-import { SearchProvider } from "../../hooks/useSearch";
-import { NetworkTabsProvider } from "../../hooks/useNetworkTabs";
-import { useDarkTheme } from "../../hooks/useTheme";
-import { Main } from "../Main";
+import { SearchProvider } from "../../hooks/useSearch"
+import { NetworkTabsProvider } from "../../hooks/useNetworkTabs"
+import { useDarkTheme } from "../../hooks/useTheme"
+import { Main } from "../Main"
 
 export const App = () => {
-  const isDarkTheme = useDarkTheme();
+  const isDarkTheme = useDarkTheme()
 
   return (
     <NetworkTabsProvider>
@@ -17,5 +16,5 @@ export const App = () => {
         </div>
       </SearchProvider>
     </NetworkTabsProvider>
-  );
-};
+  )
+}

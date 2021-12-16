@@ -1,20 +1,19 @@
-import React from "react";
-import { Panels, PanelSection } from "./PanelSection";
-import { CodeBlock } from "../../../components/CodeBlock";
-import { CopyButton } from "../../../components/CopyButton";
-import * as safeJson from "../../../helpers/safeJson";
-import { IGraphqlRequestBody } from "../../../helpers/graphqlHelpers";
+import { Panels, PanelSection } from "./PanelSection"
+import { CodeBlock } from "../../../components/CodeBlock"
+import { CopyButton } from "../../../components/CopyButton"
+import * as safeJson from "../../../helpers/safeJson"
+import { IGraphqlRequestBody } from "../../../helpers/graphqlHelpers"
 
 interface IRequestViewProps {
-  requests: IGraphqlRequestBody[];
+  requests: IGraphqlRequestBody[]
 }
 
 const isVariablesPopulated = (request: IGraphqlRequestBody) => {
-  return Object.keys(request.variables || {}).length > 0;
-};
+  return Object.keys(request.variables || {}).length > 0
+}
 
 export const RequestView = (props: IRequestViewProps) => {
-  const { requests } = props;
+  const { requests } = props
 
   return (
     <Panels>
@@ -23,13 +22,13 @@ export const RequestView = (props: IRequestViewProps) => {
           <PanelSection key={request.query} className="relative">
             <CopyButton
               textToCopy={request.query}
-              className="absolute right-6 top-6 z-10"
+              className="absolute right-3 top-3 z-10"
             />
             {isVariablesPopulated(request) && (
               <CopyButton
                 label="Copy Vars"
                 textToCopy={safeJson.stringify(request.variables, undefined, 2)}
-                className="absolute right-6 top-6 z-10 mt-12"
+                className="absolute right-3 top-3 z-10 mt-14"
               />
             )}
             <CodeBlock text={request.query} language={"graphql"} />
@@ -42,8 +41,8 @@ export const RequestView = (props: IRequestViewProps) => {
               </div>
             )}
           </PanelSection>
-        );
+        )
       })}
     </Panels>
-  );
-};
+  )
+}

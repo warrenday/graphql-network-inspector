@@ -1,16 +1,16 @@
-import dedent from "dedent";
+import dedent from "dedent"
 
-const url = "http://graphql-network-monitor.com/graphql";
+const url = "http://graphql-network-monitor.com/graphql"
 
 const createRequest = ({
   request,
   response,
 }: {
   request: {
-    query: string;
-    variables: object;
-  }[];
-  response: object;
+    query: string
+    variables: object
+  }[]
+  response: object
 }) => {
   return {
     time: 1099.4580000406131,
@@ -59,10 +59,10 @@ const createRequest = ({
       bodySize: 3364,
     },
     getContent: (cb: Function) => {
-      cb(JSON.stringify(response));
+      cb(JSON.stringify(response))
     },
-  };
-};
+  }
+}
 
 export const mockRequests = [
   createRequest({
@@ -161,6 +161,50 @@ export const mockRequests = [
           genre: "Action",
         },
       },
+      extensions: {
+        tracing: {
+          version: 1,
+          startTime: "2021-01-01T00:00:00.000Z",
+          endTime: "2021-01-01T00:00:00.100Z",
+          duration: 100 * 1000000,
+          execution: {
+            resolvers: [
+              {
+                path: ["createMovie"],
+                parentType: "Mutation",
+                fieldName: "createMovie",
+                returnType: "Movie",
+                startOffset: 10 * 1000000,
+                duration: 5 * 1000000,
+              },
+              {
+                path: ["createMovie", "id"],
+                parentType: "Movie",
+                fieldName: "id",
+                returnType: "ID!",
+                startOffset: 15 * 1000000,
+                duration: 15 * 1000000,
+              },
+              {
+                path: ["createMovie", "title"],
+                parentType: "Movie",
+                fieldName: "title",
+                returnType: "String",
+                startOffset: 15 * 1000000,
+                duration: 75 * 1000000,
+              },
+              {
+                path: ["createMovie", "genre"],
+                parentType: "Movie",
+                fieldName: "genre",
+                returnType: "String",
+                startOffset: 15 * 1000000,
+                duration: 80 * 1000000,
+              },
+            ],
+          },
+        },
+      },
     },
   }),
   createRequest({
@@ -215,6 +259,114 @@ export const mockRequests = [
           },
         ],
       },
+      extensions: {
+        tracing: {
+          version: 1,
+          startTime: "2021-01-01T00:00:00.000Z",
+          endTime: "2021-01-01T00:00:00.100Z",
+          duration: 100 * 1000000,
+          execution: {
+            resolvers: [
+              {
+                path: ["listActors"],
+                parentType: "Query",
+                fieldName: "listActors",
+                returnType: "Actor",
+                startOffset: 10 * 1000000,
+                duration: 88 * 1000000,
+              },
+              {
+                path: ["listCategories"],
+                parentType: "Query",
+                fieldName: "listCategories",
+                returnType: "Category",
+                startOffset: 10 * 1000000,
+                duration: 75 * 1000000,
+              },
+              {
+                path: ["listCategories", 0, "id"],
+                parentType: "Category",
+                fieldName: "id",
+                returnType: "ID!",
+                startOffset: 85 * 1000000,
+                duration: 1 * 10000,
+              },
+              {
+                path: ["listCategories", 0, "name"],
+                parentType: "Category",
+                fieldName: "name",
+                returnType: "String",
+                startOffset: 85 * 1000000,
+                duration: 1 * 10000,
+              },
+              {
+                path: ["listCategories", 1, "id"],
+                parentType: "Category",
+                fieldName: "id",
+                returnType: "ID!",
+                startOffset: 85 * 1000000,
+                duration: 1 * 1000000,
+              },
+              {
+                path: ["listCategories", 1, "name"],
+                parentType: "Category",
+                fieldName: "name",
+                returnType: "String",
+                startOffset: 85 * 1000000,
+                duration: 1 * 1000000,
+              },
+              {
+                path: ["listActors", 0, "id"],
+                parentType: "Actor",
+                fieldName: "id",
+                returnType: "ID!",
+                startOffset: 98 * 1000000,
+                duration: 1 * 1000000,
+              },
+              {
+                path: ["listActors", 0, "name"],
+                parentType: "Actor",
+                fieldName: "name",
+                returnType: "String",
+                startOffset: 98 * 1000000,
+                duration: 1 * 1000000,
+              },
+              {
+                path: ["listActors", 1, "id"],
+                parentType: "Actor",
+                fieldName: "id",
+                returnType: "ID!",
+                startOffset: 98 * 1000000,
+                duration: 1 * 1000000,
+              },
+              {
+                path: ["listActors", 1, "name"],
+                parentType: "Actor",
+                fieldName: "name",
+                returnType: "String",
+                startOffset: 98 * 1000000,
+                duration: 1 * 1000000,
+              },
+              {
+                path: ["listActors", 2, "id"],
+                parentType: "Actor",
+                fieldName: "id",
+                returnType: "ID!",
+                startOffset: 98 * 1000000,
+                duration: 2 * 1000000,
+              },
+              {
+                path: ["listActors", 2, "name"],
+                parentType: "Actor",
+                fieldName: "name",
+                returnType: "String",
+                startOffset: 98 * 1000000,
+                duration: 2 * 1000000,
+              },
+            ],
+          },
+        },
+      },
     },
   }),
   createRequest({
@@ -241,6 +393,34 @@ export const mockRequests = [
     response: {
       data: {
         actorDetails: [],
+      },
+      extensions: {
+        tracing: {
+          version: 1,
+          startTime: "2021-01-01T00:00:00.000Z",
+          endTime: "2021-01-01T00:00:00.010Z",
+          duration: 1173.12 * 1000000,
+          execution: {
+            resolvers: [
+              {
+                path: ["actorDetails"],
+                parentType: "Query",
+                fieldName: "actorDetails",
+                returnType: "ActorDetail",
+                startOffset: 1.187133 * 1000000,
+                duration: 1171.787124 * 1000000,
+              },
+              {
+                path: ["actorDetails", "test"],
+                parentType: "ActorDetail",
+                fieldName: "test",
+                returnType: "string",
+                startOffset: 1172.974257 * 1000000,
+                duration: 0.02 * 1000000,
+              },
+            ],
+          },
+        },
       },
     },
   }),
@@ -273,4 +453,4 @@ export const mockRequests = [
       ],
     },
   }),
-];
+]

@@ -1,22 +1,23 @@
-import React from "react";
-import { IconButton } from "../IconButton";
-import { CloseIcon } from "../Icons/CloseIcon";
+import { FC } from "react"
+import { Button } from "../Button"
+import { CloseIcon } from "../Icons/CloseIcon"
 
 interface ICloseButtonProps {
-  onClick: () => void;
-  testId?: string;
+  onClick: () => void
+  testId?: string
+  className?: string
 }
 
-export const CloseButton: React.FC<ICloseButtonProps> = (props) => {
-  const { children, onClick, testId } = props;
+export const CloseButton: FC<ICloseButtonProps> = (props) => {
+  const { children, onClick, className, testId } = props
   return (
-    <IconButton
+    <Button
       icon={<CloseIcon />}
       onClick={onClick}
-      className="w-10"
+      className={`w-10 ${className}`}
       testId={testId}
     >
       {children}
-    </IconButton>
-  );
-};
+    </Button>
+  )
+}

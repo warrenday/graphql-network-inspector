@@ -1,14 +1,13 @@
-import React from "react";
-import ReactJson from "react-json-view";
-import { useDarkTheme } from "../../hooks/useTheme";
+import ReactJson from "@notdutzi/react-json-view"
+import { useDarkTheme } from "../../hooks/useTheme"
 
 type JsonViewProps = {
-  src: object;
-  collapsed?: number;
-};
+  src: object
+  collapsed?: number
+}
 
 export const JsonView = (props: JsonViewProps) => {
-  const isDarkTheme = useDarkTheme();
+  const isDarkTheme = useDarkTheme()
 
   return (
     <div className="p-4 font-bold">
@@ -22,5 +21,5 @@ export const JsonView = (props: JsonViewProps) => {
         collapsed={props.collapsed || 2}
       />
     </div>
-  );
-};
+  )
+}

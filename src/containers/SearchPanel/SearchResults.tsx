@@ -1,35 +1,35 @@
-import React from "react";
-import { HighlightedText } from "../../components/HighlightedText";
-import { ISearchResult } from "../../services/searchService";
+import { FC } from "react"
+import { HighlightedText } from "../../components/HighlightedText"
+import { ISearchResult } from "../../services/searchService"
 import {
   getHeaderSearchContent,
   getRequestSearchContent,
   getResponseSearchContent,
-} from "../../helpers/getSearchContent";
-import { NetworkTabs } from "../../hooks/useNetworkTabs";
+} from "../../helpers/getSearchContent"
+import { NetworkTabs } from "../../hooks/useNetworkTabs"
 
 interface ISearchResultsProps {
-  searchQuery: string;
-  searchResults: ISearchResult[];
+  searchQuery: string
+  searchResults: ISearchResult[]
   onResultClick: (
     searchResult: ISearchResult,
     searchResultType: NetworkTabs
-  ) => void;
+  ) => void
 }
 
 interface ISearchResultEntryProps {
-  searchQuery: string;
-  searchResult: ISearchResult;
-  onResultClick: (searchResultType: NetworkTabs) => void;
-  index: number;
+  searchQuery: string
+  searchResult: ISearchResult
+  onResultClick: (searchResultType: NetworkTabs) => void
+  index: number
 }
 
 interface ISearchResultEntryRowProps {
-  title: string;
-  onClick: () => void;
+  title: string
+  onClick: () => void
 }
 
-const SearchResultEntryRow: React.FC<ISearchResultEntryRowProps> = ({
+const SearchResultEntryRow: FC<ISearchResultEntryRowProps> = ({
   title,
   children,
   onClick,
@@ -42,13 +42,13 @@ const SearchResultEntryRow: React.FC<ISearchResultEntryRowProps> = ({
       <div className="mr-3 opacity-70">{title}</div>
       <div className="whitespace-nowrap">{children}</div>
     </div>
-  );
-};
+  )
+}
 
 const SearchResultEntry = (props: ISearchResultEntryProps) => {
-  const { searchQuery, searchResult, onResultClick, index } = props;
-  const { matches, networkRequest } = searchResult;
-  const { operationName } = networkRequest.request.primaryOperation;
+  const { searchQuery, searchResult, onResultClick, index } = props
+  const { matches, networkRequest } = searchResult
+  const { operationName } = networkRequest.request.primaryOperation
 
   return (
     <div data-testid={`search-results-${index}`}>
@@ -87,11 +87,11 @@ const SearchResultEntry = (props: ISearchResultEntryProps) => {
         </SearchResultEntryRow>
       )}
     </div>
-  );
-};
+  )
+}
 
 export const SearchResults = (props: ISearchResultsProps) => {
-  const { searchQuery, searchResults, onResultClick } = props;
+  const { searchQuery, searchResults, onResultClick } = props
   return (
     <div className="pt-0 p-2 space-y-2">
       {searchResults.map((searchResult, index) => (
@@ -101,10 +101,10 @@ export const SearchResults = (props: ISearchResultsProps) => {
           searchQuery={searchQuery}
           searchResult={searchResult}
           onResultClick={(searchResultType) => {
-            onResultClick(searchResult, searchResultType);
+            onResultClick(searchResult, searchResultType)
           }}
         />
       ))}
     </div>
-  );
-};
+  )
+}

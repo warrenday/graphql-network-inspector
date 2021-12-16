@@ -1,6 +1,6 @@
-import { chromeProvider } from "../services/chromeProvider";
+import { chromeProvider } from "../services/chromeProvider"
 
 export const useDarkTheme = () => {
-  const chrome = chromeProvider();
-  return chrome.devtools.panels.themeName === "dark";
-};
+  const chrome = chromeProvider()
+  return chrome.devtools.panels.themeName === "dark"
+}
