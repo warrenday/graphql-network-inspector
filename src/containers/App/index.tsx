@@ -9,7 +9,10 @@ export const App = () => {
   return (
     <NetworkTabsProvider>
       <SearchProvider>
-        <div className={isDarkTheme ? "dark" : ""}>
+        <div
+          className={isDarkTheme ? "dark" : ""}
+          data-color-scheme={isDarkTheme ? "dark" : "light"}
+        >
           <div className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white">
             <Main />
           </div>
