@@ -41,7 +41,9 @@ export const Tabs = (props: TabsProps) => {
           )
         })}
       </Header>
-      <div className="overflow-y-scroll">{tabs[activeTab]?.component}</div>
+      <div className="overflow-y-auto dark:bg-gray-900">
+        {tabs[activeTab]?.component}
+      </div>
     </div>
   )
 }
