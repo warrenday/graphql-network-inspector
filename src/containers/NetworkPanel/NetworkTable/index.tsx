@@ -11,6 +11,7 @@ import { getErrorMessages } from "../../../helpers/graphqlHelpers"
 
 export type NetworkTableProps = {
   data: NetworkRequest[]
+  error: string | null
   onRowClick: (rowId: string | number, row: NetworkRequest) => void
   onRowSelect: (rowId: string | number) => void
   selectedRowId?: string | number | null
@@ -85,8 +86,14 @@ const Time = ({ ms }: { ms: number }) => {
 }
 
 export const NetworkTable = (props: NetworkTableProps) => {
-  const { data, onRowClick, onRowSelect, selectedRowId, showSingleColumn } =
-    props
+  const {
+    data,
+    error,
+    onRowClick,
+    onRowSelect,
+    selectedRowId,
+    showSingleColumn,
+  } = props
 
   const selectNextRow = (direction: "up" | "down") => {
     const directionCount = direction === "up" ? -1 : 1
@@ -140,6 +147,7 @@ export const NetworkTable = (props: NetworkTableProps) => {
       <Table
         columns={columns}
         data={data}
+        error={error}
         onRowClick={onRowClick}
         selectedRowId={selectedRowId}
         isScollBottomMaintained

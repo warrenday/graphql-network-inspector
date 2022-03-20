@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import RegexParser from "regex-parser"
 import { SplitPaneLayout } from "../../components/Layout"
 import { NetworkTable } from "./NetworkTable"
@@ -17,6 +17,7 @@ interface NetworkPanelProps {
 const filterNetworkRequests = (
   networkRequests: NetworkRequest[],
   filterValue: string,
+  setRegexError: React.Dispatch<React.SetStateAction<string | null>>,
   options: {
     isInverted: boolean
     isRegex: boolean
@@ -26,12 +27,25 @@ const filterNetworkRequests = (
     return networkRequests
   }
 
-  const regex = RegexParser(filterValue)
+  let regex: RegExp | null
+  try {
+    regex = RegexParser(filterValue)
+    setRegexError(null)
+  } catch (error) {
+    let message = "Unknown Error"
+    if (error instanceof Error) message = error.message
+    if (options.isRegex) {
+      setRegexError(message)
+      return []
+    } else {
+      setRegexError(null)
+    }
+  }
 
   return networkRequests.filter((networkRequest) => {
     const { operationName = "" } = networkRequest.request.primaryOperation
     const isMatch = options.isRegex
-      ? operationName.match(regex)
+      ? operationName.match(regex as RegExp)
       : operationName.toLowerCase().includes(filterValue.toLowerCase())
 
     return options.isInverted ? !isMatch : isMatch
@@ -46,10 +60,15 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
   const [isPreserveLogs, setIsPreserveLogs] = useState(false)
   const [isInverted, setIsInverted] = useState(false)
   const [isRegexActive, onIsRegexActiveChange] = useState(false)
-  const filteredNetworkRequests = filterNetworkRequests(
-    networkRequests,
-    filterValue,
-    { isInverted, isRegex: isRegexActive }
+  const [regexError, setRegexError] = useState<string | null>(null)
+
+  const filteredNetworkRequests = useMemo(
+    () =>
+      filterNetworkRequests(networkRequests, filterValue, setRegexError, {
+        isInverted,
+        isRegex: isRegexActive,
+      }),
+    [filterValue, isInverted, networkRequests, isRegexActive]
   )
 
   const selectedRequest = networkRequests.find(
@@ -63,6 +82,13 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
       }
     })
   }, [isPreserveLogs, clearWebRequests])
+
+  // reset the regex error state
+  useEffect(() => {
+    if (!isRegexActive || filterValue === "") {
+      setRegexError(null)
+    }
+  }, [isRegexActive, filterValue])
 
   return (
     <SplitPaneLayout
@@ -85,6 +111,7 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
       leftPane={
         <NetworkTable
           data={filteredNetworkRequests}
+          error={regexError}
           selectedRowId={selectedRowId}
           onRowClick={setSelectedRowId}
           onRowSelect={setSelectedRowId}
