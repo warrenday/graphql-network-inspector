@@ -13,7 +13,7 @@ test("Invalid regex is provided, regex mode is on - error message shows", () => 
   const filterInput = getByTestId("filter-input")
   const regexCheckbox = getByTestId("regex-checkbox")
 
-  // click the regex mode to be on
+  // click the regex checkbox to turn the regex mode on
   fireEvent.click(regexCheckbox)
 
   // enter an invalid regex expression
