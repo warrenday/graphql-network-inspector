@@ -1,5 +1,5 @@
 import { NetworkTable } from "./index"
-import { render, fireEvent } from "@testing-library/react"
+import { render, fireEvent, within } from "@testing-library/react"
 
 const request = {
   time: 1000,
@@ -37,6 +37,7 @@ test("Selects next row when pressing the down arrow", () => {
   const { getByTestId } = render(
     <NetworkTable
       data={data}
+      error={null}
       onRowClick={() => {}}
       onRowSelect={mockOnRowSelect}
       selectedRowId="2"
@@ -54,6 +55,7 @@ test("Selects previous row when pressing the up arrow", () => {
   const { getByTestId } = render(
     <NetworkTable
       data={data}
+      error={null}
       onRowClick={() => {}}
       onRowSelect={mockOnRowSelect}
       selectedRowId="2"
@@ -71,6 +73,7 @@ test("Remains on bottom row when pressing the down arrow", () => {
   const { getByTestId } = render(
     <NetworkTable
       data={data}
+      error={null}
       onRowClick={() => {}}
       onRowSelect={mockOnRowSelect}
       selectedRowId="3"
@@ -88,6 +91,7 @@ test("Remains on top row when pressing the up arrow", () => {
   const { getByTestId } = render(
     <NetworkTable
       data={data}
+      error={null}
       onRowClick={() => {}}
       onRowSelect={mockOnRowSelect}
       selectedRowId="1"
@@ -98,4 +102,37 @@ test("Remains on top row when pressing the up arrow", () => {
   fireEvent.keyDown(table, { code: "ArrowUp" })
 
   expect(mockOnRowSelect).not.toHaveBeenCalled()
+})
+
+test("Data is empty and error is null - renders empty list message", () => {
+  const { getByTestId } = render(
+    <NetworkTable
+      data={[]}
+      error={null}
+      onRowClick={() => {}}
+      onRowSelect={() => {}}
+    />
+  )
+  const table = getByTestId("network-table")
+
+  expect(
+    within(table).getByText("No requests have been detected")
+  ).toBeInTheDocument()
+})
+
+test("Data is empty and error is not null - renders error message", () => {
+  const { getByTestId } = render(
+    <NetworkTable
+      data={[]}
+      error={"someErrorMessage"}
+      onRowClick={() => {}}
+      onRowSelect={() => {}}
+    />
+  )
+  const table = getByTestId("network-table")
+
+  expect(
+    within(table).queryByText("No requests have been detected")
+  ).not.toBeInTheDocument()
+  expect(within(table).getByText("someErrorMessage")).toBeInTheDocument()
 })
