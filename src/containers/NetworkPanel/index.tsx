@@ -29,17 +29,13 @@ const filterNetworkRequests = (
 
   let regex: RegExp | null
   try {
-    regex = RegexParser(filterValue)
     setRegexError(null)
+    regex = options.isRegex ? RegexParser(filterValue) : null
   } catch (error) {
     let message = "Unknown Error"
     if (error instanceof Error) message = error.message
-    if (options.isRegex) {
-      setRegexError(message)
-      return []
-    } else {
-      setRegexError(null)
-    }
+    setRegexError(message)
+    return []
   }
 
   return networkRequests.filter((networkRequest) => {
