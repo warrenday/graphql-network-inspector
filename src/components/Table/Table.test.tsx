@@ -60,7 +60,7 @@ test("data is empty - empty table message is rendered", () => {
   expect(getByText("No requests have been detected")).toBeInTheDocument()
 })
 
-test("data is empty and error is not null - error message is rendered", () => {
+test("data is empty and an error message is provided - error message is rendered", () => {
   const { getByText, queryByText } = render(
     <Table columns={columns} data={[]} error={"someErrorMessage"} />
   )

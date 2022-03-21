@@ -37,7 +37,6 @@ test("Selects next row when pressing the down arrow", () => {
   const { getByTestId } = render(
     <NetworkTable
       data={data}
-      error={null}
       onRowClick={() => {}}
       onRowSelect={mockOnRowSelect}
       selectedRowId="2"
@@ -55,7 +54,6 @@ test("Selects previous row when pressing the up arrow", () => {
   const { getByTestId } = render(
     <NetworkTable
       data={data}
-      error={null}
       onRowClick={() => {}}
       onRowSelect={mockOnRowSelect}
       selectedRowId="2"
@@ -73,7 +71,6 @@ test("Remains on bottom row when pressing the down arrow", () => {
   const { getByTestId } = render(
     <NetworkTable
       data={data}
-      error={null}
       onRowClick={() => {}}
       onRowSelect={mockOnRowSelect}
       selectedRowId="3"
@@ -91,7 +88,6 @@ test("Remains on top row when pressing the up arrow", () => {
   const { getByTestId } = render(
     <NetworkTable
       data={data}
-      error={null}
       onRowClick={() => {}}
       onRowSelect={mockOnRowSelect}
       selectedRowId="1"
@@ -104,14 +100,9 @@ test("Remains on top row when pressing the up arrow", () => {
   expect(mockOnRowSelect).not.toHaveBeenCalled()
 })
 
-test("data is empty and error is null - empty table message is rendered", () => {
+test("data is empty - empty table message is rendered", () => {
   const { getByTestId } = render(
-    <NetworkTable
-      data={[]}
-      error={null}
-      onRowClick={() => {}}
-      onRowSelect={() => {}}
-    />
+    <NetworkTable data={[]} onRowClick={() => {}} onRowSelect={() => {}} />
   )
   const table = getByTestId("network-table")
 
@@ -121,7 +112,7 @@ test("data is empty and error is null - empty table message is rendered", () => 
   ).toBeInTheDocument()
 })
 
-test("data is empty and error is not null - error message is rendered", () => {
+test("data is empty and an error message is provided - error message is rendered", () => {
   const { getByTestId } = render(
     <NetworkTable
       data={[]}
