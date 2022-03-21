@@ -23,18 +23,18 @@ const Operation = ({ request }: { request: NetworkRequest }) => {
   const { operation, operationName } = request.request.primaryOperation
 
   const responseBody = request.response?.body
-  const errorMessages = useMemo(
-    () => getErrorMessages(responseBody),
-    [responseBody]
-  )
+  const errorMessages = useMemo(() => getErrorMessages(responseBody), [
+    responseBody,
+  ])
+
+  const operationColor =
+    operation === "query" ? "text-green-400" : "text-indigo-400"
 
   return (
     <div className="flex items-center gap-2" data-testid="column-operation">
       <Badge>
         <span
-          className={
-            operation === "query" ? "text-green-400" : "text-indigo-400"
-          }
+          className={errorMessages?.length ? "text-red-500" : operationColor}
         >
           {operation === "query" ? "Q" : "M"}
         </span>
