@@ -11,7 +11,7 @@ import { getErrorMessages } from "../../../helpers/graphqlHelpers"
 
 export type NetworkTableProps = {
   data: NetworkRequest[]
-  error: string | null
+  error?: string
   onRowClick: (rowId: string | number, row: NetworkRequest) => void
   onRowSelect: (rowId: string | number) => void
   selectedRowId?: string | number | null

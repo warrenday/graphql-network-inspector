@@ -10,7 +10,7 @@ import { useMaintainScrollBottom } from "../../hooks/useMaintainScrollBottom"
 type RowId = string | number
 
 export type TableProps<T extends {}> = TableOptions<T> & {
-  error?: string | null
+  error?: string
   onRowClick?: (rowId: RowId, data: Row<T>["original"]) => void
   selectedRowId?: RowId | null
   isScollBottomMaintained?: boolean

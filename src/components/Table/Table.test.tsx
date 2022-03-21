@@ -1,4 +1,4 @@
-import { render, fireEvent, queryByText } from "@testing-library/react"
+import { render, fireEvent } from "@testing-library/react"
 import { Table, TableProps } from "./index"
 
 const data = [
