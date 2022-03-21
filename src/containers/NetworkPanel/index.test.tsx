@@ -16,7 +16,7 @@ test("Invalid regex is provided, regex mode is on - error message shows", () => 
   // click the regex mode to be on
   fireEvent.click(regexCheckbox)
 
-  // enter invalid regex expression
+  // enter an invalid regex expression
   fireEvent.change(filterInput, { target: { value: "++" } })
 
   expect(
@@ -35,7 +35,7 @@ test("Invalid regex is provided, regex mode is off - error message does not show
   )
   const filterInput = getByTestId("filter-input")
 
-  // enter invalid regex expression
+  // enter an invalid regex expression
   fireEvent.change(filterInput, { target: { value: "++" } })
 
   expect(
