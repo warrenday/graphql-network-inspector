@@ -104,7 +104,7 @@ test("Remains on top row when pressing the up arrow", () => {
   expect(mockOnRowSelect).not.toHaveBeenCalled()
 })
 
-test("Data is empty and error is null - empty list message is rendered", () => {
+test("data is empty and error is null - empty table message is rendered", () => {
   const { getByTestId } = render(
     <NetworkTable
       data={[]}
@@ -115,12 +115,13 @@ test("Data is empty and error is null - empty list message is rendered", () => {
   )
   const table = getByTestId("network-table")
 
+  // ensure the empty table message was rendered
   expect(
     within(table).getByText("No requests have been detected")
   ).toBeInTheDocument()
 })
 
-test("Data is empty and error is not null - error message is rendered", () => {
+test("data is empty and error is not null - error message is rendered", () => {
   const { getByTestId } = render(
     <NetworkTable
       data={[]}
@@ -131,8 +132,11 @@ test("Data is empty and error is not null - error message is rendered", () => {
   )
   const table = getByTestId("network-table")
 
+  // ensure the empty table message was not rendered
   expect(
     within(table).queryByText("No requests have been detected")
   ).not.toBeInTheDocument()
+
+  // ensure the error message was rendered
   expect(within(table).getByText("someErrorMessage")).toBeInTheDocument()
 })
