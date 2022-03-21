@@ -104,7 +104,7 @@ test("Remains on top row when pressing the up arrow", () => {
   expect(mockOnRowSelect).not.toHaveBeenCalled()
 })
 
-test("Data is empty and error is null - renders empty list message", () => {
+test("Data is empty and error is null - empty list message is rendered", () => {
   const { getByTestId } = render(
     <NetworkTable
       data={[]}
@@ -120,7 +120,7 @@ test("Data is empty and error is null - renders empty list message", () => {
   ).toBeInTheDocument()
 })
 
-test("Data is empty and error is not null - renders error message", () => {
+test("Data is empty and error is not null - error message is rendered", () => {
   const { getByTestId } = render(
     <NetworkTable
       data={[]}

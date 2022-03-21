@@ -1,7 +1,7 @@
 import { NetworkPanel } from "./index"
 import { render, fireEvent } from "@testing-library/react"
 
-test("Invalid regex is provided, regex mode is on - error message shows", () => {
+test("Invalid regex is provided, regex mode is on - error message is rendered", () => {
   const { getByTestId, getByText } = render(
     <NetworkPanel
       selectedRowId={null}
@@ -24,7 +24,7 @@ test("Invalid regex is provided, regex mode is on - error message shows", () => 
   ).toBeInTheDocument()
 })
 
-test("Invalid regex is provided, regex mode is off - error message does not show", () => {
+test("Invalid regex is provided, regex mode is off - error message is not rendered", () => {
   const { getByTestId, queryByText } = render(
     <NetworkPanel
       selectedRowId={null}
