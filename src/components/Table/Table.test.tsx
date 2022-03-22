@@ -52,3 +52,22 @@ test("outputs correct row index and data when a row is clicked", () => {
     rating: 5,
   })
 })
+
+test("data is empty - empty table message is rendered", () => {
+  const { getByText } = render(<Table columns={columns} data={[]} />)
+
+  // ensure the empty table message was rendered
+  expect(getByText("No requests have been detected")).toBeInTheDocument()
+})
+
+test("data is empty and an error message is provided - error message is rendered", () => {
+  const { getByText, queryByText } = render(
+    <Table columns={columns} data={[]} error={"someErrorMessage"} />
+  )
+
+  // ensure the empty table message was not rendered
+  expect(queryByText("No requests have been detected")).not.toBeInTheDocument()
+
+  // ensure the error message was rendered
+  expect(getByText("someErrorMessage")).toBeInTheDocument()
+})

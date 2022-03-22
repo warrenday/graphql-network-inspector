@@ -1,5 +1,5 @@
 import { NetworkTable } from "./index"
-import { render, fireEvent } from "@testing-library/react"
+import { render, fireEvent, within } from "@testing-library/react"
 
 const request = {
   time: 1000,
@@ -98,4 +98,36 @@ test("Remains on top row when pressing the up arrow", () => {
   fireEvent.keyDown(table, { code: "ArrowUp" })
 
   expect(mockOnRowSelect).not.toHaveBeenCalled()
+})
+
+test("data is empty - empty table message is rendered", () => {
+  const { getByTestId } = render(
+    <NetworkTable data={[]} onRowClick={() => {}} onRowSelect={() => {}} />
+  )
+  const table = getByTestId("network-table")
+
+  // ensure the empty table message was rendered
+  expect(
+    within(table).getByText("No requests have been detected")
+  ).toBeInTheDocument()
+})
+
+test("data is empty and an error message is provided - error message is rendered", () => {
+  const { getByTestId } = render(
+    <NetworkTable
+      data={[]}
+      error={"someErrorMessage"}
+      onRowClick={() => {}}
+      onRowSelect={() => {}}
+    />
+  )
+  const table = getByTestId("network-table")
+
+  // ensure the empty table message was not rendered
+  expect(
+    within(table).queryByText("No requests have been detected")
+  ).not.toBeInTheDocument()
+
+  // ensure the error message was rendered
+  expect(within(table).getByText("someErrorMessage")).toBeInTheDocument()
 })

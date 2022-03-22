@@ -10,6 +10,7 @@ import { useMaintainScrollBottom } from "../../hooks/useMaintainScrollBottom"
 type RowId = string | number
 
 export type TableProps<T extends {}> = TableOptions<T> & {
+  error?: string
   onRowClick?: (rowId: RowId, data: Row<T>["original"]) => void
   selectedRowId?: RowId | null
   isScollBottomMaintained?: boolean
@@ -83,8 +84,14 @@ const TableBody = <T extends BaseRowData>({
 )
 
 export const Table = <T extends BaseRowData>(props: TableProps<T>) => {
-  const { columns, data, onRowClick, selectedRowId, isScollBottomMaintained } =
-    props
+  const {
+    columns,
+    data,
+    error,
+    onRowClick,
+    selectedRowId,
+    isScollBottomMaintained,
+  } = props
   const tableInstance = useTable({ columns, data })
   const { getTableProps, headerGroups } = tableInstance
   const ref = useMaintainScrollBottom({
@@ -114,11 +121,23 @@ export const Table = <T extends BaseRowData>(props: TableProps<T>) => {
           selectedRowId={selectedRowId}
         />
       </table>
-      {data.length === 0 && (
-        <div className="w-full flex flex-1 items-center justify-center">
-          <div className="p-6 text-center">No requests have been detected</div>
-        </div>
-      )}
+      {(() => {
+        if (error) {
+          return (
+            <div className="w-full flex flex-1 items-center justify-center">
+              <div className="p-6 text-center">{error}</div>
+            </div>
+          )
+        } else if (data.length === 0) {
+          return (
+            <div className="w-full flex flex-1 items-center justify-center">
+              <div className="p-6 text-center">
+                No requests have been detected
+              </div>
+            </div>
+          )
+        }
+      })()}
     </div>
   )
 }

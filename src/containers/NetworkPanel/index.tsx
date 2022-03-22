@@ -14,6 +14,17 @@ interface NetworkPanelProps {
   clearWebRequests: () => void
 }
 
+const getRegex = (str: string) => {
+  try {
+    const regex = RegexParser(str)
+    return { regex, errorMessage: null }
+  } catch (error) {
+    let message = "Invalid Regex"
+    if (error instanceof Error) message = error.message
+    return { regex: null, errorMessage: message }
+  }
+}
+
 const filterNetworkRequests = (
   networkRequests: NetworkRequest[],
   filterValue: string,
@@ -21,21 +32,26 @@ const filterNetworkRequests = (
     isInverted: boolean
     isRegex: boolean
   }
-) => {
+): { results: NetworkRequest[]; errorMessage?: string } => {
   if (!filterValue?.trim()?.length) {
-    return networkRequests
+    return { results: networkRequests }
   }
 
-  const regex = RegexParser(filterValue)
+  const regexResult = options.isRegex ? getRegex(filterValue) : null
+  if (regexResult?.errorMessage) {
+    return { results: [], errorMessage: regexResult.errorMessage }
+  }
 
-  return networkRequests.filter((networkRequest) => {
+  const results = networkRequests.filter((networkRequest) => {
     const { operationName = "" } = networkRequest.request.primaryOperation
     const isMatch = options.isRegex
-      ? operationName.match(regex)
+      ? operationName.match(regexResult?.regex as RegExp)
       : operationName.toLowerCase().includes(filterValue.toLowerCase())
 
     return options.isInverted ? !isMatch : isMatch
   })
+
+  return { results }
 }
 
 export const NetworkPanel = (props: NetworkPanelProps) => {
@@ -46,11 +62,12 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
   const [isPreserveLogs, setIsPreserveLogs] = useState(false)
   const [isInverted, setIsInverted] = useState(false)
   const [isRegexActive, onIsRegexActiveChange] = useState(false)
-  const filteredNetworkRequests = filterNetworkRequests(
-    networkRequests,
-    filterValue,
-    { isInverted, isRegex: isRegexActive }
-  )
+
+  const { results: filterResults, errorMessage: filterError } =
+    filterNetworkRequests(networkRequests, filterValue, {
+      isInverted,
+      isRegex: isRegexActive,
+    })
 
   const selectedRequest = networkRequests.find(
     (request) => request.id === selectedRowId
@@ -84,7 +101,8 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
       }
       leftPane={
         <NetworkTable
-          data={filteredNetworkRequests}
+          data={filterResults}
+          error={filterError}
           selectedRowId={selectedRowId}
           onRowClick={setSelectedRowId}
           onRowSelect={setSelectedRowId}
