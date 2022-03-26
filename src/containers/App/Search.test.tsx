@@ -46,6 +46,22 @@ describe("App - Search", () => {
     expect(rows[1]).toHaveTextContent("getMovieQuery")
   })
 
+  it("searches after debounce delay", async () => {
+    const { getByTestId, findByTestId, getByText } = render(<App />)
+
+    await waitFor(() => {
+      expect(getByText(/getMovie/i)).toBeInTheDocument()
+    })
+
+    fireEvent.click(getByTestId("search-button"))
+    const searchInput = getByTestId("search-input")
+    fireEvent.change(searchInput, {
+      target: { value: "getmovie" },
+    })
+
+    expect(await findByTestId("search-results-0")).toBeInTheDocument()
+  })
+
   it("open the headers tab when clicking a search result", async () => {
     const { getByTestId, getByText } = render(<App />)
 
