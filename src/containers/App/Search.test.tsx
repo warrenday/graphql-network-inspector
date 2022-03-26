@@ -31,10 +31,11 @@ describe("App - Search", () => {
     })
 
     fireEvent.click(getByTestId("search-button"))
-    fireEvent.change(getByTestId("search-input"), {
+    const searchInput = getByTestId("search-input")
+    fireEvent.change(searchInput, {
       target: { value: "getmovie" },
     })
-    fireEvent.keyDown(window, { key: "Enter", code: "Enter" })
+    fireEvent.keyDown(searchInput, { key: "Enter", code: "Enter" })
 
     fireEvent.click(
       within(getByTestId("search-results-0")).getByText("Request")
@@ -54,10 +55,11 @@ describe("App - Search", () => {
 
     fireEvent.click(getByTestId("search-button"))
 
-    fireEvent.change(getByTestId("search-input"), {
+    const searchInput = getByTestId("search-input")
+    fireEvent.change(searchInput, {
       target: { value: "auth" },
     })
-    fireEvent.keyDown(window, { key: "Enter", code: "Enter" })
+    fireEvent.keyDown(searchInput, { key: "Enter", code: "Enter" })
 
     fireEvent.click(within(getByTestId("search-results-0")).getByText("Header"))
 
@@ -76,10 +78,11 @@ describe("App - Search", () => {
 
     fireEvent.click(getByTestId("search-button"))
 
-    fireEvent.change(getByTestId("search-input"), {
+    const searchInput = getByTestId("search-input")
+    fireEvent.change(searchInput, {
       target: { value: "getmovie" },
     })
-    fireEvent.keyDown(window, { key: "Enter", code: "Enter" })
+    fireEvent.keyDown(searchInput, { key: "Enter", code: "Enter" })
 
     fireEvent.click(
       within(getByTestId("search-results-0")).getByText("Request")
@@ -100,10 +103,11 @@ describe("App - Search", () => {
 
     fireEvent.click(getByTestId("search-button"))
 
-    fireEvent.change(getByTestId("search-input"), {
+    const searchInput = getByTestId("search-input")
+    fireEvent.change(searchInput, {
       target: { value: "batman" },
     })
-    fireEvent.keyDown(window, { key: "Enter", code: "Enter" })
+    fireEvent.keyDown(searchInput, { key: "Enter", code: "Enter" })
 
     fireEvent.click(
       within(getByTestId("search-results-0")).getByText("Response")

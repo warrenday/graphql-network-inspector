@@ -1,6 +1,4 @@
-import { useMemo, useState } from "react"
-import { Textfield } from "../../components/Textfield"
-import { useKeyDown } from "../../hooks/useKeyDown"
+import { useMemo } from "react"
 import { NetworkRequest } from "../../hooks/useNetworkMonitor"
 import { useSearch } from "../../hooks/useSearch"
 import { NetworkTabs } from "../../hooks/useNetworkTabs"
@@ -8,6 +6,7 @@ import { getSearchResults, ISearchResult } from "../../services/searchService"
 import { SearchResults } from "./SearchResults"
 import { Header } from "../../components/Header"
 import { CloseButton } from "../../components/CloseButton"
+import { SearchInput } from "@/components/SearchInput"
 
 interface ISearchPanelProps {
   networkRequests: NetworkRequest[]
@@ -19,16 +18,11 @@ interface ISearchPanelProps {
 
 export const SearchPanel = (props: ISearchPanelProps) => {
   const { networkRequests, onResultClick } = props
-  const [searchInput, setSearchInput] = useState("")
   const { searchQuery, setSearchQuery, setIsSearchOpen } = useSearch()
   const searchResults = useMemo(
     () => getSearchResults(searchQuery, networkRequests),
     [searchQuery, networkRequests]
   )
-
-  useKeyDown("Enter", () => {
-    setSearchQuery(searchInput)
-  })
 
   return (
     <div
@@ -48,14 +42,7 @@ export const SearchPanel = (props: ISearchPanelProps) => {
         </div>
       </Header>
       <div className="p-2">
-        <Textfield
-          value={searchInput}
-          onChange={setSearchInput}
-          placeholder="Search full request"
-          autoFocus
-          className="w-full"
-          testId="search-input"
-        />
+        <SearchInput className="w-full" onSearch={setSearchQuery} />
       </div>
       {searchResults && (
         <div className="scroll overflow-y-scroll">
