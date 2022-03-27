@@ -1,6 +1,7 @@
-import { ReactNode } from "react"
+import { ReactNode, useRef } from "react"
 import cx from "classnames"
 import { Header } from "../Header"
+import { usePersistedScrollState } from "@/hooks/usePersistedScrollState"
 
 export type Tab = {
   id?: string
@@ -18,6 +19,9 @@ export type TabsProps = {
 
 export const Tabs = (props: TabsProps) => {
   const { tabs, rightContent, activeTab, onTabClick, testId } = props
+
+  const scrollRef = useRef<HTMLDivElement>(undefined!)
+  usePersistedScrollState(scrollRef, "tabs")
 
   return (
     <div className="flex flex-col h-full" data-testid={testId}>
@@ -41,7 +45,7 @@ export const Tabs = (props: TabsProps) => {
           )
         })}
       </Header>
-      <div className="overflow-y-auto dark:bg-gray-900">
+      <div className="overflow-y-auto dark:bg-gray-900" ref={scrollRef}>
         {tabs[activeTab]?.component}
       </div>
     </div>
