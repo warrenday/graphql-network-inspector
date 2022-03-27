@@ -124,3 +124,7 @@ input[type="search"]::-webkit-search-results-button,
 input[type="search"]::-webkit-search-results-decoration {
   display: none;
 }
+
+.react-code-block-override * {
+  user-select: text !important;
+}

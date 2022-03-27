@@ -14,32 +14,8 @@ export interface ISearchResult {
   networkRequest: NetworkRequest
 }
 
-const getMatchedHeaders = (
-  searchQuery: string,
-  networkRequests: NetworkRequest
-): boolean => {
-  return getHeaderSearchContent(networkRequests)
-    .toLowerCase()
-    .includes(searchQuery.toLowerCase())
-}
-
-const getMatchedRequest = (
-  searchQuery: string,
-  networkRequests: NetworkRequest
-): boolean => {
-  return getRequestSearchContent(networkRequests)
-    .toLowerCase()
-    .includes(searchQuery.toLowerCase())
-}
-
-const getMatchedResponse = (
-  searchQuery: string,
-  networkRequests: NetworkRequest
-): boolean => {
-  return getResponseSearchContent(networkRequests)
-    .toLowerCase()
-    .includes(searchQuery.toLowerCase())
-}
+const isSearchMatch = (query: string, content: string) =>
+  content.toLocaleLowerCase().includes(query)
 
 export const getSearchResults = (
   searchQuery: string,
@@ -53,9 +29,18 @@ export const getSearchResults = (
   return networkRequests
     .map((networkRequest) => {
       const matches: ISearchResult["matches"] = {
-        request: getMatchedRequest(lowercaseSearchQuery, networkRequest),
-        response: getMatchedResponse(lowercaseSearchQuery, networkRequest),
-        headers: getMatchedHeaders(lowercaseSearchQuery, networkRequest),
+        request: isSearchMatch(
+          lowercaseSearchQuery,
+          getRequestSearchContent(networkRequest)
+        ),
+        response: isSearchMatch(
+          lowercaseSearchQuery,
+          getResponseSearchContent(networkRequest)
+        ),
+        headers: isSearchMatch(
+          lowercaseSearchQuery,
+          getHeaderSearchContent(networkRequest)
+        ),
       }
 
       return {
@@ -63,7 +48,17 @@ export const getSearchResults = (
         matches,
       }
     })
-    .filter((searchResult) => {
-      return Object.values(searchResult.matches).some(Boolean)
-    })
+    .filter((searchResult) => Object.values(searchResult.matches).some(Boolean))
+}
+
+export const getSearchLineNumbers = (query: string, content: string) => {
+  if (!query) return []
+  const lowercaseQuery = query.toLocaleLowerCase()
+  const lineNumbers = []
+  for (const [lineIndex, line] of content.split("\n").entries()) {
+    if (isSearchMatch(lowercaseQuery, line)) {
+      lineNumbers.push(lineIndex + 1)
+    }
+  }
+  return lineNumbers
 }

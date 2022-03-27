@@ -1,4 +1,10 @@
-import { useState, createContext, useContext, useCallback } from "react"
+import {
+  useState,
+  createContext,
+  useContext,
+  useCallback,
+  useEffect,
+} from "react"
 import { useSearchStart } from "./useSearchStart"
 
 const SearchContext = createContext<{
@@ -17,9 +23,14 @@ export const SearchProvider: React.FC = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState("")
   const [isSearchOpen, setIsSearchOpen] = useState(false)
 
+  useEffect(() => {
+    if (!isSearchOpen) setSearchQuery("")
+  }, [isSearchOpen])
+
   const handleSearchStart = useCallback(() => {
     setIsSearchOpen(true)
   }, [setIsSearchOpen])
+
   useSearchStart(handleSearchStart)
 
   return (

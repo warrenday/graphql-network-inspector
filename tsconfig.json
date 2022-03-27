@@ -19,7 +19,8 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "noFallthroughCasesInSwitch": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "downlevelIteration": true
   },
   "include": [
     "src",
