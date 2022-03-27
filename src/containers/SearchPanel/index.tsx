@@ -26,7 +26,7 @@ export const SearchPanel = (props: ISearchPanelProps) => {
 
   return (
     <div
-      className="flex flex-col h-full border-r border-gray-300 dark:border-gray-600"
+      className="flex flex-col h-full border-r border-gray-300 dark:border-gray-600 overflow-x-hidden"
       data-testid="search-panel"
     >
       <Header

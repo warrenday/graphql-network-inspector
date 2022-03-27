@@ -31,12 +31,12 @@ export const RequestView = (props: IRequestViewProps) => {
                 className="absolute right-3 top-3 z-10 mt-14"
               />
             )}
-            <CodeBlock text={request.query} language={"graphql"} />
+            <CodeBlock text={request.query} language="graphql" />
             {isVariablesPopulated(request) && (
               <div className="bg-gray-200 dark:bg-gray-800 rounded-lg">
                 <CodeBlock
                   text={safeJson.stringify(request.variables, undefined, 2)}
-                  language={"json"}
+                  language="json"
                 />
               </div>
             )}

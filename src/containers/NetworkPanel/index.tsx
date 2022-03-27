@@ -112,7 +112,7 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
       rightPane={
         selectedRequest && (
           <div
-            className="dark:bg-gray-900 border-l border-gray-300 dark:border-gray-600 h-full"
+            className="dark:bg-gray-900 border-l border-gray-300 dark:border-gray-600 overflow-y-auto"
             style={{ minWidth: 200 }}
           >
             <NetworkDetails
