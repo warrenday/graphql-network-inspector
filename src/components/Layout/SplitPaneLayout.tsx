@@ -12,7 +12,7 @@ export const SplitPaneLayout = (props: ISplitPaneLayoutProps) => {
 
   return (
     <div
-      className="h-screen overflow-hidden"
+      className="h-screen overflow-hidden grid"
       style={{ gridTemplateRows: "auto 1fr" }}
     >
       <div>{header}</div>
