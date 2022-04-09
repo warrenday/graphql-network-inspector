@@ -4,7 +4,6 @@ import { DelayedLoader } from "../DelayedLoader"
 import { Spinner } from "../Spinner"
 import { config } from "../../config"
 import classes from "./CodeView.module.css"
-import "highlight.js/styles/atom-one-dark.css"
 
 type CodeViewProps = {
   text: string

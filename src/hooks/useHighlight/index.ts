@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import hljs from "highlight.js"
 
 type Language = "json" | "graphql"
 export interface MessagePayload {
@@ -18,8 +19,16 @@ export const useHighlight = (language: Language, code: string) => {
   const [markup, setMarkup] = useState("")
 
   useEffect(() => {
-    const worker = new Worker(new URL("./worker.ts", import.meta.url))
+    // Highlight small code blocks in the main thread
+    if (code.length < 1000) {
+      const result = hljs.highlight(code, { language })
+      setMarkup(result.value)
+      setLoading(false)
+      return
+    }
 
+    // Highlight large code blocks in a worker thread
+    const worker = new Worker(new URL("./worker.ts", import.meta.url))
     worker.onmessage = (event) => {
       setLoading(false)
       setMarkup(event.data)
@@ -27,6 +36,7 @@ export const useHighlight = (language: Language, code: string) => {
     setLoading(true)
     const messagePayload: MessagePayload = { language, code }
     worker.postMessage(messagePayload)
+
     return () => {
       worker.terminate()
     }
