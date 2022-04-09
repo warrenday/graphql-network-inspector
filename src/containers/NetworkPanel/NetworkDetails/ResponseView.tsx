@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import * as safeJson from "../../../helpers/safeJson"
-import { JsonView } from "../../../components/JsonView"
+import { JsonView } from "@/components/CodeView"
 import { CopyButton } from "../../../components/CopyButton"
 
 interface IResponseViewProps {

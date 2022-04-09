@@ -9,7 +9,7 @@ module.exports = ({ env }) => {
 
   return {
     style: {
-      postcss: {
+      postcssOptions: {
         plugins: [require("tailwindcss"), require("autoprefixer")],
       },
     },
@@ -40,10 +40,13 @@ module.exports = ({ env }) => {
       ],
     },
     devServer: {
-      // This allows use to develop via an unpacked extension in chrome
-      // During development changes are written to disk, so we can see changes
-      // within the loaded extension within needing to re-build the entire bundle
-      writeToDisk: true,
+      devMiddleware: {
+        // This aid in debugging the source maps during development.
+        // When loading an  unpacked extension in chrome we can see the
+        // source files and easily debug without needing to rebuild the
+        // entire app.
+        writeToDisk: true,
+      },
     },
   }
 }

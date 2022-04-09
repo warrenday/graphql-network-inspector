@@ -1,6 +1,13 @@
 import { NetworkPanel } from "./index"
 import { render, fireEvent } from "@testing-library/react"
 
+jest.mock("@/hooks/useHighlight", () => ({
+  useHighlight: () => ({
+    markup: "<div>hi</div>",
+    loading: false,
+  }),
+}))
+
 test("invalid regex is provided, regex mode is on - error message is rendered", () => {
   const { getByTestId, getByText } = render(
     <NetworkPanel

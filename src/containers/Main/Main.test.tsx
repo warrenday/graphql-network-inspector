@@ -6,6 +6,13 @@ import { act } from "react-dom/test-utils"
 
 jest.mock("../../services/chromeProvider")
 
+jest.mock("@/hooks/useHighlight", () => ({
+  useHighlight: () => ({
+    markup: "<div>hi</div>",
+    loading: false,
+  }),
+}))
+
 const mockChromeProvider = chromeProvider as jest.Mock
 
 const mockOnNavigated = () => {

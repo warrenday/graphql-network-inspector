@@ -17,11 +17,11 @@
     "copy-to-clipboard": "^3.3.1",
     "graphql": "^16.0.1",
     "graphql-tag": "^2.11.0",
+    "highlight.js": "^11.5.0",
     "mergeby": "^2.0.1",
     "pretty-bytes": "^5.6.0",
     "pretty-ms": "^7.0.1",
     "react": "^17.0.2",
-    "react-code-blocks": "^0.0.9-0",
     "react-dom": "^17.0.2",
     "react-split-pane": "^0.1.92",
     "react-table": "^7.5.0",
@@ -30,8 +30,8 @@
     "uuid": "^8.3.0"
   },
   "devDependencies": {
-    "@craco/craco": "^6.2.0",
-    "@tailwindcss/forms": "^0.3.3",
+    "@craco/craco": "^6.4.3",
+    "@tailwindcss/forms": "^0.5.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^12.1.2",
     "@types/chrome": "^0.0.154",
@@ -45,10 +45,10 @@
     "autoprefixer": "^9",
     "copy-webpack-plugin": "^6.4.1",
     "dedent": "^0.7.0",
-    "postcss": "^7",
+    "postcss": "^8.4.12",
     "prettier": "^2.4.1",
-    "react-scripts": "^4.0.3",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat",
+    "react-scripts": "^5.0.0",
+    "tailwindcss": "^3.0.23",
     "typescript": "^4.0.3"
   },
   "eslintConfig": {

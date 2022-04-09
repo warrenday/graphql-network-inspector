@@ -25,6 +25,23 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
+
+    <!--
+      Styles for highlight.js. We need to support both light and dark mode and 
+      can do this by disabling each stylesheet depending on the theme.
+    -->
+    <link
+      rel="stylesheet"
+      href="%PUBLIC_URL%/css/atom-one-light.css"
+      disabled="disabled"
+      id="highlightjs-light-theme"
+    />
+    <link
+      rel="stylesheet"
+      href="%PUBLIC_URL%/css/atom-one-dark.css"
+      disabled="disabled"
+      id="highlightjs-dark-theme"
+    />
     <title>React App</title>
   </head>
   <body>
