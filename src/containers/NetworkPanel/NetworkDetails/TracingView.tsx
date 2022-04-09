@@ -13,8 +13,8 @@ export const TracingView = (props: ITracingViewProps) => {
 
   if (size > config.maxUsableResponseSizeMb) {
     return (
-      <div className="p-4 text-white">
-        The response payload is too large to display.
+      <div className="p-4 dark:text-white">
+        The output is too large to display.
       </div>
     )
   }

@@ -8,7 +8,7 @@ export const useDarkTheme = () => {
   // Switch out the css for highlight.js depending on the theme
   useEffect(() => {
     const darkThemeLink = document.getElementById("highlightjs-dark-theme")
-    const lightThemeLink = document.getElementById("highlightjs-dark-theme")
+    const lightThemeLink = document.getElementById("highlightjs-light-theme")
 
     if (isDark) {
       lightThemeLink?.setAttribute("disabled", "disabled")

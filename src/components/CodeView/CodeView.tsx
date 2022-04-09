@@ -14,14 +14,14 @@ const LoadingIndicator = () => {
   return (
     <div className="flex items-center">
       <Spinner />
-      <div className="text-white ml-4 mt-0.5">Formatting...</div>
+      <div className="dark:text-white ml-4 mt-0.5">Formatting...</div>
     </div>
   )
 }
 
 const CodeTooLargeMessage = () => {
   return (
-    <div className="text-white">
+    <div className="dark:text-white">
       The response payload is too large to display.
     </div>
   )
