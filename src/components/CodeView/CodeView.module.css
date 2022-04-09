@@ -1,0 +1,10 @@
+.container {
+  font-size: 1.2rem;
+  line-height: 2.1rem;
+  font-family: Monaco, Menlo, Consolas, "Droid Sans Mono", "Inconsolata",
+    "Courier New", monospace;
+}
+
+.container span {
+  background: none !important;
+}

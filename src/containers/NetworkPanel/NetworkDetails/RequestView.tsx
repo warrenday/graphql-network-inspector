@@ -1,8 +1,8 @@
 import { Panels, PanelSection } from "./PanelSection"
-import { CodeBlock } from "../../../components/CodeBlock"
-import { CopyButton } from "../../../components/CopyButton"
-import * as safeJson from "../../../helpers/safeJson"
-import { IGraphqlRequestBody } from "../../../helpers/graphqlHelpers"
+import { CodeView } from "@/components/CodeView"
+import { CopyButton } from "@/components/CopyButton"
+import * as safeJson from "@/helpers/safeJson"
+import { IGraphqlRequestBody } from "@/helpers/graphqlHelpers"
 
 interface IRequestViewProps {
   requests: IGraphqlRequestBody[]
@@ -31,10 +31,10 @@ export const RequestView = (props: IRequestViewProps) => {
                 className="absolute right-3 top-3 z-10 mt-14"
               />
             )}
-            <CodeBlock text={request.query} language={"graphql"} />
+            <CodeView text={request.query} language={"graphql"} />
             {isVariablesPopulated(request) && (
               <div className="bg-gray-200 dark:bg-gray-800 rounded-lg">
-                <CodeBlock
+                <CodeView
                   text={safeJson.stringify(request.variables, undefined, 2)}
                   language={"json"}
                 />
