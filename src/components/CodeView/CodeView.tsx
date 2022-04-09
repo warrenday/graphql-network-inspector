@@ -34,7 +34,7 @@ const CodeRenderer = (props: CodeViewProps) => {
   const ref = useMarkSearch(jsonMarkup)
 
   return (
-    <DelayedLoader loading={loading} loader={<LoadingIndicator />} delay={300}>
+    <DelayedLoader loading={loading} loader={<LoadingIndicator />}>
       <pre>
         <code
           dangerouslySetInnerHTML={{ __html: jsonMarkup }}

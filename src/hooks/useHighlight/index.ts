@@ -20,7 +20,7 @@ export const useHighlight = (language: Language, code: string) => {
 
   useEffect(() => {
     // Highlight small code blocks in the main thread
-    if (code.length < 1000) {
+    if (code.length < 500) {
       const result = hljs.highlight(code, { language })
       setMarkup(result.value)
       setLoading(false)
