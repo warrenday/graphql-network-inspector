@@ -11,27 +11,21 @@ import { useSearch } from "./useSearch"
 export const useMark = (searchQuery: string, content?: string) => {
   const ref = useRef(null)
 
-  useEffect(
-    () => {
-      if (!ref.current) {
-        return
-      }
+  useEffect(() => {
+    if (!ref.current) {
+      return
+    }
 
-      const mark = new Mark(ref.current)
-      mark.mark(searchQuery, {
-        caseSensitive: false,
-        separateWordSearch: false,
-      })
+    const mark = new Mark(ref.current)
+    mark.mark(searchQuery, {
+      caseSensitive: false,
+      separateWordSearch: false,
+    })
 
-      return () => {
-        mark.unmark()
-      }
-    },
-    // Really important we listen for change on both
-    // ref and ref.current. This means we receive updates
-    // when the ref changes, but also when the dom changes
-    [ref, ref.current, searchQuery, content]
-  )
+    return () => {
+      mark.unmark()
+    }
+  }, [ref, searchQuery, content])
 
   return ref
 }
