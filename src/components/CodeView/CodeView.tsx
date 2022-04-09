@@ -1,5 +1,6 @@
 import { useHighlight } from "@/hooks/useHighlight"
 import { useByteSize } from "@/hooks/useBytes"
+import { useMarkSearch } from "@/hooks/useMark"
 import { DelayedLoader } from "../DelayedLoader"
 import { Spinner } from "../Spinner"
 import { config } from "../../config"
@@ -30,6 +31,7 @@ const CodeTooLargeMessage = () => {
 const CodeRenderer = (props: CodeViewProps) => {
   const { text, language } = props
   const { markup: jsonMarkup, loading } = useHighlight(language, text)
+  const ref = useMarkSearch(jsonMarkup)
 
   return (
     <DelayedLoader loading={loading} loader={<LoadingIndicator />} delay={300}>
@@ -37,6 +39,7 @@ const CodeRenderer = (props: CodeViewProps) => {
         <code
           dangerouslySetInnerHTML={{ __html: jsonMarkup }}
           className={classes.container}
+          ref={ref}
         />
       </pre>
     </DelayedLoader>
