@@ -10,7 +10,7 @@ export const TracingView = (props: ITracingViewProps) => {
   const tracing = useApolloTracing(response)
 
   return (
-    <div className="relative p-4">
+    <div className="relative h-full">
       {tracing ? (
         <TracingVisualization tracing={tracing} />
       ) : (

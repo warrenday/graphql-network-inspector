@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useMemo, CSSProperties } from "react"
 import { nsToMs } from "@/helpers/nsToMs"
 import { useBoundingRect } from "@/hooks/useBoundingRect"
 
@@ -9,12 +9,13 @@ interface ITracingVisualizationRowProps {
   total: number
   offset?: number
   duration: number
+  style?: CSSProperties
 }
 
 export const TracingVisualizationRow = (
   props: ITracingVisualizationRowProps
 ) => {
-  const { name, total, offset, duration, type, color } = props
+  const { name, total, offset, duration, type, color, style } = props
 
   const backgroundColorCss = getBackgroundColors(color || type)
 
@@ -51,7 +52,7 @@ export const TracingVisualizationRow = (
   }, [width, duration, offset, total])
 
   return (
-    <div ref={container} className={`w-full mb-1 whitespace-nowrap`}>
+    <div ref={container} className={`w-full mb-1 whitespace-nowrap`} style={style}>
       {marginLeftPercentage > 0 && (
         <div
           className="inline-block text-right"
