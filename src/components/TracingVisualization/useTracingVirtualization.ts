@@ -4,20 +4,14 @@ import { useVirtualization } from '@/hooks/useVirtualization'
 
 const EMPTY_ARRAY: IApolloServerTracingResolvers[] = []
 
-interface Options {
-  height?: number
-}
-
 interface Results extends ReturnType<typeof useVirtualization> {
   ref: MutableRefObject<HTMLDivElement | null>;
   resolvers: IApolloServerTracingResolvers[];
+  height: number;
 }
 
-export const useTracingVirtualization = (
-  tracing?: IApolloServerTracing,
-  options?: Options,
-): Results => {
-  const height = options?.height || 20;
+export const useTracingVirtualization = (tracing?: IApolloServerTracing): Results => {
+  const height = 20;
   const resolvers = tracing?.execution.resolvers || EMPTY_ARRAY;
 
   const parentRef = useRef<HTMLDivElement>(null)
@@ -26,11 +20,13 @@ export const useTracingVirtualization = (
     parentRef,
     estimateSize: useCallback(() => height, []),
     overscan: 5,
+    paddingEnd: 20,
   })
 
   const memoResults = useMemo(() => ({
     ref: parentRef,
     resolvers,
+    height,
     ...rowVirtualizer,
   }), [resolvers, rowVirtualizer])
 

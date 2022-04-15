@@ -1,8 +1,6 @@
 import { IApolloServerTracing, IApolloServerTracingResolvers } from "@/types"
-import { VirtualItem } from 'react-virtual';
+import { VirtualItem } from '@/hooks/useVirtualization';
 import { TracingVisualizationRow, useTracingVirtualization } from "."
-
-const height = 20;
 
 interface ITracingVisualizationProps {
   tracing?: IApolloServerTracing
@@ -14,15 +12,12 @@ interface ITracingVisualizationProps {
 export const TracingVisualization = (props: ITracingVisualizationProps) => {
   const { tracing } = props
   const totalTimeNs = tracing?.duration || 0
-  const { ref, resolvers, totalSize, virtualItems } = useTracingVirtualization(tracing)
+  const { ref, resolvers, totalSize, virtualItems, height } = useTracingVirtualization(tracing)
 
   return (
     <div
       ref={ref}
-      className="relative h-full"
-      style={{
-        overflow: 'auto',
-      }}
+      className="relative h-full overflow-y-auto p-4"
     >
       <div
         className="relative w-full"
@@ -49,7 +44,6 @@ export const TracingVisualization = (props: ITracingVisualizationProps) => {
               position: 'absolute',
               top: 0,
               left: 0,
-              width: '100%',
               height: `${size}px`,
               transform: `translateY(${start + height}px)`,
             }}
