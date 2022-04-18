@@ -10,9 +10,7 @@
     "test": "craco test",
     "eject": "react-scripts eject",
     "lint": "eslint --max-warnings=0 src",
-    "check-types": "tsc --noEmit",
-    "_preinstall_comment_": "https://stackoverflow.com/a/71855781/2573621",
-    "preinstall": "npm install --package-lock-only --ignore-scripts && npx npm-force-resolutions"
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@notdutzi/react-json-view": "^1.21.8",
