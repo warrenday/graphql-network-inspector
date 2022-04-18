@@ -17,7 +17,7 @@ export const Checkbox = (props: ICheckboxProps) => {
   return (
     <label
       htmlFor={id}
-      className={`flex items-center ${className}`}
+      className={`flex items-center whitespace-nowrap ${className}`}
       data-testid={testId}
     >
       <input

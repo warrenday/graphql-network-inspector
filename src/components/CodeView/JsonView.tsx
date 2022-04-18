@@ -10,11 +10,15 @@ export const JsonView = (props: JsonViewProps) => {
   const isDarkTheme = useDarkTheme()
 
   return (
-    <div className="p-4 font-bold">
+    <div className="p-4">
       <ReactJson
         name={null}
         src={props.src}
         theme={isDarkTheme ? "tomorrow" : "rjv-default"}
+        style={{
+          fontFamily:
+            'Monaco, Menlo, Consolas, "Droid Sans Mono", "Inconsolata", "Courier New", monospace',
+        }}
         enableClipboard={false}
         displayDataTypes={false}
         displayObjectSize={true}
