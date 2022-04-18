@@ -4,8 +4,10 @@ export type DeepPartial<T> = {
   [P in keyof T]?: DeepPartial<T[P]>
 }
 
+export type Maybe<T> = T | null | undefined;
+
 export interface IResponseBody
-  extends ExecutionResult<unknown, IApolloServerExtensions> {}
+  extends ExecutionResult<unknown, IApolloServerExtensions> { }
 
 export interface IApolloServerExtensions {
   tracing?: IApolloServerTracing

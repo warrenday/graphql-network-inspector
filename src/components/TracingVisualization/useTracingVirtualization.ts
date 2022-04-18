@@ -1,4 +1,4 @@
-import { IApolloServerTracing, IApolloServerTracingResolvers } from "@/types"
+import { IApolloServerTracing, IApolloServerTracingResolvers, Maybe } from "@/types"
 import { useRef, useCallback, MutableRefObject, useMemo } from 'react'
 import { useVirtualization } from '@/hooks/useVirtualization'
 
@@ -10,7 +10,7 @@ interface Results extends ReturnType<typeof useVirtualization> {
   height: number;
 }
 
-export const useTracingVirtualization = (tracing?: IApolloServerTracing): Results => {
+export const useTracingVirtualization = (tracing: Maybe<IApolloServerTracing>): Results => {
   const height = 20;
   const resolvers = tracing?.execution.resolvers || EMPTY_ARRAY;
 

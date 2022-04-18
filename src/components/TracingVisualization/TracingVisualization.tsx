@@ -1,12 +1,8 @@
-import { IApolloServerTracing, IApolloServerTracingResolvers } from "@/types"
-import { VirtualItem } from '@/hooks/useVirtualization';
+import { IApolloServerTracing, Maybe } from "@/types"
 import { TracingVisualizationRow, useTracingVirtualization } from "."
 
 interface ITracingVisualizationProps {
-  tracing?: IApolloServerTracing
-  totalSize?: number
-  virtualItems?: VirtualItem[]
-  resolvers?: IApolloServerTracingResolvers[]
+  tracing: Maybe<IApolloServerTracing>;
 }
 
 export const TracingVisualization = (props: ITracingVisualizationProps) => {
