@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react"
 import { TracingView } from "./TracingView"
-import * as safeJson from "../../../helpers/safeJson"
+import * as safeJson from "@/helpers/safeJson"
 
 jest.mock("@/hooks/useHighlight", () => ({
   useHighlight: () => ({

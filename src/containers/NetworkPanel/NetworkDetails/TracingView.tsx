@@ -2,8 +2,10 @@ import { TracingVisualization } from "@/components/TracingVisualization"
 import { useApolloTracing } from "@/hooks/useApolloTracing"
 import { useByteSize } from "@/hooks/useBytes"
 import { config } from "@/config"
+import { Maybe } from '@/types'
+
 interface ITracingViewProps {
-  response?: string
+  response: Maybe<string>
 }
 
 export const TracingView = (props: ITracingViewProps) => {
@@ -20,7 +22,7 @@ export const TracingView = (props: ITracingViewProps) => {
   }
 
   return (
-    <div className="relative p-4">
+    <div className="relative h-full">
       {tracing ? (
         <TracingVisualization tracing={tracing} />
       ) : (
