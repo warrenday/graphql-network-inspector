@@ -52,7 +52,11 @@ export const TracingVisualizationRow = (
   }, [width, duration, offset, total])
 
   return (
-    <div ref={container} className={`w-full mb-1 whitespace-nowrap`} style={style}>
+    <div
+      ref={container}
+      className="w-full whitespace-nowrap absolute top-0 left-0"
+      style={style}
+    >
       {marginLeftPercentage > 0 && (
         <div
           className="inline-block text-right"

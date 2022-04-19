@@ -8,7 +8,7 @@ interface ITracingVisualizationProps {
 export const TracingVisualization = (props: ITracingVisualizationProps) => {
   const { tracing } = props
   const totalTimeNs = tracing?.duration || 0
-  const { ref, resolvers, totalSize, virtualItems, height } = useTracingVirtualization(tracing)
+  const { ref, resolvers, totalSize, virtualItems } = useTracingVirtualization(tracing)
 
   return (
     <div
@@ -17,9 +17,7 @@ export const TracingVisualization = (props: ITracingVisualizationProps) => {
     >
       <div
         className="relative w-full"
-        style={{
-          height: `${totalSize}px`,
-        }}
+        style={{ height: `${totalSize}px` }}
       >
         <TracingVisualizationRow
           type="total"
@@ -28,23 +26,23 @@ export const TracingVisualization = (props: ITracingVisualizationProps) => {
           duration={totalTimeNs}
         />
 
-        {virtualItems.map(({ key, index, size, start }) => (
-          <TracingVisualizationRow
-            key={key}
-            type={resolvers[index].parentType}
-            name={resolvers[index].path.join(".")}
-            total={totalTimeNs}
-            offset={resolvers[index].startOffset}
-            duration={resolvers[index].duration}
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              height: `${size}px`,
-              transform: `translateY(${start + height}px)`,
-            }}
-          />
-        ))}
+        {virtualItems.map(({ key, index, size, start }) => {
+          const { parentType, path, startOffset, duration } = resolvers[index];
+          return (
+            <TracingVisualizationRow
+              key={key}
+              type={parentType}
+              name={path.join(".")}
+              total={totalTimeNs}
+              offset={startOffset}
+              duration={duration}
+              style={{
+                height: `${size}px`,
+                transform: `translateY(${start + size}px)`,
+              }}
+            />
+          )
+        })}
       </div>
     </div>
   )
