@@ -3,6 +3,7 @@
 
 const path = require("path")
 const CopyWebpackPlugin = require("copy-webpack-plugin")
+const BrowserWebpackPlugin = require("./webpack/browserWebpackPlugin")
 
 module.exports = ({ env }) => {
   const isEnvDevelopment = env === "development"
@@ -36,6 +37,9 @@ module.exports = ({ env }) => {
               },
             },
           ],
+        }),
+        new BrowserWebpackPlugin({
+          buildTarget: process.env?.BUILD_TARGET ?? "chrome",
         }),
       ],
     },

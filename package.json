@@ -5,6 +5,7 @@
   "scripts": {
     "start": "craco start",
     "build": "INLINE_RUNTIME_CHUNK=false craco build",
+    "build:firefox": "BUILD_TARGET='firefox' INLINE_RUNTIME_CHUNK=false craco build",
     "bundle": "yarn build && bestzip build.zip build/*",
     "postbuild": "node ./scripts/set-manifest-version.js",
     "test": "craco test",

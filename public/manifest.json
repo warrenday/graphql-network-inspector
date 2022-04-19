@@ -5,7 +5,7 @@
   "icons": {
     "128": "icon.png"
   },
-  "manifest_version": 3,
+  "manifest_version": "{{manifest_version}}",
   "permissions": [],
   "devtools_page": "devtools/devtools.html"
 }
