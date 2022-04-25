@@ -1,33 +1,49 @@
-import { IApolloServerTracing } from "@/types"
-import { TracingVisualizationRow } from "."
+import { IApolloServerTracing, Maybe } from "@/types"
+import { TracingVisualizationRow, useTracingVirtualization } from "."
 
 interface ITracingVisualizationProps {
-  tracing?: IApolloServerTracing
+  tracing: Maybe<IApolloServerTracing>;
 }
 
 export const TracingVisualization = (props: ITracingVisualizationProps) => {
   const { tracing } = props
   const totalTimeNs = tracing?.duration || 0
+  const { ref, resolvers, totalSize, virtualItems } = useTracingVirtualization(tracing)
 
   return (
-    <>
-      <TracingVisualizationRow
-        type="total"
-        name="Total"
-        total={totalTimeNs}
-        duration={totalTimeNs}
-      />
-
-      {tracing?.execution.resolvers.map((a) => (
+    <div
+      ref={ref}
+      className="relative h-full overflow-y-auto p-4"
+    >
+      <div
+        className="relative w-full"
+        style={{ height: `${totalSize}px` }}
+      >
         <TracingVisualizationRow
-          key={a.path.join(".")}
-          type={a.parentType}
-          name={a.path.join(".")}
+          type="total"
+          name="Total"
           total={totalTimeNs}
-          offset={a.startOffset}
-          duration={a.duration}
+          duration={totalTimeNs}
         />
-      ))}
-    </>
+
+        {virtualItems.map(({ key, index, size, start }) => {
+          const { parentType, path, startOffset, duration } = resolvers[index];
+          return (
+            <TracingVisualizationRow
+              key={key}
+              type={parentType}
+              name={path.join(".")}
+              total={totalTimeNs}
+              offset={startOffset}
+              duration={duration}
+              style={{
+                height: `${size}px`,
+                transform: `translateY(${start + size}px)`,
+              }}
+            />
+          )
+        })}
+      </div>
+    </div>
   )
 }

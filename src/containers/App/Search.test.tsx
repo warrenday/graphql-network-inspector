@@ -1,6 +1,13 @@
 import { render, fireEvent, within, waitFor } from "@testing-library/react"
 import { App } from "./index"
 
+jest.mock("@/hooks/useHighlight", () => ({
+  useHighlight: () => ({
+    markup: "<div>hi</div>",
+    loading: false,
+  }),
+}))
+
 describe("App - Search", () => {
   it("search panel is closed by default", async () => {
     const { queryByTestId, getByText } = render(<App />)

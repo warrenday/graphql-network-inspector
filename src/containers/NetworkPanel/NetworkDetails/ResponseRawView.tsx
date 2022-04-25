@@ -1,18 +1,36 @@
 import { useMemo } from "react"
-import * as safeJson from "../../../helpers/safeJson"
-import { CodeBlock } from "../../../components/CodeBlock"
-import { CopyButton } from "../../../components/CopyButton"
+import * as safeJson from "@/helpers/safeJson"
+import { CopyButton } from "@/components/CopyButton"
+import { CodeView } from "@/components/CodeView"
 
 interface IResponseRawViewProps {
   response?: string
 }
 
-export const ResponseRawView = (props: IResponseRawViewProps) => {
-  const { response } = props
-  const formattedJson = useMemo(() => {
-    const parsedResponse = safeJson.parse(response) || {}
+const useFormatResponse = (response?: string): string => {
+  return useMemo(() => {
+    if (!response) {
+      return "{}"
+    }
+
+    // We remove the "extensions" prop as this is just meta data
+    // for things like "tracing" and can be huge in size.
+    const parsedResponse = safeJson.parse<{ extensions?: string }>(response)
+    if (!parsedResponse) {
+      return ""
+    }
+
+    if ("extensions" in parsedResponse) {
+      delete parsedResponse["extensions"]
+    }
+
     return safeJson.stringify(parsedResponse, undefined, 2)
   }, [response])
+}
+
+export const ResponseRawView = (props: IResponseRawViewProps) => {
+  const { response } = props
+  const formattedJson = useFormatResponse(response)
 
   return (
     <div className="relative p-4">
@@ -20,7 +38,7 @@ export const ResponseRawView = (props: IResponseRawViewProps) => {
         textToCopy={formattedJson}
         className="absolute right-3 top-3 z-10"
       />
-      <CodeBlock text={formattedJson} language={"json"} />
+      <CodeView text={formattedJson} language={"json"} />
     </div>
   )
 }
