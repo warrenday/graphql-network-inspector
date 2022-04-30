@@ -105,12 +105,6 @@ button {
   background-color: #3a4351;
 }
 
-@layer components {
-  .text-input {
-    @apply dark:bg-gray-900 border border-gray-300 dark:border-gray-600 px-3 py-1 rounded-lg text-lg;
-  }
-}
-
 input[type="search"]::-ms-clear,
 input[type="search"]::-ms-reveal {
   display: none;

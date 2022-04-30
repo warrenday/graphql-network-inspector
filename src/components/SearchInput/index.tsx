@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useRef } from "react"
 import { debounce } from "@/helpers/debounce"
+import { TextInput } from "../TextInput"
 
 interface ISearchInputProps {
   className?: string
@@ -17,7 +18,7 @@ export const SearchInput = (props: ISearchInputProps) => {
     [onSearchImmediate, debounceDelay]
   )
   return (
-    <input
+    <TextInput
       ref={ref}
       onChange={() => onSearchDebounced()}
       onBlur={onSearchImmediate}
@@ -26,7 +27,7 @@ export const SearchInput = (props: ISearchInputProps) => {
       }}
       placeholder="Search full request"
       autoFocus
-      className={`text-input ${className}`}
+      className={className}
       data-testid="search-input"
       type="search"
     />
