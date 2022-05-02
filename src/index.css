@@ -37,6 +37,10 @@ h2 {
   font-size: 1.2rem;
 }
 
+input {
+  font-size: 1.2rem !important;
+}
+
 button {
   cursor: pointer;
 }
@@ -103,18 +107,4 @@ button {
 .dark .react-json-view *:focus {
   outline: 2px solid #3a4351;
   background-color: #3a4351;
-}
-
-input[type="search"]::-ms-clear,
-input[type="search"]::-ms-reveal {
-  display: none;
-  width: 0;
-  height: 0;
-}
-
-input[type="search"]::-webkit-search-decoration,
-input[type="search"]::-webkit-search-cancel-button,
-input[type="search"]::-webkit-search-results-button,
-input[type="search"]::-webkit-search-results-decoration {
-  display: none;
 }

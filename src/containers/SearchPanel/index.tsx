@@ -1,11 +1,11 @@
 import { useMemo } from "react"
-import { NetworkRequest } from "../../hooks/useNetworkMonitor"
-import { useSearch } from "../../hooks/useSearch"
-import { NetworkTabs } from "../../hooks/useNetworkTabs"
-import { getSearchResults, ISearchResult } from "../../services/searchService"
+import { NetworkRequest } from "@/hooks/useNetworkMonitor"
+import { useSearch } from "@/hooks/useSearch"
+import { NetworkTabs } from "@/hooks/useNetworkTabs"
+import { getSearchResults, ISearchResult } from "@/services/searchService"
 import { SearchResults } from "./SearchResults"
-import { Header } from "../../components/Header"
-import { CloseButton } from "../../components/CloseButton"
+import { Header } from "@/components/Header"
+import { CloseButton } from "@/components/CloseButton"
 import { SearchInput } from "@/components/SearchInput"
 
 interface ISearchPanelProps {
