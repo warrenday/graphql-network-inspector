@@ -38,10 +38,11 @@ describe("App - Search", () => {
     })
 
     fireEvent.click(getByTestId("search-button"))
-    fireEvent.change(getByTestId("search-input"), {
+    const searchInput = getByTestId("search-input")
+    fireEvent.change(searchInput, {
       target: { value: "getmovie" },
     })
-    fireEvent.keyDown(window, { key: "Enter", code: "Enter" })
+    fireEvent.keyDown(searchInput, { key: "Enter", code: "Enter" })
 
     fireEvent.click(
       within(getByTestId("search-results-0")).getByText("Request")
@@ -50,6 +51,22 @@ describe("App - Search", () => {
     const rows = within(getByTestId("network-table")).getAllByRole("row")
     expect(rows[1]).toHaveAttribute("aria-selected", "true")
     expect(rows[1]).toHaveTextContent("getMovieQuery")
+  })
+
+  it("searches after debounce delay", async () => {
+    const { getByTestId, findByTestId, getByText } = render(<App />)
+
+    await waitFor(() => {
+      expect(getByText(/getMovie/i)).toBeInTheDocument()
+    })
+
+    fireEvent.click(getByTestId("search-button"))
+    const searchInput = getByTestId("search-input")
+    fireEvent.change(searchInput, {
+      target: { value: "getmovie" },
+    })
+
+    expect(await findByTestId("search-results-0")).toBeInTheDocument()
   })
 
   it("open the headers tab when clicking a search result", async () => {
@@ -61,10 +78,11 @@ describe("App - Search", () => {
 
     fireEvent.click(getByTestId("search-button"))
 
-    fireEvent.change(getByTestId("search-input"), {
+    const searchInput = getByTestId("search-input")
+    fireEvent.change(searchInput, {
       target: { value: "auth" },
     })
-    fireEvent.keyDown(window, { key: "Enter", code: "Enter" })
+    fireEvent.keyDown(searchInput, { key: "Enter", code: "Enter" })
 
     fireEvent.click(within(getByTestId("search-results-0")).getByText("Header"))
 
@@ -83,10 +101,11 @@ describe("App - Search", () => {
 
     fireEvent.click(getByTestId("search-button"))
 
-    fireEvent.change(getByTestId("search-input"), {
+    const searchInput = getByTestId("search-input")
+    fireEvent.change(searchInput, {
       target: { value: "getmovie" },
     })
-    fireEvent.keyDown(window, { key: "Enter", code: "Enter" })
+    fireEvent.keyDown(searchInput, { key: "Enter", code: "Enter" })
 
     fireEvent.click(
       within(getByTestId("search-results-0")).getByText("Request")
@@ -107,10 +126,11 @@ describe("App - Search", () => {
 
     fireEvent.click(getByTestId("search-button"))
 
-    fireEvent.change(getByTestId("search-input"), {
+    const searchInput = getByTestId("search-input")
+    fireEvent.change(searchInput, {
       target: { value: "batman" },
     })
-    fireEvent.keyDown(window, { key: "Enter", code: "Enter" })
+    fireEvent.keyDown(searchInput, { key: "Enter", code: "Enter" })
 
     fireEvent.click(
       within(getByTestId("search-results-0")).getByText("Response")

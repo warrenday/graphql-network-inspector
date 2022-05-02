@@ -2,8 +2,8 @@ import { Checkbox } from "../../components/Checkbox"
 import { Button } from "../../components/Button"
 import { BinIcon } from "../../components/Icons/BinIcon"
 import { SearchIcon } from "../../components/Icons/SearchIcon"
-import { Textfield } from "../../components/Textfield"
 import { useSearch } from "../../hooks/useSearch"
+import { TextInput } from "@/components/TextInput"
 
 interface IToolbarProps {
   filterValue: string
@@ -42,11 +42,12 @@ export const Toolbar = (props: IToolbarProps) => {
         testId="clear-network-table"
         className="-mr-3"
       />
-      <Textfield
+      <TextInput
+        className="w-80"
         value={filterValue}
-        onChange={onFilterValueChange}
+        onChange={(event) => onFilterValueChange(event.currentTarget.value)}
         placeholder={regexActive ? "/ab+c/" : "Filter"}
-        testId="filter-input"
+        data-testid="filter-input"
       />
       <Checkbox
         id="invert"
