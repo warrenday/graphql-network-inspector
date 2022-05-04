@@ -3,7 +3,7 @@ import cx from "classnames"
 
 interface IButtonProps {
   icon?: ReactElement
-  onClick: () => void
+  onClick?: () => void
   className?: string
   variant?: "default" | "contained"
   testId?: string
