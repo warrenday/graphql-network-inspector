@@ -6,6 +6,7 @@ import { useSearch } from "../../hooks/useSearch"
 import { Textfield } from "@/components/Textfield"
 import { InterceptButton } from "../../components/InterceptPopover"
 import { OverflowPopover } from "../../components/OverflowPopover"
+import { useOperatingSystem } from "../../hooks/useOperatingSystem"
 
 interface IToolbarProps {
   filterValue: string
@@ -32,6 +33,8 @@ export const Toolbar = (props: IToolbarProps) => {
     onClear,
   } = props
   const { setIsSearchOpen } = useSearch()
+  const os = useOperatingSystem()
+  const isMac = os === "mac"
 
   return (
     <div
@@ -82,7 +85,7 @@ export const Toolbar = (props: IToolbarProps) => {
           >
             Search
           </Button>,
-          <InterceptButton />,
+          ...(isMac ? [<InterceptButton />] : []),
         ]}
       />
     </div>

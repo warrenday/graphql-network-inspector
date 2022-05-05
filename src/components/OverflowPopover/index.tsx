@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
 import { Button } from "../Button"
 import { ChevronIcon } from "../Icons/ChevronIcon"
 import { Popover } from "../Popover"
@@ -33,24 +33,33 @@ const useVisibilityObserver = (
 ) => {
   const [itemsOnScreen, setItemOnScreen] = useState<boolean[]>([])
 
+  const handleResize = useCallback(() => {
+    const windowWidth = window.innerWidth - 30
+    const elementVisibility = refs.current.map((element) => {
+      const dims = element?.getBoundingClientRect()
+      const elementRightEdge = dims?.right || 0
+
+      return elementRightEdge < windowWidth
+    })
+    setItemOnScreen(elementVisibility)
+  }, [refs])
+
+  // Noticed when loaded as an extension the delay was
+  // required otherwise items would not align correctly
   useEffect(() => {
-    const handleResize = () => {
-      const windowWidth = window.innerWidth - 30
-      const elementVisibility = refs.current.map((element) => {
-        const dims = element?.getBoundingClientRect()
-        const elementRightEdge = dims?.right || 0
-
-        return elementRightEdge < windowWidth
-      })
-      setItemOnScreen(elementVisibility)
-    }
     handleResize()
+    const timer = setTimeout(() => {
+      handleResize()
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [handleResize])
 
+  useEffect(() => {
     window.addEventListener("resize", handleResize, false)
     return () => {
       window.removeEventListener("resize", handleResize, false)
     }
-  }, [refs])
+  }, [handleResize])
 
   return itemsOnScreen
 }
@@ -64,7 +73,7 @@ export const OverflowPopover = (props: IOverflowPopoverProps) => {
   return (
     <div className={`flex items-center ${className}`}>
       {items.map((item, index) => {
-        const isOnScreen = itemsOnScreen[index]
+        const isOnScreen = itemsOnScreen[index] ?? true
 
         return (
           <Item

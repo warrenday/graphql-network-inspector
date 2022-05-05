@@ -1,4 +1,3 @@
-import React from "react"
 import { Button } from "../Button"
 import { MockIcon } from "../Icons/MockIcon"
 import { Popover } from "../Popover"
