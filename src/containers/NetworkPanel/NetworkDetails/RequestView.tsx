@@ -24,7 +24,7 @@ export const RequestView = (props: IRequestViewProps) => {
       {requests.map((request) => {
         return (
           <PanelSection key={request.query} className="relative">
-            <div className="flex gap-2 absolute right-3 top-3 z-10">
+            <div className="flex gap-2 absolute right-3 top-3 z-10 transition-opacity opacity-75 hover:opacity-100">
               <AutoFormatToggleButton
                 active={autoFormat}
                 onToggle={toggleAutoFormat}
