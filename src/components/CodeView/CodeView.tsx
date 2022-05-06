@@ -1,6 +1,7 @@
 import { useHighlight } from "@/hooks/useHighlight"
 import { useByteSize } from "@/hooks/useBytes"
 import { useMarkSearch } from "@/hooks/useMark"
+import { useFormattedCode } from "../../hooks/useFormattedCode"
 import { DelayedLoader } from "../DelayedLoader"
 import { Spinner } from "../Spinner"
 import { config } from "../../config"
@@ -9,6 +10,7 @@ import classes from "./CodeView.module.css"
 type CodeViewProps = {
   text: string
   language: "graphql" | "json"
+  autoFormat?: boolean
 }
 
 const LoadingIndicator = () => {
@@ -29,8 +31,10 @@ const CodeTooLargeMessage = () => {
 }
 
 const CodeRenderer = (props: CodeViewProps) => {
-  const { text, language } = props
-  const { markup: jsonMarkup, loading } = useHighlight(language, text)
+  const { text, language, autoFormat } = props
+  const formattedText = useFormattedCode(text, language, autoFormat)
+
+  const { markup: jsonMarkup, loading } = useHighlight(language, formattedText)
   const ref = useMarkSearch(jsonMarkup)
 
   return (
@@ -47,7 +51,7 @@ const CodeRenderer = (props: CodeViewProps) => {
 }
 
 export const CodeView = (props: CodeViewProps) => {
-  const { text, language } = props
+  const { text, language, autoFormat } = props
   const size = useByteSize(text.length, { unit: "mb" })
 
   return (
@@ -55,7 +59,7 @@ export const CodeView = (props: CodeViewProps) => {
       {size > config.maxUsableResponseSizeMb ? (
         <CodeTooLargeMessage />
       ) : (
-        <CodeRenderer text={text} language={language} />
+        <CodeRenderer autoFormat={autoFormat} text={text} language={language} />
       )}
     </div>
   )
