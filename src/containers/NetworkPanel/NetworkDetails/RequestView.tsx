@@ -24,21 +24,23 @@ export const RequestView = (props: IRequestViewProps) => {
       {requests.map((request) => {
         return (
           <PanelSection key={request.query} className="relative">
-            <div className="flex gap-0.5 absolute right-3 top-3 z-10">
+            <div className="flex gap-2 absolute right-3 top-3 z-10">
               <AutoFormatToggleButton
                 active={autoFormat}
                 onToggle={toggleAutoFormat}
               />{" "}
-              <CopyButton textToCopy={request.query} />
+              <CopyButton label="Copy Query" textToCopy={request.query} />{" "}
+              {isVariablesPopulated(request) && (
+                <CopyButton
+                  label="Copy Vars"
+                  textToCopy={safeJson.stringify(
+                    request.variables,
+                    undefined,
+                    2
+                  )}
+                />
+              )}
             </div>
-
-            {isVariablesPopulated(request) && (
-              <CopyButton
-                label="Copy Vars"
-                textToCopy={safeJson.stringify(request.variables, undefined, 2)}
-                className="absolute right-3 top-3 z-10 mt-14"
-              />
-            )}
             <CodeView
               text={request.query}
               language={"graphql"}
