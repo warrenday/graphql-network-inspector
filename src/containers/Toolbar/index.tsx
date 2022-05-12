@@ -7,6 +7,7 @@ import { Textfield } from "@/components/Textfield"
 import { InterceptButton } from "../../components/InterceptPopover"
 import { OverflowPopover } from "../../components/OverflowPopover"
 import { useOperatingSystem } from "../../hooks/useOperatingSystem"
+import { Bar } from "../../components/Bar"
 
 interface IToolbarProps {
   filterValue: string
@@ -37,10 +38,7 @@ export const Toolbar = (props: IToolbarProps) => {
   const isMac = os === "mac"
 
   return (
-    <div
-      className="relative flex items-center w-full p-2 border-b dark:bg-gray-800 border-gray-300 dark:border-gray-600 space-x-6"
-      data-testid="toolbar"
-    >
+    <Bar testId="toolbar">
       <Button
         icon={<BinIcon />}
         onClick={onClear}
@@ -88,6 +86,6 @@ export const Toolbar = (props: IToolbarProps) => {
           ...(isMac ? [<InterceptButton />] : []),
         ]}
       />
-    </div>
+    </Bar>
   )
 }

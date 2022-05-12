@@ -66,6 +66,7 @@ button {
   -moz-background-clip: padding;
   -webkit-background-clip: padding;
   background-clip: padding-box;
+  z-index: 20;
 }
 
 .Resizer.vertical {

@@ -1,24 +1,25 @@
 import { Button } from "../Button"
+import { CodeIcon } from "../Icons/CodeIcon"
 
-type AutoFormatToggleButtonProps = {
+type IAutoFormatToggleButtonProps = {
   active?: boolean
   onToggle?: (value: boolean) => void
   className?: string
 }
 
-export const AutoFormatToggleButton = (props: AutoFormatToggleButtonProps) => {
+export const AutoFormatToggleButton = (props: IAutoFormatToggleButtonProps) => {
   const { active, onToggle, className } = props
 
   return (
     <div className={className}>
       <Button
         testId="auto-format-toggle-button"
-        variant="contained"
+        icon={<CodeIcon className={active ? "text-blue-500" : ""} />}
         onClick={() => {
           onToggle?.(!active)
         }}
       >
-        {active ? "AutoFormat on" : "AutoFormat off"}
+        Auto Format
       </Button>
     </div>
   )

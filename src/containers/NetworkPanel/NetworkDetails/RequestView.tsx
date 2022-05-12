@@ -4,6 +4,7 @@ import { CopyButton } from "@/components/CopyButton"
 import { IGraphqlRequestBody } from "@/helpers/graphqlHelpers"
 import * as safeJson from "@/helpers/safeJson"
 import { useToggle } from "@/hooks/useToggle"
+import { Bar } from "../../../components/Bar"
 import { Panels, PanelSection } from "./PanelSection"
 
 interface IRequestViewProps {
@@ -16,7 +17,6 @@ const isVariablesPopulated = (request: IGraphqlRequestBody) => {
 
 export const RequestView = (props: IRequestViewProps) => {
   const { requests } = props
-
   const [autoFormat, toggleAutoFormat] = useToggle()
 
   return (
@@ -24,12 +24,8 @@ export const RequestView = (props: IRequestViewProps) => {
       {requests.map((request) => {
         return (
           <PanelSection key={request.query} className="relative">
-            <div className="flex gap-2 absolute right-3 top-3 z-10 transition-opacity opacity-75 hover:opacity-100">
-              <AutoFormatToggleButton
-                active={autoFormat}
-                onToggle={toggleAutoFormat}
-              />{" "}
-              <CopyButton label="Copy Query" textToCopy={request.query} />{" "}
+            <div className="flex flex-col items-end gap-2 absolute right-3 top-3 z-10 transition-opacity opacity-50 hover:opacity-100">
+              <CopyButton label="Copy Query" textToCopy={request.query} />
               {isVariablesPopulated(request) && (
                 <CopyButton
                   label="Copy Vars"
@@ -57,6 +53,12 @@ export const RequestView = (props: IRequestViewProps) => {
           </PanelSection>
         )
       })}
+      <Bar className="mt-auto">
+        <AutoFormatToggleButton
+          active={autoFormat}
+          onToggle={toggleAutoFormat}
+        />
+      </Bar>
     </Panels>
   )
 }

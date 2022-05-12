@@ -4,7 +4,9 @@ export const Panels: FC = (props) => {
   const { children } = props
 
   return (
-    <div className="divide-y divide-solid dark:divide-gray-600">{children}</div>
+    <div className="h-full flex flex-col divide-y divide-solid dark:divide-gray-600">
+      {children}
+    </div>
   )
 }
 
