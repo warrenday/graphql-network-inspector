@@ -11,7 +11,7 @@ export const Bar = (props: IBarProps) => {
 
   return (
     <div
-      className={`relative flex items-center w-full p-2 border-b dark:bg-gray-800 border-gray-300 dark:border-gray-600 space-x-6 ${className}`}
+      className={`relative flex items-center w-full p-2 dark:bg-gray-800 border-gray-300 dark:border-gray-600 space-x-6 ${className}`}
       data-testid={testId}
     >
       {children}

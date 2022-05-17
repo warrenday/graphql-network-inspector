@@ -6,6 +6,7 @@ export type Tab = {
   id?: string
   title: string
   component: ReactNode
+  bottomComponent?: ReactNode
 }
 
 export type TabsProps = {
@@ -44,6 +45,11 @@ export const Tabs = (props: TabsProps) => {
       <div className="h-full overflow-y-auto dark:bg-gray-900">
         {tabs[activeTab]?.component}
       </div>
+      {tabs[activeTab]?.bottomComponent && (
+        <div className="bottom-0 w-full">
+          {tabs[activeTab]?.bottomComponent}
+        </div>
+      )}
     </div>
   )
 }

@@ -38,7 +38,7 @@ export const Toolbar = (props: IToolbarProps) => {
   const isMac = os === "mac"
 
   return (
-    <Bar testId="toolbar">
+    <Bar testId="toolbar" className="border-b">
       <Button
         icon={<BinIcon />}
         onClick={onClear}

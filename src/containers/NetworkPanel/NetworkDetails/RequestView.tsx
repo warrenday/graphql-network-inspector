@@ -8,7 +8,13 @@ import { Bar } from "../../../components/Bar"
 import { Panels, PanelSection } from "./PanelSection"
 
 interface IRequestViewProps {
+  autoFormat: boolean
   requests: IGraphqlRequestBody[]
+}
+
+interface IRequestViewFooterProps {
+  autoFormat: boolean
+  toggleAutoFormat: React.DispatchWithoutAction
 }
 
 const isVariablesPopulated = (request: IGraphqlRequestBody) => {
@@ -16,8 +22,7 @@ const isVariablesPopulated = (request: IGraphqlRequestBody) => {
 }
 
 export const RequestView = (props: IRequestViewProps) => {
-  const { requests } = props
-  const [autoFormat, toggleAutoFormat] = useToggle()
+  const { requests, autoFormat } = props
 
   return (
     <Panels>
@@ -53,12 +58,16 @@ export const RequestView = (props: IRequestViewProps) => {
           </PanelSection>
         )
       })}
-      <Bar className="mt-auto">
-        <AutoFormatToggleButton
-          active={autoFormat}
-          onToggle={toggleAutoFormat}
-        />
-      </Bar>
     </Panels>
+  )
+}
+
+export const RequestViewFooter = (props: IRequestViewFooterProps) => {
+  const { autoFormat, toggleAutoFormat } = props
+
+  return (
+    <Bar className="mt-auto absolute border-t">
+      <AutoFormatToggleButton active={autoFormat} onToggle={toggleAutoFormat} />
+    </Bar>
   )
 }

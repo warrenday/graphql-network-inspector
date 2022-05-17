@@ -1,13 +1,14 @@
-import { Tabs } from "../../../components/Tabs"
-import { NetworkRequest } from "../../../hooks/useNetworkMonitor"
+import { Tabs } from "@/components/Tabs"
+import { NetworkRequest } from "@/hooks/useNetworkMonitor"
 import { HeaderView } from "./HeaderView"
-import { RequestView } from "./RequestView"
+import { RequestView, RequestViewFooter } from "./RequestView"
 import { ResponseView } from "./ResponseView"
-import { ResponseRawView } from "./ResponseRawView"
-import { useNetworkTabs } from "../../../hooks/useNetworkTabs"
-import { CloseButton } from "../../../components/CloseButton"
 import { TracingView } from "./TracingView"
+import { ResponseRawView } from "./ResponseRawView"
+import { useNetworkTabs } from "@/hooks/useNetworkTabs"
+import { CloseButton } from "@/components/CloseButton"
 import { useApolloTracing } from "@/hooks/useApolloTracing"
+import { useToggle } from "@/hooks/useToggle"
 
 export type NetworkDetailsProps = {
   data: NetworkRequest
@@ -23,6 +24,7 @@ export const NetworkDetails = (props: NetworkDetailsProps) => {
   const responseBody = data.response?.body
   const responseCollapsedCount = requestBody.length > 1 ? 3 : 2
   const tracing = useApolloTracing(responseBody)
+  const [autoFormat, toggleAutoFormat] = useToggle()
 
   return (
     <Tabs
@@ -44,7 +46,15 @@ export const NetworkDetails = (props: NetworkDetailsProps) => {
         {
           id: "request",
           title: "Request",
-          component: <RequestView requests={requestBody} />,
+          component: (
+            <RequestView requests={requestBody} autoFormat={autoFormat} />
+          ),
+          bottomComponent: (
+            <RequestViewFooter
+              autoFormat={autoFormat}
+              toggleAutoFormat={toggleAutoFormat}
+            />
+          ),
         },
         {
           id: "response",
