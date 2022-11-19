@@ -15,7 +15,7 @@ const defaultVariantStyle = `
 `
 
 const containedVariantStyle = `
-  text-gray-500 hover:text-gray-400
+  text-gray-600 hover:text-gray-800
   bg-gray-300 hover:bg-gray-300
 
   dark:text-gray-400 dark:hover:text-white

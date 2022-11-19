@@ -3,8 +3,7 @@ import { CodeView } from "@/components/CodeView"
 import { CopyButton } from "@/components/CopyButton"
 import { IGraphqlRequestBody } from "@/helpers/graphqlHelpers"
 import * as safeJson from "@/helpers/safeJson"
-import { useToggle } from "@/hooks/useToggle"
-import { Bar } from "../../../components/Bar"
+import { Bar } from "@/components/Bar"
 import { Panels, PanelSection } from "./PanelSection"
 
 interface IRequestViewProps {

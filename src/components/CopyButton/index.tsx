@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react"
-import copy from "copy-to-clipboard"
 import { Button } from "../Button"
+import useCopy from "../../hooks/useCopy"
 
 type CopyButtonProps = {
   label?: string
@@ -10,18 +9,8 @@ type CopyButtonProps = {
 
 export const CopyButton = (props: CopyButtonProps) => {
   const { textToCopy, className } = props
-  const [copied, setCopied] = useState(false)
-  const buttonLabel = props.label || "Copy";
-
-  useEffect(() => {
-    if (copied) {
-      const timeout = setTimeout(() => setCopied(false), 2000)
-
-      return () => {
-        clearTimeout(timeout)
-      }
-    }
-  }, [copied])
+  const { isCopied, copy } = useCopy()
+  const buttonLabel = props.label || "Copy"
 
   return (
     <div className={className}>
@@ -30,10 +19,9 @@ export const CopyButton = (props: CopyButtonProps) => {
         variant="contained"
         onClick={() => {
           copy(textToCopy)
-          setCopied(true)
         }}
       >
-        {copied ? "Copied!" : buttonLabel}
+        {isCopied ? "Copied!" : buttonLabel}
       </Button>
     </div>
   )
