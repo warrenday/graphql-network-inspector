@@ -4,9 +4,7 @@ import { BinIcon } from "../../components/Icons/BinIcon"
 import { SearchIcon } from "../../components/Icons/SearchIcon"
 import { useSearch } from "../../hooks/useSearch"
 import { Textfield } from "@/components/Textfield"
-import { InterceptButton } from "../../components/InterceptPopover"
 import { OverflowPopover } from "../../components/OverflowPopover"
-import { useOperatingSystem } from "../../hooks/useOperatingSystem"
 import { Bar } from "../../components/Bar"
 
 interface IToolbarProps {
@@ -34,8 +32,6 @@ export const Toolbar = (props: IToolbarProps) => {
     onClear,
   } = props
   const { setIsSearchOpen } = useSearch()
-  const os = useOperatingSystem()
-  const isMac = os === "mac"
 
   return (
     <Bar testId="toolbar" className="border-b">
@@ -83,7 +79,6 @@ export const Toolbar = (props: IToolbarProps) => {
           >
             Search
           </Button>,
-          ...(isMac ? [<InterceptButton />] : []),
         ]}
       />
     </Bar>

@@ -8,12 +8,6 @@ The browser plugin can be found on the [Chrome Webstore](https://chrome.google.c
 
 For product updates follow me on Twitter [@warrenjday](https://twitter.com/warrenjday)
 
-## Desktop App
-
-To inspect traffic from other browsers such as Firefox and Safari try the desktop app at https://graphproxy.com
-
-With desktop you can inspect traffic from any app or browser plus intercept inflight requests to see how your app can handle different responses.
-
 ## Contribute
 
 PRs are welcome! The best way to do this is to first fork the repository, create a branch and open a pull request back to this repository.
