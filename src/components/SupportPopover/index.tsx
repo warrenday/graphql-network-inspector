@@ -4,7 +4,12 @@ import { Popover } from "../Popover"
 
 const Link = (props: { href: string; children: React.ReactNode }) => {
   return (
-    <a href={props.href} className="text-blue-500 underline">
+    <a
+      href={props.href}
+      target="_blank"
+      rel="noreferrer"
+      className="text-blue-500 underline"
+    >
       {props.children}
     </a>
   )
