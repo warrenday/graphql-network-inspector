@@ -5,6 +5,7 @@ import { useSearch } from "@/hooks/useSearch"
 import { useNetworkTabs } from "@/hooks/useNetworkTabs"
 import { NetworkPanel } from "../NetworkPanel"
 import { SearchPanel } from "../SearchPanel"
+import { SupportPopover } from "../../components/SupportPopover"
 
 export const Main = () => {
   const [selectedRowId, setSelectedRowId] = useState<string | number | null>(
@@ -15,26 +16,29 @@ export const Main = () => {
   const { setActiveTab } = useNetworkTabs()
 
   return (
-    <SplitPaneLayout
-      leftPane={
-        isSearchOpen ? (
-          <SearchPanel
+    <>
+      <SplitPaneLayout
+        leftPane={
+          isSearchOpen ? (
+            <SearchPanel
+              networkRequests={networkRequests}
+              onResultClick={(searchResult, networkTab) => {
+                setSelectedRowId(searchResult.networkRequest.id)
+                setActiveTab(networkTab)
+              }}
+            />
+          ) : undefined
+        }
+        rightPane={
+          <NetworkPanel
             networkRequests={networkRequests}
-            onResultClick={(searchResult, networkTab) => {
-              setSelectedRowId(searchResult.networkRequest.id)
-              setActiveTab(networkTab)
-            }}
+            clearWebRequests={clearWebRequests}
+            selectedRowId={selectedRowId}
+            setSelectedRowId={setSelectedRowId}
           />
-        ) : undefined
-      }
-      rightPane={
-        <NetworkPanel
-          networkRequests={networkRequests}
-          clearWebRequests={clearWebRequests}
-          selectedRowId={selectedRowId}
-          setSelectedRowId={setSelectedRowId}
-        />
-      }
-    />
+        }
+      />
+      <SupportPopover />
+    </>
   )
 }
