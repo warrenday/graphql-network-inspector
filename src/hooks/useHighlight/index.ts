@@ -2,10 +2,12 @@ import { useEffect, useState } from "react"
 import hljs from "highlight.js"
 
 type Language = "json" | "graphql"
+
 export interface MessagePayload {
   language: Language
   code: string
 }
+
 /**
  * Highlight the text in a worker thread and return the resulting markup.
  * This provides a performant async way to render the given text.

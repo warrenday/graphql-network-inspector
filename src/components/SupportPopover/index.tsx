@@ -16,14 +16,14 @@ export const SupportPopover = () => {
       button={
         <Button className="fixed p-2 bottom-0.5 right-0.5">Support</Button>
       }
-      position={{ bottom: 30, right: 6 }}
+      position={{ bottom: 20, right: 0 }}
+      className="m-3"
     >
-      <div className="p-4 max-w-2xl">
+      <div className="p-4 max-w-xl">
         <h2 className="font-bold mb-2">Support</h2>
         <p className="mb-6">
-          Thanks for using graphql inspector. If you're having any issues or
-          want to talk about the product roadmap there are a few ways to reach
-          out.
+          Thanks for using graphql inspector. There are a few ways to reach out
+          for product support.
         </p>
         <p>
           Feature or bug?{" "}
