@@ -11,7 +11,7 @@ const HeaderListItem = (props: { header: Header }) => {
   const { isCopied, copy } = useCopy()
 
   const handleClick = (header: Header) => {
-    copy(`${header.name}: "${header.value}"`)
+    copy(`"${header.name}": "${header.value}"`)
   }
 
   return (
@@ -21,10 +21,10 @@ const HeaderListItem = (props: { header: Header }) => {
         className="text-left dark:text-gray-300 px-3 py-0.5 rounded-md w-fit cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-700"
       >
         <span className="font-bold">{header.name}: </span>
-        {header.value}
+        <span className="break-all">{header.value}</span>
       </button>
       {isCopied && (
-        <div className="rounded-md px-1.5 py-0.5 font-bold text-white  bg-blue-400 dark:bg-blue-600 absolute right-2 -top-4">
+        <div className="rounded-md px-1.5 py-0.5 font-bold text-white bg-blue-400 dark:bg-blue-600 absolute left-2 -top-4">
           Copied!
         </div>
       )}
