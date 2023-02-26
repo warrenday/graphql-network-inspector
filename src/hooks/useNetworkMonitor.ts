@@ -36,17 +36,14 @@ export const useNetworkMonitor = (): [NetworkRequest[], () => void] => {
 
   const handleRequestFinished = useCallback(
     (details: chrome.devtools.network.Request) => {
-      const primaryOperation = getPrimaryOperation(
-        details.request.postData?.text
-      )
+      const primaryOperation = getPrimaryOperation(details)
+
       if (!primaryOperation) {
         return
       }
 
       const requestId = uuid()
-      const graphqlRequestBody = parseGraphqlRequest(
-        details.request.postData?.text
-      )
+      const graphqlRequestBody = parseGraphqlRequest(details)
 
       if (!graphqlRequestBody) {
         return
