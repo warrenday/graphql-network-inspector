@@ -7,24 +7,31 @@ import {
 describe("GraphQL Helpers", () => {
   describe("getPrimaryOperation", () => {
     it("Gets the primary operation name for a query", () => {
-      const operation = getPrimaryOperation(
-        JSON.stringify([
-          {
-            query: `
-              query searchMovieQuery($title: String) {
-                searchMovie(title: $title) {
-                  id
-                  title
-                  genre
-                }
-              }
-            `,
-            variables: {
-              title: "Batman",
-            },
+      const request = {
+        request: {
+          method: "POST",
+          postData: {
+            text: JSON.stringify([
+              {
+                query: `
+                    query searchMovieQuery($title: String) {
+                      searchMovie(title: $title) {
+                        id
+                        title
+                        genre
+                      }
+                    }
+                  `,
+                variables: {
+                  title: "Batman",
+                },
+              },
+            ]),
           },
-        ])
-      )
+        },
+      } as chrome.devtools.network.Request
+
+      const operation = getPrimaryOperation(request)
 
       expect(operation).toEqual({
         operationName: "searchMovieQuery",
@@ -33,24 +40,31 @@ describe("GraphQL Helpers", () => {
     })
 
     it("Gets the primary operation name for a mutation", () => {
-      const operation = getPrimaryOperation(
-        JSON.stringify([
-          {
-            query: `
-              mutation createMovieMutation($title: String, $genre: String) {
-                createMovie(title: $title, genre: $genre) {
-                  id
-                  title
-                  genre
-                }
-              }
-            `,
-            variables: {
-              title: "Batman",
-            },
+      const request = {
+        request: {
+          method: "POST",
+          postData: {
+            text: JSON.stringify([
+              {
+                query: `
+                  mutation createMovieMutation($title: String, $genre: String) {
+                    createMovie(title: $title, genre: $genre) {
+                      id
+                      title
+                      genre
+                    }
+                  }
+                `,
+                variables: {
+                  title: "Batman",
+                },
+              },
+            ]),
           },
-        ])
-      )
+        },
+      } as chrome.devtools.network.Request
+
+      const operation = getPrimaryOperation(request)
 
       expect(operation).toEqual({
         operationName: "createMovieMutation",
@@ -59,29 +73,36 @@ describe("GraphQL Helpers", () => {
     })
 
     it("Gets the primary operation name for a query with fragments", () => {
-      const operation = getPrimaryOperation(
-        JSON.stringify([
-          {
-            query: `
-              fragment NameParts on Person {
-                firstName
-                lastName
-              }
-
-              query getMovieQuery($title: String) {
-                getMovie(title: $title) {
-                  id
-                  title
-                  genre
-                }
-              }
-            `,
-            variables: {
-              title: "Batman",
-            },
+      const request = {
+        request: {
+          method: "POST",
+          postData: {
+            text: JSON.stringify([
+              {
+                query: `
+                  fragment NameParts on Person {
+                    firstName
+                    lastName
+                  }
+    
+                  query getMovieQuery($title: String) {
+                    getMovie(title: $title) {
+                      id
+                      title
+                      genre
+                    }
+                  }
+                `,
+                variables: {
+                  title: "Batman",
+                },
+              },
+            ]),
           },
-        ])
-      )
+        },
+      } as chrome.devtools.network.Request
+
+      const operation = getPrimaryOperation(request)
 
       expect(operation).toEqual({
         operationName: "getMovieQuery",
@@ -90,21 +111,28 @@ describe("GraphQL Helpers", () => {
     })
 
     it("Gets the primary operation name for an unnamed query", () => {
-      const operation = getPrimaryOperation(
-        JSON.stringify([
-          {
-            query: `
-              query {
-                getTopMovie {
-                  id
-                  title
-                  genre
-                }
-              }
-            `,
+      const request = {
+        request: {
+          method: "POST",
+          postData: {
+            text: JSON.stringify([
+              {
+                query: `
+                  query {
+                    getTopMovie {
+                      id
+                      title
+                      genre
+                    }
+                  }
+                `,
+              },
+            ]),
           },
-        ])
-      )
+        },
+      } as chrome.devtools.network.Request
+
+      const operation = getPrimaryOperation(request)
 
       expect(operation).toEqual({
         operationName: "getTopMovie",
@@ -113,33 +141,137 @@ describe("GraphQL Helpers", () => {
     })
 
     it("Returns null if operation could not be determined", () => {
-      const operation = getPrimaryOperation(
-        JSON.stringify([
-          {
-            query: ``,
-            variables: {},
+      const request = {
+        request: {
+          method: "POST",
+          postData: {
+            text: JSON.stringify([
+              {
+                query: ``,
+                variables: {},
+              },
+            ]),
           },
-        ])
-      )
+        },
+      } as chrome.devtools.network.Request
+
+      const operation = getPrimaryOperation(request)
 
       expect(operation).toEqual(null)
+    })
+
+    it("gets the primary operation name for a persisted query", () => {
+      const request = {
+        request: {
+          method: "GET",
+          queryString: [
+            {
+              name: "operationName",
+              value: "getTopMovie",
+            },
+            {
+              name: "extensions",
+              value: encodeURIComponent(
+                JSON.stringify({
+                  persistedQuery: {
+                    version: 1,
+                    sha256Hash:
+                      "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+                  },
+                })
+              ),
+            },
+          ],
+        },
+      } as chrome.devtools.network.Request
+
+      const operation = getPrimaryOperation(request)
+
+      expect(operation).toEqual({
+        operationName: "getTopMovie",
+        operation: "query",
+      })
+    })
+
+    it("returns null if PUT request", () => {
+      const request = {
+        request: {
+          method: "PUT",
+          postData: {
+            text: JSON.stringify([
+              {
+                query: `
+                  query {
+                    getTopMovie {
+                      id
+                      title
+                      genre
+                    }
+                  }
+                `,
+              },
+            ]),
+          },
+        },
+      } as chrome.devtools.network.Request
+
+      const operation = getPrimaryOperation(request)
+
+      expect(operation).toBeNull()
+    })
+
+    it("returns null if DELETE request", () => {
+      const request = {
+        request: {
+          method: "DELETE",
+          queryString: [
+            {
+              name: "operationName",
+              value: "getTopMovie",
+            },
+            {
+              name: "extensions",
+              value: encodeURIComponent(
+                JSON.stringify({
+                  persistedQuery: {
+                    version: 1,
+                    sha256Hash:
+                      "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+                  },
+                })
+              ),
+            },
+          ],
+        },
+      } as chrome.devtools.network.Request
+
+      const operation = getPrimaryOperation(request)
+
+      expect(operation).toBeNull()
     })
   })
 
   describe("parseGraphqlRequest", () => {
     it("returns an array of objects when the string given parses to an array", () => {
-      const res = parseGraphqlRequest(
-        JSON.stringify([
-          {
-            query: "",
-            variables: {},
+      const request = {
+        request: {
+          method: "POST",
+          postData: {
+            text: JSON.stringify([
+              {
+                query: "",
+                variables: {},
+              },
+              {
+                query: "",
+                variables: {},
+              },
+            ]),
           },
-          {
-            query: "",
-            variables: {},
-          },
-        ])
-      )
+        },
+      } as chrome.devtools.network.Request
+
+      const res = parseGraphqlRequest(request)
 
       expect(res).toMatchObject([
         {
@@ -154,12 +286,19 @@ describe("GraphQL Helpers", () => {
     })
 
     it("returns an array of objects when the string given parses to a single object", () => {
-      const res = parseGraphqlRequest(
-        JSON.stringify({
-          query: "",
-          variables: {},
-        })
-      )
+      const request = {
+        request: {
+          method: "POST",
+          postData: {
+            text: JSON.stringify({
+              query: "",
+              variables: {},
+            }),
+          },
+        },
+      } as chrome.devtools.network.Request
+
+      const res = parseGraphqlRequest(request)
 
       expect(res).toMatchObject([
         {
@@ -173,11 +312,18 @@ describe("GraphQL Helpers", () => {
       const consoleError = jest.spyOn(console, "error")
       consoleError.mockImplementationOnce(() => {})
 
-      const res = parseGraphqlRequest(
-        JSON.stringify({
-          variables: {},
-        })
-      )
+      const request = {
+        request: {
+          method: "POST",
+          postData: {
+            text: JSON.stringify({
+              variables: {},
+            }),
+          },
+        },
+      } as chrome.devtools.network.Request
+
+      const res = parseGraphqlRequest(request)
 
       expect(res).toBeNull()
 
@@ -188,12 +334,19 @@ describe("GraphQL Helpers", () => {
       const consoleError = jest.spyOn(console, "error")
       consoleError.mockImplementationOnce(() => {})
 
-      const res = parseGraphqlRequest(
-        JSON.stringify({
-          query: "",
-          variables: 2,
-        })
-      )
+      const request = {
+        request: {
+          method: "POST",
+          postData: {
+            text: JSON.stringify({
+              query: "",
+              variables: 2,
+            }),
+          },
+        },
+      } as chrome.devtools.network.Request
+
+      const res = parseGraphqlRequest(request)
 
       expect(res).toBeNull()
 
@@ -204,11 +357,118 @@ describe("GraphQL Helpers", () => {
       const consoleError = jest.spyOn(console, "error")
       consoleError.mockImplementationOnce(() => {})
 
-      const res = parseGraphqlRequest("bad json")
+      const request = {
+        request: {
+          method: "POST",
+          postData: {
+            text: "bad json",
+          },
+        },
+      } as chrome.devtools.network.Request
+
+      const res = parseGraphqlRequest(request)
 
       expect(res).toBeNull()
 
       consoleError.mockRestore()
+    })
+
+    it("gets an array of objects for a persisted query", () => {
+      const request = {
+        request: {
+          method: "GET",
+          queryString: [
+            {
+              name: "operationName",
+              value: "getTopMovie",
+            },
+            {
+              name: "extensions",
+              value: encodeURIComponent(
+                JSON.stringify({
+                  persistedQuery: {
+                    version: 1,
+                    sha256Hash:
+                      "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+                  },
+                })
+              ),
+            },
+          ],
+        },
+      } as chrome.devtools.network.Request
+
+      const res = parseGraphqlRequest(request)
+
+      expect(res).toEqual([
+        {
+          extensions: {
+            persistedQuery: {
+              version: 1,
+              sha256Hash:
+                "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+            },
+          },
+          query: "",
+        },
+      ])
+    })
+
+    it("Returns null if PUT request", () => {
+      const request = {
+        request: {
+          method: "PUT",
+          postData: {
+            text: JSON.stringify([
+              {
+                query: `
+                  query {
+                    getTopMovie {
+                      id
+                      title
+                      genre
+                    }
+                  }
+                `,
+              },
+            ]),
+          },
+        },
+      } as chrome.devtools.network.Request
+
+      const res = parseGraphqlRequest(request)
+
+      expect(res).toBeNull()
+    })
+
+    it("Returns null if DELETE request", () => {
+      const request = {
+        request: {
+          method: "DELETE",
+          queryString: [
+            {
+              name: "operationName",
+              value: "getTopMovie",
+            },
+            {
+              name: "extensions",
+              value: encodeURIComponent(
+                JSON.stringify({
+                  persistedQuery: {
+                    version: 1,
+                    sha256Hash:
+                      "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+                  },
+                })
+              ),
+            },
+          ],
+        },
+      } as chrome.devtools.network.Request
+
+      const res = parseGraphqlRequest(request)
+
+      expect(res).toBeNull()
     })
   })
 

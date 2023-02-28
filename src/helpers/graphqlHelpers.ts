@@ -1,14 +1,17 @@
 import { FieldNode, GraphQLError, OperationDefinitionNode } from "graphql"
 import gql from "graphql-tag"
 
+export type OperationType = "query" | "mutation" | "subscription"
+
 export interface IGraphqlRequestBody {
   query: string
   variables?: object
+  extensions?: object
 }
 
 export type OperationDetails = {
   operationName: string
-  operation: string
+  operation: OperationType
 }
 
 const isParsedGraphqlRequestValid = (
@@ -30,9 +33,80 @@ export const parseGraphqlQuery = (queryString: any) => {
   `
 }
 
-export const parseGraphqlRequest = (
-  requestBody?: string
+const parseGraphqlGetRequest = (
+  details: chrome.devtools.network.Request
 ): IGraphqlRequestBody[] | null => {
+  const queryParam = details.request.queryString.find(
+    (qs) => qs.name === "query"
+  )
+
+  const variablesParam = details.request.queryString.find(
+    (qs) => qs.name === "variables"
+  )
+
+  const extensionsParam = details.request.queryString.find(
+    (qs) => qs.name === "extensions"
+  )
+
+  try {
+    const variables =
+      variablesParam?.value && decodeURIComponent(variablesParam?.value)
+
+    if (queryParam?.value) {
+      try {
+        const query = decodeURIComponent(queryParam.value)
+
+        if (variables) {
+          return [
+            {
+              query,
+              variables: JSON.parse(variables),
+            },
+          ]
+        }
+
+        return [
+          {
+            query,
+          },
+        ]
+      } catch (e) {
+        return null
+      }
+    }
+
+    if (extensionsParam?.value) {
+      const extensions = JSON.parse(decodeURIComponent(extensionsParam.value))
+
+      if (variables) {
+        return [
+          {
+            query: "",
+            extensions: extensions,
+            variables: JSON.parse(variables),
+          },
+        ]
+      }
+
+      return [
+        {
+          query: "",
+          extensions: extensions,
+        },
+      ]
+    }
+  } catch (e) {
+    return null
+  }
+
+  return null
+}
+
+const parseGraphqlPostRequest = (
+  details: chrome.devtools.network.Request
+): IGraphqlRequestBody[] | null => {
+  const requestBody = details.request.postData?.text
+
   if (!requestBody) {
     return null
   }
@@ -53,9 +127,60 @@ export const parseGraphqlRequest = (
   }
 }
 
-export const getPrimaryOperation = (
-  requestBody?: string
+export const parseGraphqlRequest = (
+  details: chrome.devtools.network.Request
+): IGraphqlRequestBody[] | null => {
+  switch (details.request.method) {
+    case "GET":
+      return parseGraphqlGetRequest(details)
+    case "POST":
+      return parseGraphqlPostRequest(details)
+    default:
+      return null
+  }
+}
+
+export const getPrimaryOperationForGetRequest = (
+  details: chrome.devtools.network.Request
 ): OperationDetails | null => {
+  const operationNameParam = details.request.queryString.find(
+    (qs) => qs.name === "operationName"
+  )
+
+  const operationName = operationNameParam?.value
+
+  if (!operationName) {
+    return null
+  }
+
+  const extensionsParam = details.request.queryString.find(
+    (qs) => qs.name === "extensions"
+  )
+
+  if (extensionsParam?.value) {
+    try {
+      const extensions = JSON.parse(decodeURIComponent(extensionsParam.value))
+      const isPersistedQuery = !!extensions.persistedQuery
+
+      if (isPersistedQuery) {
+        return {
+          operationName: operationNameParam.value,
+          operation: "query",
+        }
+      }
+    } catch (e) {
+      return null
+    }
+  }
+
+  return null
+}
+
+export const getPrimaryOperationForPostRequest = (
+  details: chrome.devtools.network.Request
+): OperationDetails | null => {
+  const requestBody = details.request.postData?.text
+
   if (!requestBody) {
     return null
   }
@@ -83,6 +208,19 @@ export const getPrimaryOperation = (
     }
   } catch (e) {
     return null
+  }
+}
+
+export const getPrimaryOperation = (
+  details: chrome.devtools.network.Request
+): OperationDetails | null => {
+  switch (details.request.method) {
+    case "GET":
+      return getPrimaryOperationForGetRequest(details)
+    case "POST":
+      return getPrimaryOperationForPostRequest(details)
+    default:
+      return null
   }
 }
 
