@@ -12,17 +12,19 @@ export type Tab = {
 export type TabsProps = {
   tabs: Tab[]
   leftContent?: ReactNode
+  rightContent?: ReactNode
   activeTab: number
   onTabClick: (activeTab: number) => void
   testId?: string
 }
 
 export const Tabs = (props: TabsProps) => {
-  const { tabs, leftContent, activeTab, onTabClick, testId } = props
+  const { tabs, leftContent, rightContent, activeTab, onTabClick, testId } =
+    props
 
   return (
     <div className="flex flex-col h-full" data-testid={testId}>
-      <Header leftContent={leftContent}>
+      <Header leftContent={leftContent} rightContent={rightContent}>
         {tabs.map((tab, i) => {
           const isActive = i === activeTab
           return (
