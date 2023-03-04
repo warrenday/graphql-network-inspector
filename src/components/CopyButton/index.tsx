@@ -16,7 +16,7 @@ export const CopyButton = (props: CopyButtonProps) => {
     <div className={className}>
       <Button
         testId="copy-button"
-        variant="contained"
+        variant="primary"
         onClick={() => {
           copy(textToCopy)
         }}

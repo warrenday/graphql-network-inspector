@@ -30,6 +30,7 @@
     "react-table": "^7.5.0",
     "react-virtual": "^2.10.4",
     "regex-parser": "^2.2.11",
+    "tailwind-merge": "^1.10.0",
     "ts-debounce": "^4.0.0",
     "uuid": "^8.3.0"
   },

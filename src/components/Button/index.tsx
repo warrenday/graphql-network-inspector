@@ -1,54 +1,50 @@
-import { ReactElement, FC } from "react"
-import cx from "classnames"
+import { twMerge } from "tailwind-merge"
+import { ReactElement } from "react"
+
+const baseStyle = `
+  py-1.5 px-2.5 text-md font-semibold rounded-md text-gray-600 dark:text-white
+`
+
+const styles = {
+  primary: `
+    bg-black/10 dark:bg-white/10
+    hover:bg-black/20 dark:hover:bg-white/20
+  `,
+  ghost: ``,
+}
 
 interface IButtonProps {
-  icon?: ReactElement
   onClick?: () => void
   className?: string
-  variant?: "default" | "contained"
+  variant?: "primary" | "ghost"
+  size?: "sm" | "md" | "lg"
+  children?: React.ReactNode
+  icon?: ReactElement
   testId?: string
 }
 
-const defaultVariantStyle = `
-  text-gray-500 hover:text-gray-700
-  dark:text-gray-400 dark:hover:text-gray-300
-`
-
-const containedVariantStyle = `
-  text-gray-600 hover:text-gray-800
-  bg-gray-300 hover:bg-gray-300
-
-  dark:text-gray-400 dark:hover:text-white
-  dark:bg-gray-700 dark:hover:bg-gray-600
-  p-2 px-2.5
-`
-
-export const Button: FC<IButtonProps> = (props) => {
+export const Button = (props: IButtonProps) => {
   const {
     children,
-    icon,
     onClick,
-    variant = "default",
+    variant = "primary",
     className,
+    icon,
     testId,
   } = props
 
+  const computedClassName = twMerge(baseStyle, [styles[variant]], className)
+
   return (
     <button
-      type="button"
       onClick={onClick}
-      className={cx(
-        "flex justify-center items-center rounded-lg font-bold transition",
-        {
-          [defaultVariantStyle]: variant === "default",
-          [containedVariantStyle]: variant === "contained",
-          [className || ""]: true,
-        }
-      )}
+      className={computedClassName}
       data-testid={testId}
     >
-      {icon && <span>{icon}</span>}
-      {children && <span className={icon && "pl-2"}>{children}</span>}
+      <div className="flex items-center">
+        {icon && <span className={children ? "pr-2" : ""}>{icon}</span>}
+        {children}
+      </div>
     </button>
   )
 }

@@ -14,8 +14,9 @@ export const CloseButton: FC<ICloseButtonProps> = (props) => {
     <Button
       icon={<CloseIcon />}
       onClick={onClick}
-      className={`w-10 ${className}`}
+      className={`w-10 dark:text-gray-400 dark:hover:text-white ${className}`}
       testId={testId}
+      variant="ghost"
     >
       {children}
     </Button>

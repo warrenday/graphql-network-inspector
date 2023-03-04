@@ -14,6 +14,7 @@ export const AutoFormatToggleButton = (props: IAutoFormatToggleButtonProps) => {
     <div className={className}>
       <Button
         testId="auto-format-toggle-button"
+        variant={active ? "primary" : "ghost"}
         icon={<CodeIcon className={active ? "text-blue-500" : ""} />}
         onClick={() => {
           onToggle?.(!active)

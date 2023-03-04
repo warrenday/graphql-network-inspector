@@ -19,7 +19,9 @@ export const SupportPopover = () => {
   return (
     <Popover
       button={
-        <Button className="fixed p-2 bottom-0.5 right-0.5">Support</Button>
+        <Button variant="primary" className="fixed bottom-2 right-2">
+          Get Support
+        </Button>
       }
       position={{ bottom: 20, right: 0 }}
       className="m-3"

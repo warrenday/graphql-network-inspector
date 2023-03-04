@@ -31,7 +31,11 @@ export const NetworkDetails = (props: NetworkDetailsProps) => {
       testId="network-tabs"
       activeTab={activeTab}
       onTabClick={setActiveTab}
-      rightContent={<CloseButton onClick={onClose} testId="close-side-panel" />}
+      leftContent={
+        <div className="flex mr-1 h-full">
+          <CloseButton onClick={onClose} testId="close-side-panel" />
+        </div>
+      }
       tabs={[
         {
           id: "headers",
