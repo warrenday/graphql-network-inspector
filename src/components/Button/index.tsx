@@ -37,6 +37,7 @@ export const Button = (props: IButtonProps) => {
 
   return (
     <button
+      type="button"
       onClick={onClick}
       className={computedClassName}
       data-testid={testId}
