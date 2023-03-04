@@ -11,27 +11,30 @@ export type Tab = {
 
 export type TabsProps = {
   tabs: Tab[]
-  rightContent?: ReactNode
+  leftContent?: ReactNode
   activeTab: number
   onTabClick: (activeTab: number) => void
   testId?: string
 }
 
 export const Tabs = (props: TabsProps) => {
-  const { tabs, rightContent, activeTab, onTabClick, testId } = props
+  const { tabs, leftContent, activeTab, onTabClick, testId } = props
 
   return (
     <div className="flex flex-col h-full" data-testid={testId}>
-      <Header rightContent={rightContent}>
+      <Header leftContent={leftContent}>
         {tabs.map((tab, i) => {
           const isActive = i === activeTab
           return (
             <button
               key={i}
-              className={cx("px-4 py-2 bg-none whitespace-nowrap", {
-                "text-gray-500 dark:text-gray-400": !isActive,
-                "bg-gray-300 dark:bg-gray-700": isActive,
-              })}
+              className={cx(
+                "px-4 py-2 bg-none whitespace-nowrap dark:hover:bg-gray-700",
+                {
+                  "text-gray-500 dark:text-gray-400": !isActive,
+                  "bg-gray-300 dark:bg-gray-700": isActive,
+                }
+              )}
               onClick={() => onTabClick(i)}
               role="tab"
               aria-selected={isActive}

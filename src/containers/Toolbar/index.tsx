@@ -39,7 +39,8 @@ export const Toolbar = (props: IToolbarProps) => {
         icon={<BinIcon />}
         onClick={onClear}
         testId="clear-network-table"
-        className="-mr-3"
+        className="-mr-3 dark:text-gray-400 dark:hover:text-white"
+        variant="ghost"
       />
       <Textfield
         className="w-80"
@@ -76,6 +77,8 @@ export const Toolbar = (props: IToolbarProps) => {
             icon={<SearchIcon />}
             onClick={() => setIsSearchOpen(true)}
             testId="search-button"
+            variant="ghost"
+            className="text-gray-500 dark:text-gray-400 -ml-2"
           >
             Search
           </Button>,
