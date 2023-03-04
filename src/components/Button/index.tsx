@@ -35,6 +35,7 @@ export const Button: FC<IButtonProps> = (props) => {
 
   return (
     <button
+      type="button"
       onClick={onClick}
       className={cx(
         "flex justify-center items-center rounded-lg font-bold transition",
