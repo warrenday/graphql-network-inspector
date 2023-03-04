@@ -8,6 +8,15 @@ export type QuickFiltersContainerProps = {
   onQuickFilterButtonClicked: (filter: OperationType) => void
 }
 
+type PillProps = {
+  className: string
+}
+
+const Pill = (props: PillProps) => {
+  const { className } = props
+  return <div className={`h-3 w-3 rounded-full ${className}`} />
+}
+
 export const QuickFiltersContainer = (props: QuickFiltersContainerProps) => {
   const { quickFilters, onQuickFilterButtonClicked } = props
 
@@ -17,12 +26,24 @@ export const QuickFiltersContainer = (props: QuickFiltersContainerProps) => {
         <Button
           variant={quickFilters.query ? "primary" : "ghost"}
           onClick={() => onQuickFilterButtonClicked("query")}
+          icon={
+            <Pill
+              className={quickFilters.query ? "bg-green-400" : "bg-gray-400"}
+            />
+          }
         >
           Queries
         </Button>
         <Button
           variant={quickFilters.mutation ? "primary" : "ghost"}
           onClick={() => onQuickFilterButtonClicked("mutation")}
+          icon={
+            <Pill
+              className={
+                quickFilters.mutation ? "bg-indigo-400" : "bg-gray-400"
+              }
+            />
+          }
         >
           Mutations
         </Button>
