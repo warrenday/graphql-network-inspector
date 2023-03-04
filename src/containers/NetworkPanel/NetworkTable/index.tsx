@@ -7,7 +7,12 @@ import { Badge } from "../../../components/Badge"
 import { getStatusColor } from "../../../helpers/getStatusColor"
 import { NetworkRequest } from "../../../hooks/useNetworkMonitor"
 import { useKeyDown } from "../../../hooks/useKeyDown"
-import { getErrorMessages } from "../../../helpers/graphqlHelpers"
+import {
+  getErrorMessages,
+  OperationType,
+} from "../../../helpers/graphqlHelpers"
+import { QuickFilters } from ".."
+import { QuickFiltersContainer } from "../QuickFiltersContainer"
 
 export type NetworkTableProps = {
   data: NetworkRequest[]
@@ -16,6 +21,8 @@ export type NetworkTableProps = {
   onRowSelect: (rowId: string | number) => void
   selectedRowId?: string | number | null
   showSingleColumn?: boolean
+  quickFilters: QuickFilters
+  onQuickFilterButtonClicked: (filter: OperationType) => void
 }
 
 const Operation = ({ request }: { request: NetworkRequest }) => {
@@ -23,9 +30,10 @@ const Operation = ({ request }: { request: NetworkRequest }) => {
   const { operation, operationName } = request.request.primaryOperation
 
   const responseBody = request.response?.body
-  const errorMessages = useMemo(() => getErrorMessages(responseBody), [
-    responseBody,
-  ])
+  const errorMessages = useMemo(
+    () => getErrorMessages(responseBody),
+    [responseBody]
+  )
 
   const operationColor =
     operation === "query" ? "text-green-400" : "text-indigo-400"
@@ -93,6 +101,8 @@ export const NetworkTable = (props: NetworkTableProps) => {
     onRowSelect,
     selectedRowId,
     showSingleColumn,
+    quickFilters,
+    onQuickFilterButtonClicked,
   } = props
 
   const selectNextRow = (direction: "up" | "down") => {
@@ -141,7 +151,7 @@ export const NetworkTable = (props: NetworkTableProps) => {
 
   return (
     <div
-      className="w-full relative h-full dark:bg-gray-900"
+      className="w-full h-full flex flex-col relative dark:bg-gray-900"
       data-testid="network-table"
     >
       <Table
@@ -151,6 +161,11 @@ export const NetworkTable = (props: NetworkTableProps) => {
         onRowClick={onRowClick}
         selectedRowId={selectedRowId}
         isScollBottomMaintained
+      />
+
+      <QuickFiltersContainer
+        quickFilters={quickFilters}
+        onQuickFilterButtonClicked={onQuickFilterButtonClicked}
       />
     </div>
   )

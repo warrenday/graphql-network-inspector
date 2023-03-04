@@ -1,5 +1,6 @@
 import { NetworkTable } from "./index"
 import { render, fireEvent, within } from "@testing-library/react"
+import { QuickFilters } from ".."
 
 const request = {
   time: 1000,
@@ -32,6 +33,12 @@ const data = [
   },
 ] as any[]
 
+const quickFilters: QuickFilters = {
+  query: true,
+  mutation: true,
+  subscription: true,
+}
+
 test("Selects next row when pressing the down arrow", () => {
   const mockOnRowSelect = jest.fn()
   const { getByTestId } = render(
@@ -40,6 +47,8 @@ test("Selects next row when pressing the down arrow", () => {
       onRowClick={() => {}}
       onRowSelect={mockOnRowSelect}
       selectedRowId="2"
+      quickFilters={quickFilters}
+      onQuickFilterButtonClicked={() => {}}
     />
   )
   const table = getByTestId("network-table")
@@ -57,6 +66,8 @@ test("Selects previous row when pressing the up arrow", () => {
       onRowClick={() => {}}
       onRowSelect={mockOnRowSelect}
       selectedRowId="2"
+      quickFilters={quickFilters}
+      onQuickFilterButtonClicked={() => {}}
     />
   )
   const table = getByTestId("network-table")
@@ -74,6 +85,8 @@ test("Remains on bottom row when pressing the down arrow", () => {
       onRowClick={() => {}}
       onRowSelect={mockOnRowSelect}
       selectedRowId="3"
+      quickFilters={quickFilters}
+      onQuickFilterButtonClicked={() => {}}
     />
   )
   const table = getByTestId("network-table")
@@ -91,6 +104,8 @@ test("Remains on top row when pressing the up arrow", () => {
       onRowClick={() => {}}
       onRowSelect={mockOnRowSelect}
       selectedRowId="1"
+      quickFilters={quickFilters}
+      onQuickFilterButtonClicked={() => {}}
     />
   )
   const table = getByTestId("network-table")
@@ -102,7 +117,13 @@ test("Remains on top row when pressing the up arrow", () => {
 
 test("data is empty - empty table message is rendered", () => {
   const { getByTestId } = render(
-    <NetworkTable data={[]} onRowClick={() => {}} onRowSelect={() => {}} />
+    <NetworkTable
+      data={[]}
+      onRowClick={() => {}}
+      onRowSelect={() => {}}
+      quickFilters={quickFilters}
+      onQuickFilterButtonClicked={() => {}}
+    />
   )
   const table = getByTestId("network-table")
 
@@ -119,6 +140,8 @@ test("data is empty and an error message is provided - error message is rendered
       error={"someErrorMessage"}
       onRowClick={() => {}}
       onRowSelect={() => {}}
+      quickFilters={quickFilters}
+      onQuickFilterButtonClicked={() => {}}
     />
   )
   const table = getByTestId("network-table")

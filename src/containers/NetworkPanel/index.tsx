@@ -6,12 +6,17 @@ import { NetworkDetails } from "./NetworkDetails"
 import { Toolbar } from "../Toolbar"
 import { NetworkRequest } from "../../hooks/useNetworkMonitor"
 import { onNavigate } from "../../services/networkMonitor"
+import { OperationType } from "@/helpers/graphqlHelpers"
 
 interface NetworkPanelProps {
   selectedRowId: string | number | null
   setSelectedRowId: (selectedRowId: string | number | null) => void
   networkRequests: NetworkRequest[]
   clearWebRequests: () => void
+}
+
+export type QuickFilters = {
+  [key in OperationType]: boolean
 }
 
 const getRegex = (str: string) => {
@@ -31,19 +36,22 @@ const filterNetworkRequests = (
   options: {
     isInverted: boolean
     isRegex: boolean
+    quickFilters: QuickFilters
   }
 ): { results: NetworkRequest[]; errorMessage?: string } => {
-  if (!filterValue?.trim()?.length) {
-    return { results: networkRequests }
-  }
-
   const regexResult = options.isRegex ? getRegex(filterValue) : null
   if (regexResult?.errorMessage) {
     return { results: [], errorMessage: regexResult.errorMessage }
   }
 
   const results = networkRequests.filter((networkRequest) => {
-    const { operationName = "" } = networkRequest.request.primaryOperation
+    const { operationName = "", operation } =
+      networkRequest.request.primaryOperation
+
+    if (!options.quickFilters[operation]) {
+      return false
+    }
+
     const isMatch = options.isRegex
       ? operationName.match(regexResult?.regex as RegExp)
       : operationName.toLowerCase().includes(filterValue.toLowerCase())
@@ -62,11 +70,17 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
   const [isPreserveLogs, setIsPreserveLogs] = useState(false)
   const [isInverted, setIsInverted] = useState(false)
   const [isRegexActive, onIsRegexActiveChange] = useState(false)
+  const [quickFilters, setQuickFilters] = useState<QuickFilters>({
+    query: true,
+    mutation: true,
+    subscription: false,
+  })
 
   const { results: filterResults, errorMessage: filterError } =
     filterNetworkRequests(networkRequests, filterValue, {
       isInverted,
       isRegex: isRegexActive,
+      quickFilters,
     })
 
   const selectedRequest = networkRequests.find(
@@ -80,6 +94,13 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
       }
     })
   }, [isPreserveLogs, clearWebRequests])
+
+  const handleQuickFilterButtonClicked = (filter: OperationType) => {
+    setQuickFilters({
+      ...quickFilters,
+      [filter]: !quickFilters[filter],
+    })
+  }
 
   return (
     <SplitPaneLayout
@@ -107,6 +128,8 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
           onRowClick={setSelectedRowId}
           onRowSelect={setSelectedRowId}
           showSingleColumn={Boolean(selectedRequest)}
+          quickFilters={quickFilters}
+          onQuickFilterButtonClicked={handleQuickFilterButtonClicked}
         />
       }
       rightPane={
