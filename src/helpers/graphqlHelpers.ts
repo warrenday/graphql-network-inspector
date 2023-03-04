@@ -14,6 +14,40 @@ export type OperationDetails = {
   operation: OperationType
 }
 
+const decodeQueryParam = (param: string): string | null => {
+  try {
+    return decodeURIComponent(param.replace(/\+/g, " "))
+  } catch (e) {
+    return null
+  }
+}
+
+const extractExtensionsFromQueryParam = (param: string): any => {
+  try {
+    const decodedParam = decodeQueryParam(param)
+    if (!decodedParam) {
+      return null
+    }
+
+    return JSON.parse(decodedParam)
+  } catch (e) {
+    return null
+  }
+}
+
+const extractVariablesFromQueryParam = (param: string): any => {
+  try {
+    const decodedParam = decodeQueryParam(param)
+    if (!decodedParam) {
+      return null
+    }
+
+    return JSON.parse(decodedParam)
+  } catch (e) {
+    return null
+  }
+}
+
 const isParsedGraphqlRequestValid = (
   requestPayloads: any[]
 ): requestPayloads is IGraphqlRequestBody[] => {
@@ -48,55 +82,31 @@ const parseGraphqlGetRequest = (
     (qs) => qs.name === "extensions"
   )
 
-  try {
-    const variables =
-      variablesParam?.value && decodeURIComponent(variablesParam?.value)
+  const query = queryParam && decodeQueryParam(queryParam.value)
+  const variables =
+    variablesParam && extractVariablesFromQueryParam(variablesParam.value)
 
-    if (queryParam?.value) {
-      try {
-        const query = decodeURIComponent(queryParam.value)
+  if (!!query) {
+    return [
+      {
+        query,
+        variables,
+      },
+    ]
+  }
 
-        if (variables) {
-          return [
-            {
-              query,
-              variables: JSON.parse(variables),
-            },
-          ]
-        }
+  const extensions =
+    extensionsParam && extractExtensionsFromQueryParam(extensionsParam.value)
+  const isPersistedQuery = !!extensions?.persistedQuery
 
-        return [
-          {
-            query,
-          },
-        ]
-      } catch (e) {
-        return null
-      }
-    }
-
-    if (extensionsParam?.value) {
-      const extensions = JSON.parse(decodeURIComponent(extensionsParam.value))
-
-      if (variables) {
-        return [
-          {
-            query: "",
-            extensions: extensions,
-            variables: JSON.parse(variables),
-          },
-        ]
-      }
-
-      return [
-        {
-          query: "",
-          extensions: extensions,
-        },
-      ]
-    }
-  } catch (e) {
-    return null
+  if (isPersistedQuery) {
+    return [
+      {
+        query: "",
+        extensions,
+        variables,
+      },
+    ]
   }
 
   return null
@@ -153,23 +163,31 @@ export const getPrimaryOperationForGetRequest = (
     return null
   }
 
+  const queryParam = details.request.queryString.find(
+    (qs) => qs.name === "query"
+  )
+
+  const query = queryParam && decodeQueryParam(queryParam.value)
+
+  if (!!query) {
+    return {
+      operationName: operationNameParam.value,
+      operation: "query",
+    }
+  }
+
   const extensionsParam = details.request.queryString.find(
     (qs) => qs.name === "extensions"
   )
 
-  if (extensionsParam?.value) {
-    try {
-      const extensions = JSON.parse(decodeURIComponent(extensionsParam.value))
-      const isPersistedQuery = !!extensions.persistedQuery
+  const extensions =
+    extensionsParam && extractExtensionsFromQueryParam(extensionsParam.value)
+  const isPersistedQuery = !!extensions?.persistedQuery
 
-      if (isPersistedQuery) {
-        return {
-          operationName: operationNameParam.value,
-          operation: "query",
-        }
-      }
-    } catch (e) {
-      return null
+  if (isPersistedQuery) {
+    return {
+      operationName: operationNameParam.value,
+      operation: "query",
     }
   }
 

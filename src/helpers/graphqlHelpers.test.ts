@@ -166,6 +166,32 @@ describe("GraphQL Helpers", () => {
           method: "GET",
           queryString: [
             {
+              name: "query",
+              value:
+                "query+getTopMovie+%7B+getTopMovie+%7B+id+title+genre+%7D%20%7D",
+            },
+            {
+              name: "operationName",
+              value: "getTopMovie",
+            },
+          ],
+        },
+      } as chrome.devtools.network.Request
+
+      const operation = getPrimaryOperation(request)
+
+      expect(operation).toEqual({
+        operationName: "getTopMovie",
+        operation: "query",
+      })
+    })
+
+    it("gets the primary operation name for a persisted query using Hash", () => {
+      const request = {
+        request: {
+          method: "GET",
+          queryString: [
+            {
               name: "operationName",
               value: "getTopMovie",
             },
@@ -374,6 +400,33 @@ describe("GraphQL Helpers", () => {
     })
 
     it("gets an array of objects for a persisted query", () => {
+      const request = {
+        request: {
+          method: "GET",
+          queryString: [
+            {
+              name: "query",
+              value:
+                "query+getTopMovie+%7B+getTopMovie+%7B+id+title+genre+%7D%20%7D",
+            },
+            {
+              name: "operationName",
+              value: "getTopMovie",
+            },
+          ],
+        },
+      } as chrome.devtools.network.Request
+
+      const res = parseGraphqlRequest(request)
+
+      expect(res).toEqual([
+        {
+          query: "query getTopMovie { getTopMovie { id title genre } }",
+        },
+      ])
+    })
+
+    it("gets an array of objects for a persisted query using Hash", () => {
       const request = {
         request: {
           method: "GET",
