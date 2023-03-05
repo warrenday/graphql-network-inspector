@@ -51,13 +51,28 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
   const displayExtensions = isExtensionsPopulated(request)
 
   return (
-    <PanelSection>
-      <div className="flex flex-col gap-4">
+    <PanelSection className="relative">
+      <div className="flex flex-col">
+        <div className="flex items-end gap-2 absolute right-3 z-10 transition-opacity opacity-50 hover:opacity-100">
+          {displayQuery && (
+            <CopyButton label="Copy Query" textToCopy={request.query} />
+          )}
+          {displayVariables && (
+            <CopyButton
+              label="Copy Vars"
+              textToCopy={safeJson.stringify(request.variables, undefined, 2)}
+            />
+          )}
+          {displayExtensions && (
+            <CopyButton
+              label="Copy Extensions"
+              textToCopy={safeJson.stringify(request.extensions, undefined, 2)}
+            />
+          )}
+        </div>
+
         {displayQuery && (
-          <RequestViewSection
-            title="Query"
-            actions={<CopyButton label="Copy" textToCopy={request.query} />}
-          >
+          <RequestViewSection title="Query">
             <CodeView
               text={request.query}
               language={"graphql"}
@@ -66,15 +81,7 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
           </RequestViewSection>
         )}
         {displayVariables && (
-          <RequestViewSection
-            title="Variables"
-            actions={
-              <CopyButton
-                label="Copy"
-                textToCopy={safeJson.stringify(request.variables, undefined, 2)}
-              />
-            }
-          >
+          <RequestViewSection title="Variables">
             <CodeView
               text={safeJson.stringify(request.variables, undefined, 2)}
               language={"json"}
@@ -82,19 +89,7 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
           </RequestViewSection>
         )}
         {displayExtensions && (
-          <RequestViewSection
-            title="Extensions"
-            actions={
-              <CopyButton
-                label="Copy"
-                textToCopy={safeJson.stringify(
-                  request.extensions,
-                  undefined,
-                  2
-                )}
-              />
-            }
-          >
+          <RequestViewSection title="Extensions">
             <CodeView
               text={safeJson.stringify(request.extensions, undefined, 2)}
               language={"json"}
@@ -109,17 +104,15 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
 
 type RequestViewSectionProps = {
   title: string
-  actions: ReactNode
 }
 
 const RequestViewSection: FC<RequestViewSectionProps> = (props) => {
-  const { title, actions, children } = props
+  const { title, children } = props
 
   return (
     <div>
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mt-3">
         <span className="font-bold mb-4">{title}</span>
-        {actions}
       </div>
       <div className="bg-gray-200 dark:bg-gray-800 rounded-lg">{children}</div>
     </div>
