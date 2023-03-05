@@ -5,7 +5,7 @@ import { IGraphqlRequestBody } from "@/helpers/graphqlHelpers"
 import * as safeJson from "@/helpers/safeJson"
 import { Bar } from "@/components/Bar"
 import { Panels, PanelSection } from "./PanelSection"
-import { FC, ReactNode } from "react"
+import { FC } from "react"
 
 const isVariablesPopulated = (request: IGraphqlRequestBody) => {
   return Object.keys(request.variables || {}).length > 0
@@ -23,14 +23,19 @@ interface IRequestViewProps {
 export const RequestView = (props: IRequestViewProps) => {
   const { requests, autoFormat } = props
 
+  const numberOfRequests = requests.length
+  const shouldDisplayRequestIndex = numberOfRequests > 1
+
   return (
     <Panels>
-      {requests.map((request) => {
+      {requests.map((request, index) => {
         return (
           <SingleRequestView
             key={request.query}
             request={request}
             autoFormat={autoFormat}
+            index={shouldDisplayRequestIndex && index + 1}
+            numberOfRequests={numberOfRequests}
           />
         )
       })}
@@ -41,10 +46,12 @@ export const RequestView = (props: IRequestViewProps) => {
 type SingleRequestViewProps = {
   request: IGraphqlRequestBody
   autoFormat: boolean
+  index: number | false
+  numberOfRequests: number
 }
 
 const SingleRequestView = (props: SingleRequestViewProps) => {
-  const { request, autoFormat } = props
+  const { request, autoFormat, index, numberOfRequests } = props
 
   const displayQuery = !!request.query
   const displayVariables = isVariablesPopulated(request)
@@ -72,7 +79,9 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
         </div>
 
         {displayQuery && (
-          <RequestViewSection title="Query">
+          <RequestViewSection
+            title={"Query" + (index ? ` (${index}/${numberOfRequests})` : "")}
+          >
             <CodeView
               text={request.query}
               language={"graphql"}
