@@ -4,6 +4,7 @@ import { chromeProvider } from "../services/chromeProvider"
 export const useDarkTheme = () => {
   const chrome = chromeProvider()
   const isDark = chrome.devtools.panels.themeName === "dark"
+  // const isDark = false
 
   // Switch out the css for highlight.js depending on the theme
   useEffect(() => {

@@ -60,7 +60,7 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
   return (
     <PanelSection className="relative">
       <div className="flex flex-col">
-        <div className="flex items-end gap-2 absolute right-3 z-10 transition-opacity opacity-50 hover:opacity-100">
+        <div className="flex items-end gap-2 absolute right-4 z-10 transition-opacity">
           {displayQuery && (
             <CopyButton label="Copy Query" textToCopy={request.query} />
           )}
