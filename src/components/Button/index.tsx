@@ -2,13 +2,13 @@ import { twMerge } from "tailwind-merge"
 import { ReactElement } from "react"
 
 const baseStyle = `
-  py-1.5 px-2.5 text-md font-semibold rounded-md text-gray-600 dark:text-white
+  py-1.5 px-2.5 text-md font-semibold rounded-md text-gray-600 dark:text-white z-10
 `
 
 const styles = {
   primary: `
-    bg-black/10 dark:bg-white/10
-    hover:bg-black/20 dark:hover:bg-white/20
+    bg-gray-200 dark:bg-gray-700
+    hover:bg-gray-300 dark:hover:bg-gray-600
   `,
   ghost: ``,
 }
