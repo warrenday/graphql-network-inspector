@@ -47,6 +47,17 @@ export const QuickFiltersContainer = (props: QuickFiltersContainerProps) => {
         >
           Mutations
         </Button>
+        <Button
+          variant={quickFilters.unknown ? "primary" : "ghost"}
+          onClick={() => onQuickFilterButtonClicked("unknown")}
+          icon={
+            <Pill
+              className={quickFilters.unknown ? "bg-yellow-400" : "bg-gray-400"}
+            />
+          }
+        >
+          Unknowns
+        </Button>
       </div>
     </Bar>
   )
