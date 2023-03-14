@@ -73,7 +73,7 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
   const [quickFilters, setQuickFilters] = useState<QuickFilters>({
     query: true,
     mutation: true,
-    unknown: true,
+    persisted: true,
     subscription: false,
   })
 

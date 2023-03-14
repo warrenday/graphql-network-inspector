@@ -18,14 +18,14 @@ const OperationAliases: Record<OperationType, string> = {
   query: "Q",
   mutation: "M",
   subscription: "S",
-  unknown: "U",
+  persisted: "P",
 }
 
 const OperationColors: Record<OperationType, string> = {
   query: "text-green-400",
   mutation: "text-indigo-400",
   subscription: "",
-  unknown: "text-yellow-400",
+  persisted: "text-yellow-400",
 }
 
 export type NetworkTableProps = {

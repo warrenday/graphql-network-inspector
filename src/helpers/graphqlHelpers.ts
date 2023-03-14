@@ -1,7 +1,7 @@
 import { FieldNode, GraphQLError, OperationDefinitionNode } from "graphql"
 import gql from "graphql-tag"
 
-export type OperationType = "query" | "mutation" | "subscription" | "unknown"
+export type OperationType = "query" | "mutation" | "subscription" | "persisted"
 
 export interface IGraphqlRequestBody {
   query: string
@@ -234,7 +234,7 @@ export const getPrimaryOperationForPostRequest = (
       }
 
       // Can be either query or mutation here, we don't know
-      operation = "unknown"
+      operation = "persisted"
     }
 
     return {

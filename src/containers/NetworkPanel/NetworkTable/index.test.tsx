@@ -36,6 +36,7 @@ const data = [
 const quickFilters: QuickFilters = {
   query: true,
   mutation: true,
+  persisted: true,
   subscription: true,
 }
 

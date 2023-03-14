@@ -211,7 +211,7 @@ describe("GraphQL Helpers", () => {
 
       expect(operation).toEqual({
         operationName: "createMovie",
-        operation: "unknown",
+        operation: "persisted",
       })
     })
 
