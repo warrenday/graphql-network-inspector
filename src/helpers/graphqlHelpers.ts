@@ -189,7 +189,7 @@ export const getPrimaryOperationForGetRequest = (
   if (isPersistedQuery) {
     return {
       operationName: operationNameParam.value,
-      operation: "query",
+      operation: "persisted",
     }
   }
 
@@ -226,16 +226,21 @@ export const getPrimaryOperationForPostRequest = (
       }
 
       operation = firstOperationDefinition?.operation
-    } else {
-      operationName = postData[0].operationName
 
-      if (!operationName) {
-        throw new Error("Operation name could not be determined")
+      return {
+        operationName,
+        operation,
       }
-
-      // Can be either query or mutation here, we don't know
-      operation = "persisted"
     }
+
+    operationName = postData[0].operationName
+
+    if (!operationName) {
+      throw new Error("Operation name could not be determined")
+    }
+
+    // Can be either query or mutation here, we don't know
+    operation = "persisted"
 
     return {
       operationName,

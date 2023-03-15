@@ -244,7 +244,7 @@ describe("GraphQL Helpers", () => {
 
       expect(operation).toEqual({
         operationName: "getTopMovie",
-        operation: "query",
+        operation: "persisted",
       })
     })
 
