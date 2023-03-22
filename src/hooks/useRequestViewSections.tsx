@@ -38,7 +38,5 @@ export const RequestViewSectionsProvider: React.FC = ({ children }) => {
 }
 
 export const useRequestViewSections = () => {
-  const context = useContext(RequestViewSectionsContext)
-
-  return context
+  return useContext(RequestViewSectionsContext)
 }

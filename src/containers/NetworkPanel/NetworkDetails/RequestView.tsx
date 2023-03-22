@@ -138,7 +138,7 @@ const RequestViewSection: FC<RequestViewSectionProps> = (props) => {
   const { id, title, children } = props
   const { collapsedSections, setIsSectionCollapsed } = useRequestViewSections()
 
-  function handleToggleView() {
+  const handleToggleView = () => {
     setIsSectionCollapsed(id, !collapsedSections[id])
   }
 
