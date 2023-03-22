@@ -1,11 +1,11 @@
 import { useState, createContext, useContext } from "react"
 
-export type RequestViewSectionId = "query" | "variables" | "extensions"
+export type RequestViewSectionType = "query" | "variables" | "extensions"
 
 const RequestViewSectionsContext = createContext<{
-  collapsedSections: Partial<Record<RequestViewSectionId, boolean>>
+  collapsedSections: Partial<Record<RequestViewSectionType, boolean>>
   setIsSectionCollapsed: (
-    sectionId: RequestViewSectionId,
+    sectionId: RequestViewSectionType,
     isCollapsed: boolean
   ) => void
 }>({
@@ -15,11 +15,11 @@ const RequestViewSectionsContext = createContext<{
 
 export const RequestViewSectionsProvider: React.FC = ({ children }) => {
   const [collapsedSections, setCollapsedSections] = useState(
-    {} as Partial<Record<RequestViewSectionId, boolean>>
+    {} as Partial<Record<RequestViewSectionType, boolean>>
   )
 
   function setIsSectionCollapsed(
-    sectionId: RequestViewSectionId,
+    sectionId: RequestViewSectionType,
     isCollapsed: boolean
   ) {
     setCollapsedSections({

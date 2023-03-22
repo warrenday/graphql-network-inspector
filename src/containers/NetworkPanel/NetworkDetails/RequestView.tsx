@@ -7,7 +7,7 @@ import { Bar } from "@/components/Bar"
 import { Panels, PanelSection } from "./PanelSection"
 import { FC } from "react"
 import {
-  RequestViewSectionId,
+  RequestViewSectionType,
   useRequestViewSections,
 } from "@/hooks/useRequestViewSections"
 import { CaretIcon } from "../../../components/Icons/CaretIcon"
@@ -97,7 +97,7 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
       >
         {displayQuery && (
           <RequestViewSection
-            id="query"
+            type="query"
             title={"Query" + (index ? ` (${index}/${numberOfRequests})` : "")}
           >
             <CodeView
@@ -108,7 +108,7 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
           </RequestViewSection>
         )}
         {displayVariables && (
-          <RequestViewSection id="variables" title="Variables">
+          <RequestViewSection type="variables" title="Variables">
             <CodeView
               text={safeJson.stringify(request.variables, undefined, 2)}
               language={"json"}
@@ -116,7 +116,7 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
           </RequestViewSection>
         )}
         {displayExtensions && (
-          <RequestViewSection id="extensions" title="Extensions">
+          <RequestViewSection type="extensions" title="Extensions">
             <CodeView
               text={safeJson.stringify(request.extensions, undefined, 2)}
               language={"json"}
@@ -130,19 +130,19 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
 }
 
 type RequestViewSectionProps = {
-  id: RequestViewSectionId
+  type: RequestViewSectionType
   title: string
 }
 
 const RequestViewSection: FC<RequestViewSectionProps> = (props) => {
-  const { id, title, children } = props
+  const { type, title, children } = props
   const { collapsedSections, setIsSectionCollapsed } = useRequestViewSections()
 
   const handleToggleView = () => {
-    setIsSectionCollapsed(id, !collapsedSections[id])
+    setIsSectionCollapsed(type, !collapsedSections[type])
   }
 
-  const isCollapsed = !!collapsedSections[id]
+  const isCollapsed = !!collapsedSections[type]
 
   return (
     <div>
