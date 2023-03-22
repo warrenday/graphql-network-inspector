@@ -14,6 +14,20 @@ import {
 import { QuickFilters } from ".."
 import { QuickFiltersContainer } from "../QuickFiltersContainer"
 
+const OperationAliases: Record<OperationType, string> = {
+  query: "Q",
+  mutation: "M",
+  subscription: "S",
+  persisted: "P",
+}
+
+const OperationColors: Record<OperationType, string> = {
+  query: "text-green-400",
+  mutation: "text-indigo-400",
+  subscription: "",
+  persisted: "text-yellow-400",
+}
+
 export type NetworkTableProps = {
   data: NetworkRequest[]
   error?: string
@@ -35,8 +49,7 @@ const Operation = ({ request }: { request: NetworkRequest }) => {
     [responseBody]
   )
 
-  const operationColor =
-    operation === "query" ? "text-green-400" : "text-indigo-400"
+  const operationColor = OperationColors[operation]
 
   return (
     <div className="flex items-center gap-2" data-testid="column-operation">
@@ -44,7 +57,7 @@ const Operation = ({ request }: { request: NetworkRequest }) => {
         <span
           className={errorMessages?.length ? "text-red-500" : operationColor}
         >
-          {operation === "query" ? "Q" : "M"}
+          {OperationAliases[operation]}
         </span>
       </Badge>
 
