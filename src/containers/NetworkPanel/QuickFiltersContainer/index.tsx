@@ -47,6 +47,19 @@ export const QuickFiltersContainer = (props: QuickFiltersContainerProps) => {
         >
           Mutations
         </Button>
+        <Button
+          variant={quickFilters.persisted ? "primary" : "ghost"}
+          onClick={() => onQuickFilterButtonClicked("persisted")}
+          icon={
+            <Pill
+              className={
+                quickFilters.persisted ? "bg-yellow-400" : "bg-gray-400"
+              }
+            />
+          }
+        >
+          Persisted
+        </Button>
       </div>
     </Bar>
   )

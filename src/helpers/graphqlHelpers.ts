@@ -1,7 +1,7 @@
 import { FieldNode, GraphQLError, OperationDefinitionNode } from "graphql"
 import gql from "graphql-tag"
 
-export type OperationType = "query" | "mutation" | "subscription"
+export type OperationType = "query" | "mutation" | "subscription" | "persisted"
 
 export interface IGraphqlRequestBody {
   query: string
@@ -52,7 +52,9 @@ const isParsedGraphqlRequestValid = (
   requestPayloads: any[]
 ): requestPayloads is IGraphqlRequestBody[] => {
   const isValid = requestPayloads.every((payload) => {
-    const isQueryValid = "query" in payload && typeof payload.query === "string"
+    const isQueryValid =
+      ("query" in payload && typeof payload.query === "string") ||
+      payload.extensions?.persistedQuery
     const isVariablesValid =
       "variables" in payload ? typeof payload.variables === "object" : true
     return isQueryValid && isVariablesValid
@@ -187,7 +189,7 @@ export const getPrimaryOperationForGetRequest = (
   if (isPersistedQuery) {
     return {
       operationName: operationNameParam.value,
-      operation: "query",
+      operation: "persisted",
     }
   }
 
@@ -206,23 +208,43 @@ export const getPrimaryOperationForPostRequest = (
   try {
     const request = JSON.parse(requestBody)
     const postData = Array.isArray(request) ? request : [request]
-    const documentNode = parseGraphqlQuery(postData[0].query)
-    const firstOperationDefinition = documentNode.definitions.find(
-      (def) => def.kind === "OperationDefinition"
-    ) as OperationDefinitionNode
-    const field = firstOperationDefinition.selectionSet.selections.find(
-      (selection) => selection.kind === "Field"
-    ) as FieldNode
-    const operationName =
-      firstOperationDefinition.name?.value || field?.name.value
+    let operationName
+    let operation: OperationType
+
+    if (postData[0].query) {
+      const documentNode = parseGraphqlQuery(postData[0].query)
+      const firstOperationDefinition = documentNode.definitions.find(
+        (def) => def.kind === "OperationDefinition"
+      ) as OperationDefinitionNode
+      const field = firstOperationDefinition.selectionSet.selections.find(
+        (selection) => selection.kind === "Field"
+      ) as FieldNode
+      operationName = firstOperationDefinition.name?.value || field?.name.value
+
+      if (!operationName) {
+        throw new Error("Operation name could not be determined")
+      }
+
+      operation = firstOperationDefinition?.operation
+
+      return {
+        operationName,
+        operation,
+      }
+    }
+
+    operationName = postData[0].operationName
 
     if (!operationName) {
       throw new Error("Operation name could not be determined")
     }
 
+    // Can be either query or mutation here, we don't know
+    operation = "persisted"
+
     return {
       operationName,
-      operation: firstOperationDefinition?.operation,
+      operation,
     }
   } catch (e) {
     return null

@@ -84,7 +84,7 @@ describe("GraphQL Helpers", () => {
                     firstName
                     lastName
                   }
-    
+
                   query getMovieQuery($title: String) {
                     getMovie(title: $title) {
                       id
@@ -160,7 +160,7 @@ describe("GraphQL Helpers", () => {
       expect(operation).toEqual(null)
     })
 
-    it("gets the primary operation name for a persisted query", () => {
+    it("gets the primary operation name for a GET persisted query", () => {
       const request = {
         request: {
           method: "GET",
@@ -183,6 +183,35 @@ describe("GraphQL Helpers", () => {
       expect(operation).toEqual({
         operationName: "getTopMovie",
         operation: "query",
+      })
+    })
+
+    it("gets the primary operation name for a POST persisted query", () => {
+      const request = {
+        request: {
+          method: "POST",
+          postData: {
+            text: JSON.stringify([
+              {
+                operationName: "createMovie",
+                extensions: {
+                  persistedQuery: {
+                    version: 1,
+                    sha256Hash:
+                      "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+                  },
+                },
+              },
+            ]),
+          },
+        },
+      } as chrome.devtools.network.Request
+
+      const operation = getPrimaryOperation(request)
+
+      expect(operation).toEqual({
+        operationName: "createMovie",
+        operation: "persisted",
       })
     })
 
@@ -215,7 +244,7 @@ describe("GraphQL Helpers", () => {
 
       expect(operation).toEqual({
         operationName: "getTopMovie",
-        operation: "query",
+        operation: "persisted",
       })
     })
 
@@ -399,7 +428,7 @@ describe("GraphQL Helpers", () => {
       consoleError.mockRestore()
     })
 
-    it("gets an array of objects for a persisted query", () => {
+    it("gets an array of objects for a GET persisted query", () => {
       const request = {
         request: {
           method: "GET",
@@ -422,6 +451,43 @@ describe("GraphQL Helpers", () => {
       expect(res).toEqual([
         {
           query: "query getTopMovie { getTopMovie { id title genre } }",
+        },
+      ])
+    })
+
+    it("gets an array of objects for a POST persisted query", () => {
+      const request = {
+        request: {
+          method: "POST",
+          postData: {
+            text: JSON.stringify([
+              {
+                operationName: "createMovie",
+                extensions: {
+                  persistedQuery: {
+                    version: 1,
+                    sha256Hash:
+                      "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+                  },
+                },
+              },
+            ]),
+          },
+        },
+      } as chrome.devtools.network.Request
+
+      const res = parseGraphqlRequest(request)
+
+      expect(res).toEqual([
+        {
+          operationName: "createMovie",
+          extensions: {
+            persistedQuery: {
+              version: 1,
+              sha256Hash:
+                "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+            },
+          },
         },
       ])
     })
