@@ -21,7 +21,6 @@ interface IButtonProps {
   children?: React.ReactNode
   icon?: ReactElement
   testId?: string
-  style?: React.HTMLAttributes<HTMLButtonElement>["style"]
 }
 
 export const Button = (props: IButtonProps) => {
@@ -32,7 +31,6 @@ export const Button = (props: IButtonProps) => {
     className,
     icon,
     testId,
-    style,
   } = props
 
   const computedClassName = twMerge(baseStyle, [styles[variant]], className)
@@ -43,7 +41,6 @@ export const Button = (props: IButtonProps) => {
       onClick={onClick}
       className={computedClassName}
       data-testid={testId}
-      style={style}
     >
       <div className="flex items-center">
         {icon && <span className={children ? "pr-2" : ""}>{icon}</span>}

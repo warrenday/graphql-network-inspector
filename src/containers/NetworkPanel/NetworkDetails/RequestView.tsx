@@ -64,14 +64,7 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
 
   return (
     <PanelSection className="relative">
-      <div
-        className="flex items-end gap-2 absolute right-4 z-10 transition-opacity"
-        style={{
-          top: "3px",
-          right: "3px",
-          alignItems: "center",
-        }}
-      >
+      <div className="flex items-center gap-2 absolute top-[3px] right-[3px] z-10 transition-opacity">
         {displayQuery && (
           <CopyButton label="Copy Query" textToCopy={request.query} />
         )}
@@ -89,12 +82,7 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
         )}
       </div>
 
-      <div
-        className="flex flex-col"
-        style={{
-          marginTop: "-10px",
-        }}
-      >
+      <div className="flex flex-col">
         {displayQuery && (
           <RequestViewSection
             type="query"
@@ -147,16 +135,7 @@ const RequestViewSection: FC<RequestViewSectionProps> = (props) => {
   return (
     <div>
       <button
-        style={{
-          margin: "0 -10px",
-          padding: "4px 6px",
-          borderBottom: "1px solid #666",
-          background: "#333",
-          borderColor: "#666",
-          userSelect: "none",
-          outlineColor: "#2f80ed",
-          width: "calc(100% + 20px)",
-        }}
+        className="select-none w-full px-3 py-1.5 bg-[#333] border-b-[#666] outline-[#2f80ed]"
         onClick={handleToggleView}
       >
         <div className="flex justify-be align-center tween items-center gap-2">

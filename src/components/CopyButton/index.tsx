@@ -20,12 +20,7 @@ export const CopyButton = (props: CopyButtonProps) => {
         onClick={() => {
           copy(textToCopy)
         }}
-        style={{
-          border: "1px solid #797979",
-          borderRadius: "2px",
-          padding: "1px 5px",
-          fontSize: "10px",
-        }}
+        className="border border-[#797979] rounded-sm text-xxs px-[5px] py-[1px]"
       >
         {isCopied ? "Copied!" : buttonLabel}
       </Button>
