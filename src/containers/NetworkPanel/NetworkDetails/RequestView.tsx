@@ -6,6 +6,11 @@ import * as safeJson from "@/helpers/safeJson"
 import { Bar } from "@/components/Bar"
 import { Panels, PanelSection } from "./PanelSection"
 import { FC } from "react"
+import {
+  RequestViewSectionType,
+  useRequestViewSections,
+} from "@/hooks/useRequestViewSections"
+import { CaretIcon } from "../../../components/Icons/CaretIcon"
 
 const isVariablesPopulated = (request: IGraphqlRequestBody) => {
   return Object.keys(request.variables || {}).length > 0
@@ -59,27 +64,28 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
 
   return (
     <PanelSection className="relative">
-      <div className="flex flex-col">
-        <div className="flex items-end gap-2 absolute right-4 z-10 transition-opacity">
-          {displayQuery && (
-            <CopyButton label="Copy Query" textToCopy={request.query} />
-          )}
-          {displayVariables && (
-            <CopyButton
-              label="Copy Vars"
-              textToCopy={safeJson.stringify(request.variables, undefined, 2)}
-            />
-          )}
-          {displayExtensions && (
-            <CopyButton
-              label="Copy Extensions"
-              textToCopy={safeJson.stringify(request.extensions, undefined, 2)}
-            />
-          )}
-        </div>
+      <div className="flex items-center gap-2 absolute top-[3px] right-[3px] z-10 transition-opacity">
+        {displayQuery && (
+          <CopyButton label="Copy Query" textToCopy={request.query} />
+        )}
+        {displayVariables && (
+          <CopyButton
+            label="Copy Vars"
+            textToCopy={safeJson.stringify(request.variables, undefined, 2)}
+          />
+        )}
+        {displayExtensions && (
+          <CopyButton
+            label="Copy Extensions"
+            textToCopy={safeJson.stringify(request.extensions, undefined, 2)}
+          />
+        )}
+      </div>
 
+      <div className="flex flex-col">
         {displayQuery && (
           <RequestViewSection
+            type="query"
             title={"Query" + (index ? ` (${index}/${numberOfRequests})` : "")}
           >
             <CodeView
@@ -90,7 +96,7 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
           </RequestViewSection>
         )}
         {displayVariables && (
-          <RequestViewSection title="Variables">
+          <RequestViewSection type="variables" title="Variables">
             <CodeView
               text={safeJson.stringify(request.variables, undefined, 2)}
               language={"json"}
@@ -98,7 +104,7 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
           </RequestViewSection>
         )}
         {displayExtensions && (
-          <RequestViewSection title="Extensions">
+          <RequestViewSection type="extensions" title="Extensions">
             <CodeView
               text={safeJson.stringify(request.extensions, undefined, 2)}
               language={"json"}
@@ -112,18 +118,32 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
 }
 
 type RequestViewSectionProps = {
+  type: RequestViewSectionType
   title: string
 }
 
 const RequestViewSection: FC<RequestViewSectionProps> = (props) => {
-  const { title, children } = props
+  const { type, title, children } = props
+  const { collapsedSections, setIsSectionCollapsed } = useRequestViewSections()
+
+  const handleToggleView = () => {
+    setIsSectionCollapsed(type, !collapsedSections[type])
+  }
+
+  const isCollapsed = !!collapsedSections[type]
 
   return (
     <div>
-      <div className="flex justify-between items-center mt-3">
-        <span className="font-bold mb-4">{title}</span>
-      </div>
-      <div className="bg-gray-200 dark:bg-gray-800 rounded-lg">{children}</div>
+      <button
+        className="select-none w-full px-3 py-1.5 bg-[#333] border-b-[#666] outline-[#2f80ed]"
+        onClick={handleToggleView}
+      >
+        <div className="flex justify-be align-center tween items-center gap-2">
+          <CaretIcon className={"w-2.5 " + (isCollapsed ? "" : "rotate-90")} />
+          <span className="font-bold">{title}</span>
+        </div>
+      </button>
+      {!isCollapsed && <div className="rounded-lg">{children}</div>}
     </div>
   )
 }

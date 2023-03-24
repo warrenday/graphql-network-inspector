@@ -4,7 +4,11 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html"],
   darkMode: "class", // or 'media' or 'class'
   theme: {
-    extend: {},
+    extend: {
+      fontSize: {
+        xxs: "10px",
+      },
+    },
     colors: {
       transparent: "transparent",
       current: "currentColor",

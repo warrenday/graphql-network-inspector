@@ -19,7 +19,7 @@ export const PanelSection: FC<IPanelSectionProps> = (props) => {
   const { title, children, className } = props
 
   return (
-    <div className={`p-4 ${className}`}>
+    <div className={className}>
       {title && <div className="font-bold mb-4">{title}</div>}
       <div>{children}</div>
     </div>

@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useMemo, useRef } from "react"
 import prettyBytes from "pretty-bytes"
 import prettyMs from "pretty-ms"
 import { Table, TableProps } from "../../../components/Table"
@@ -118,6 +118,8 @@ export const NetworkTable = (props: NetworkTableProps) => {
     onQuickFilterButtonClicked,
   } = props
 
+  const ref = useRef<HTMLDivElement>(null)
+
   const selectNextRow = (direction: "up" | "down") => {
     const directionCount = direction === "up" ? -1 : 1
     const selectedRowIndex = data.findIndex((row) => row.id === selectedRowId)
@@ -127,11 +129,22 @@ export const NetworkTable = (props: NetworkTableProps) => {
     }
   }
 
-  useKeyDown("ArrowUp", () => {
+  function scrollSelectedIntoView() {
+    ref.current
+      ?.querySelector<HTMLElement>("[aria-selected='true']")
+      ?.scrollIntoView({ block: "nearest" })
+  }
+
+  useKeyDown("ArrowUp", (e) => {
+    e.preventDefault()
     selectNextRow("up")
+    setTimeout(scrollSelectedIntoView, 0)
   })
-  useKeyDown("ArrowDown", () => {
+
+  useKeyDown("ArrowDown", (e) => {
+    e.preventDefault()
     selectNextRow("down")
+    setTimeout(scrollSelectedIntoView, 0)
   })
 
   const columns = useMemo(() => {
@@ -164,6 +177,7 @@ export const NetworkTable = (props: NetworkTableProps) => {
 
   return (
     <div
+      ref={ref}
       className="w-full h-full flex flex-col relative dark:bg-gray-900"
       data-testid="network-table"
     >

@@ -58,15 +58,19 @@ const TableBody = <T extends BaseRowData>({
       prepareRow(row)
 
       const isSelected = row.original.id === selectedRowId
+      const props = row.getRowProps()
+      const style = { ...props.style, scrollMargin: "31px" }
+
       return (
         <tr
-          {...row.getRowProps()}
+          {...props}
           className={`${
             isSelected
               ? "text-white bg-blue-500 dark:bg-blue-600"
               : "even:bg-gray-200 dark:even:bg-gray-900 odd:bg-gray-100 dark:odd:bg-gray-800 hover:bg-blue-300 dark:hover:bg-blue-900"
           } cursor-pointer `}
           aria-selected={isSelected}
+          style={style}
         >
           {row.cells.map((cell) => (
             <td
