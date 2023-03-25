@@ -20,14 +20,14 @@ export const HeaderView = (props: IHeaderViewProps) => {
 
   return (
     <Panels>
-      <PanelSection title="Request Headers" className="relative">
+      <PanelSection title="Request Headers" className="relative p-4">
         <CopyButton
           textToCopy={headerStrings.requestHeaders}
           className="absolute right-3 top-3 z-10"
         />
         <HeaderList headers={requestHeaders} />
       </PanelSection>
-      <PanelSection title="Response Headers" className="relative">
+      <PanelSection title="Response Headers" className="relative p-4">
         <CopyButton
           textToCopy={headerStrings.responseHeaders}
           className="absolute right-3 top-3 z-10"

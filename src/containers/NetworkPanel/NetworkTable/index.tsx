@@ -190,10 +190,12 @@ export const NetworkTable = (props: NetworkTableProps) => {
         isScollBottomMaintained
       />
 
-      <QuickFiltersContainer
-        quickFilters={quickFilters}
-        onQuickFilterButtonClicked={onQuickFilterButtonClicked}
-      />
+      <div className="overflow-hidden">
+        <QuickFiltersContainer
+          quickFilters={quickFilters}
+          onQuickFilterButtonClicked={onQuickFilterButtonClicked}
+        />
+      </div>
     </div>
   )
 }

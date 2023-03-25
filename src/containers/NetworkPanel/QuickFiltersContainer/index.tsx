@@ -21,7 +21,7 @@ export const QuickFiltersContainer = (props: QuickFiltersContainerProps) => {
   const { quickFilters, onQuickFilterButtonClicked } = props
 
   return (
-    <Bar className="border-t">
+    <Bar className="border-t pb-3">
       <div className="flex gap-2">
         <Button
           variant={quickFilters.query ? "primary" : "ghost"}

@@ -11,6 +11,7 @@ type CodeViewProps = {
   text: string
   language: "graphql" | "json"
   autoFormat?: boolean
+  className?: string
 }
 
 const LoadingIndicator = () => {
@@ -51,11 +52,11 @@ const CodeRenderer = (props: CodeViewProps) => {
 }
 
 export const CodeView = (props: CodeViewProps) => {
-  const { text, language, autoFormat } = props
+  const { text, language, autoFormat, className } = props
   const size = useByteSize(text.length, { unit: "mb" })
 
   return (
-    <div className="p-4">
+    <div className={className}>
       {size > config.maxUsableResponseSizeMb ? (
         <CodeTooLargeMessage />
       ) : (

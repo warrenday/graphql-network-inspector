@@ -38,7 +38,7 @@ export const ResponseRawView = (props: IResponseRawViewProps) => {
         textToCopy={formattedJson}
         className="absolute right-3 top-3 z-10"
       />
-      <CodeView text={formattedJson} language={"json"} />
+      <CodeView text={formattedJson} language={"json"} className="p-4" />
     </div>
   )
 }

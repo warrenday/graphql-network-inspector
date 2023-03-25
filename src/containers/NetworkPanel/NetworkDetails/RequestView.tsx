@@ -63,8 +63,8 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
   const displayExtensions = isExtensionsPopulated(request)
 
   return (
-    <PanelSection className="relative">
-      <div className="flex items-center gap-2 absolute top-[3px] right-[3px] z-10 transition-opacity">
+    <PanelSection className="relative mb-3">
+      <div className="flex items-center gap-2 absolute top-[8px] right-[8px] z-10 transition-opacity">
         {displayQuery && (
           <CopyButton label="Copy Query" textToCopy={request.query} />
         )}
@@ -92,6 +92,7 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
               text={request.query}
               language={"graphql"}
               autoFormat={autoFormat}
+              className="px-6"
             />
           </RequestViewSection>
         )}
@@ -100,6 +101,7 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
             <CodeView
               text={safeJson.stringify(request.variables, undefined, 2)}
               language={"json"}
+              className="px-6"
             />
           </RequestViewSection>
         )}
@@ -109,6 +111,7 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
               text={safeJson.stringify(request.extensions, undefined, 2)}
               language={"json"}
               autoFormat={autoFormat}
+              className="px-6"
             />
           </RequestViewSection>
         )}
@@ -125,17 +128,16 @@ type RequestViewSectionProps = {
 const RequestViewSection: FC<RequestViewSectionProps> = (props) => {
   const { type, title, children } = props
   const { collapsedSections, setIsSectionCollapsed } = useRequestViewSections()
+  const isCollapsed = !!collapsedSections[type]
 
   const handleToggleView = () => {
     setIsSectionCollapsed(type, !collapsedSections[type])
   }
 
-  const isCollapsed = !!collapsedSections[type]
-
   return (
     <div>
       <button
-        className="select-none w-full px-3 py-1.5 bg-[#333] border-b-[#666] outline-[#2f80ed]"
+        className="select-none w-full px-4 py-3 outline-[#2f80ed]"
         onClick={handleToggleView}
       >
         <div className="flex justify-be align-center tween items-center gap-2">
