@@ -18,7 +18,7 @@ export type NetworkRequest = {
     headers: Header[]
     body: {
       query: string
-      variables?: object
+      variables?: Record<string, unknown>
     }[]
     headersSize: number
     bodySize: number

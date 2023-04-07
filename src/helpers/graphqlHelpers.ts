@@ -5,8 +5,8 @@ export type OperationType = "query" | "mutation" | "subscription" | "persisted"
 
 export interface IGraphqlRequestBody {
   query: string
-  variables?: object
-  extensions?: object
+  variables?: Record<string, unknown>
+  extensions?: Record<string, unknown>
 }
 
 export type OperationDetails = {

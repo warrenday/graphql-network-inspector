@@ -7,10 +7,12 @@ const createRequest = ({
   response,
 }: {
   request: {
-    query: string
-    variables: object
+    query?: string
+    operationName?: string
+    variables?: Record<string, unknown>
+    extensions?: Record<string, unknown>
   }[]
-  response: object
+  response: Record<string, unknown>
 }) => {
   return {
     time: 1099.4580000406131,
@@ -38,9 +40,11 @@ const createRequest = ({
       method: "POST",
       postData: {
         text: JSON.stringify(
-          request.map(({ query, variables }) => ({
-            query: dedent(query),
+          request.map(({ query, variables, extensions, operationName }) => ({
+            query: query && dedent(query),
+            operationName,
             variables,
+            extensions,
           }))
         ),
       },
@@ -422,6 +426,25 @@ export const mockRequests = [
             ],
           },
         },
+      },
+    },
+  }),
+  createRequest({
+    request: [
+      {
+        operationName: 'hasUnseenAnnouncements',
+        extensions: {
+          persistedQuery: {
+            version: 1,
+            sha256Hash: "ecf4edb46db40b5132295c0291d62fb65d6759a9eedfa4d5d612dd5ec54a6b38",
+          },
+          variables: btoa('{"language":"pt"}'),
+        },
+      },
+    ],
+    response: {
+      data: {
+        hasUnseenAnnouncements: true,
       },
     },
   }),
