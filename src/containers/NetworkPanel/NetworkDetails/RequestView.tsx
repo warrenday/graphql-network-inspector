@@ -52,7 +52,7 @@ export const RequestView = (props: IRequestViewProps) => {
       {requests.map((request, index) => {
         return (
           <SingleRequestView
-            key={request.query}
+            key={request.id}
             request={request}
             autoFormat={autoFormat}
             index={shouldDisplayRequestIndex && index + 1}
