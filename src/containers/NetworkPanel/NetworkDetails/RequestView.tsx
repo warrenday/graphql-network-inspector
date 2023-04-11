@@ -12,12 +12,28 @@ import {
 } from "@/hooks/useRequestViewSections"
 import { CaretIcon } from "../../../components/Icons/CaretIcon"
 
-const isVariablesPopulated = (request: IGraphqlRequestBody) => {
-  return Object.keys(request.variables || {}).length > 0
+const isVariablesPopulated = (variables: Record<string, unknown>) => {
+  return Object.keys(variables || {}).length > 0
 }
 
 const isExtensionsPopulated = (request: IGraphqlRequestBody) => {
   return Object.keys(request.extensions || {}).length > 0
+}
+
+const getVariables = ({ variables, extensions }: IGraphqlRequestBody) => {
+  if (variables) {
+    return variables
+  }
+
+  if (extensions && 'variables' in extensions && typeof extensions.variables == 'string') {
+    try {
+      return JSON.parse(atob(extensions.variables))
+    } catch (e) {
+      return null
+    }
+  }
+
+  return null
 }
 
 interface IRequestViewProps {
@@ -36,7 +52,7 @@ export const RequestView = (props: IRequestViewProps) => {
       {requests.map((request, index) => {
         return (
           <SingleRequestView
-            key={request.query}
+            key={request.id}
             request={request}
             autoFormat={autoFormat}
             index={shouldDisplayRequestIndex && index + 1}
@@ -59,7 +75,8 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
   const { request, autoFormat, index, numberOfRequests } = props
 
   const displayQuery = !!request.query
-  const displayVariables = isVariablesPopulated(request)
+  const variables = getVariables(request)
+  const displayVariables = isVariablesPopulated(variables)
   const displayExtensions = isExtensionsPopulated(request)
 
   return (
@@ -71,7 +88,7 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
         {displayVariables && (
           <CopyButton
             label="Copy Vars"
-            textToCopy={safeJson.stringify(request.variables, undefined, 2)}
+            textToCopy={safeJson.stringify(variables, undefined, 2)}
           />
         )}
         {displayExtensions && (
@@ -99,7 +116,7 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
         {displayVariables && (
           <RequestViewSection type="variables" title="Variables">
             <CodeView
-              text={safeJson.stringify(request.variables, undefined, 2)}
+              text={safeJson.stringify(variables, undefined, 2)}
               language={"json"}
               className="px-6"
             />

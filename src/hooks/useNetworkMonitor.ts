@@ -4,6 +4,7 @@ import {
   getPrimaryOperation,
   parseGraphqlRequest,
   OperationDetails,
+  IGraphqlRequestBody,
 } from "../helpers/graphqlHelpers"
 import { onRequestFinished, getHAR } from "../services/networkMonitor"
 
@@ -16,10 +17,7 @@ export type NetworkRequest = {
   request: {
     primaryOperation: OperationDetails
     headers: Header[]
-    body: {
-      query: string
-      variables?: object
-    }[]
+    body: IGraphqlRequestBody[]
     headersSize: number
     bodySize: number
   }
@@ -58,7 +56,10 @@ export const useNetworkMonitor = (): [NetworkRequest[], () => void] => {
           request: {
             primaryOperation,
             headers: details.request.headers,
-            body: graphqlRequestBody,
+            body: graphqlRequestBody.map(request => ({
+              id: uuid(),
+              ...request,
+            })),
             headersSize: details.request.headersSize,
             bodySize: details.request.bodySize,
           },

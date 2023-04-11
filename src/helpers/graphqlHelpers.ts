@@ -4,9 +4,10 @@ import gql from "graphql-tag"
 export type OperationType = "query" | "mutation" | "subscription" | "persisted"
 
 export interface IGraphqlRequestBody {
+  id: string
   query: string
-  variables?: object
-  extensions?: object
+  variables?: Record<string, unknown>
+  extensions?: Record<string, unknown>
 }
 
 export type OperationDetails = {
@@ -71,7 +72,7 @@ export const parseGraphqlQuery = (queryString: any) => {
 
 const parseGraphqlGetRequest = (
   details: chrome.devtools.network.Request
-): IGraphqlRequestBody[] | null => {
+): Omit<IGraphqlRequestBody, 'id'>[] | null => {
   const queryParam = details.request.queryString.find(
     (qs) => qs.name === "query"
   )
@@ -141,7 +142,7 @@ const parseGraphqlPostRequest = (
 
 export const parseGraphqlRequest = (
   details: chrome.devtools.network.Request
-): IGraphqlRequestBody[] | null => {
+): Omit<IGraphqlRequestBody, 'id'>[] | null => {
   switch (details.request.method) {
     case "GET":
       return parseGraphqlGetRequest(details)

@@ -91,7 +91,7 @@ describe("Main", () => {
       expect(getByText(/getMovie/i)).toBeInTheDocument()
     })
 
-    expect(queryAllByRole("row")).toHaveLength(7)
+    expect(queryAllByRole("row")).toHaveLength(8)
   })
 
   it("renders correct values for each column within the table", async () => {
@@ -188,7 +188,7 @@ describe("Main", () => {
       triggerOnNavigated()
     })
 
-    expect(queryAllByRole("row")).toHaveLength(7)
+    expect(queryAllByRole("row")).toHaveLength(8)
   })
 
   it("filters network data with the given search query", async () => {
@@ -238,7 +238,7 @@ describe("Main", () => {
     })
 
     expect(filterInput.value).toBe("getmovie")
-    expect(queryAllByRole("row")).toHaveLength(6)
+    expect(queryAllByRole("row")).toHaveLength(7)
     queryAllByRole("row").forEach((row, i) => {
       // First row is header
       if (i !== 0) {
@@ -274,6 +274,22 @@ describe("Main", () => {
       if (i !== 0) {
         expect(row).toHaveTextContent("getMovie")
       }
+    })
+  })
+
+  it("extracts variables from extensions", async () => {
+    const { getByText, getByTestId } = render(<Main />)
+
+    await waitFor(() => {
+      expect(getByText(/hasUnseenAnnouncements/i)).toBeInTheDocument()
+    })
+
+    fireEvent.click(getByText(/hasUnseenAnnouncements/i))
+
+    expect(getByTestId("network-tabs")).toBeInTheDocument()
+
+    await waitFor(() => {
+      expect(getByText('Variables')).toBeInTheDocument()
     })
   })
 })
