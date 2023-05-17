@@ -7,5 +7,10 @@
   },
   "manifest_version": 3,
   "permissions": [],
-  "devtools_page": "devtools/devtools.html"
+  "devtools_page": "devtools/devtools.html",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "warrenjday@graphqlnetworkinspector.com"
+    }
+  }
 }

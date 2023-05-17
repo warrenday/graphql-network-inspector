@@ -13,7 +13,8 @@
 
 # production
 /build
-/build.zip
+/build-chrome.zip
+/build-firefox.zip
 
 # misc
 .DS_Store

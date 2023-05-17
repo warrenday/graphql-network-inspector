@@ -5,7 +5,9 @@
   "scripts": {
     "start": "craco start",
     "build": "INLINE_RUNTIME_CHUNK=false craco build",
-    "bundle": "yarn build && bestzip build.zip build/*",
+    "bundle": "yarn bundle:chrome && yarn bundle:firefox",
+    "bundle:chrome": "yarn build && bestzip build-chrome.zip build/*",
+    "bundle:firefox": "yarn build && cd build && bestzip ../build-firefox.zip *",
     "postbuild": "node ./scripts/set-manifest-version.js",
     "test": "craco test",
     "eject": "react-scripts eject",
