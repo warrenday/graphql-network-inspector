@@ -1,6 +1,6 @@
 {
   "name": "GraphQL Network Inspector",
-  "version": "{{package_version}}",
+  "version": "1.0",
   "description": "Simple and clean network inspector for GraphQL",
   "icons": {
     "128": "icon.png"
