@@ -2,6 +2,7 @@ import {
   getPrimaryOperation,
   getErrorMessages,
   parseGraphqlRequest,
+  parseMultipartFormData,
 } from "./graphqlHelpers"
 
 describe("GraphQL Helpers", () => {
@@ -618,6 +619,42 @@ describe("GraphQL Helpers", () => {
         })
       )
       expect(errorMessages).toEqual(["First Error", "Second Error"])
+    })
+  })
+
+  describe("parseMultiPartFormData", () => {
+    it("parses a multipart/form-data payload", () => {
+      const formDataPayload = `
+      ------WebKitFormBoundaryDKVAqIzxvy7rDWjN
+      Content-Disposition: form-data; name="operations"
+      
+      {"operationName":"ReadTextFile","query":"mutation ReadTextFile($file: File!) {\n  readTextFile(file: $file)\n}","variables":{"file":null}}
+      ------WebKitFormBoundaryDKVAqIzxvy7rDWjN
+      Content-Disposition: form-data; name="map"
+      
+      {"0":["variables.file"]}
+      ------WebKitFormBoundaryDKVAqIzxvy7rDWjN
+      Content-Disposition: form-data; name="0"; filename="cat.jpeg"
+      Content-Type: image/jpeg
+      
+      
+      ------WebKitFormBoundaryDKVAqIzxvy7rDWjN--
+    `
+
+      const output = parseMultipartFormData(
+        "----WebKitFormBoundaryDKVAqIzxvy7rDWjN",
+        formDataPayload
+      )
+
+      expect(output).toEqual({
+        operations: {
+          operationName: "ReadTextFile",
+          query:
+            "mutation ReadTextFile($file: File!) {  readTextFile(file: $file)}",
+          variables: { file: null },
+        },
+        map: { "0": ["variables.file"] },
+      })
     })
   })
 })
