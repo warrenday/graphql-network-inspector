@@ -1,16 +1,11 @@
 {
   "name": "GraphQL Network Inspector",
-  "version": "{{package_version}}",
+  "version": "1.0",
   "description": "Simple and clean network inspector for GraphQL",
   "icons": {
     "128": "icon.png"
   },
   "manifest_version": 3,
   "permissions": [],
-  "devtools_page": "devtools/devtools.html",
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "warrenjday@graphqlnetworkinspector.com"
-    }
-  }
+  "devtools_page": "devtools/devtools.html"
 }
