@@ -1,6 +1,7 @@
 <div align="center">
   <h1>GraphQL Network Inspector</h1>
   <h3>A better network inspector for viewing and debugging GraphQL requests.</h3>
+  <img alt="MIT License" src="https://img.shields.io/github/license/warrenday/graphql-network-inspector" />
   <a href="https://twitter.com/warrenjday">
     <img alt="Twitter" src="https://img.shields.io/twitter/url.svg?label=%40warrenjday&style=social&url=https%3A%2F%2Ftwitter.com%2Fwarrenjday" />
   </a>
