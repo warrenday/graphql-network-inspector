@@ -1,7 +1,7 @@
-<span style="text-align:center;">
-  <h2>GraphQL Network Inspector</h2>
-  <p>A better network inspector for viewing and debugging GraphQL requests.</p>
-</span>
+<div align="center">
+  <h1>GraphQL Network Inspector</h1>
+  <h3>A better network inspector for viewing and debugging GraphQL requests.</h3>
+</div>
 
 ![Application Preview](docs/main.jpg)
 
