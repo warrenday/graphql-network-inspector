@@ -1,12 +1,39 @@
-# GraphQL Network Inspector
+<span style="text-align:center;">
+  <h2>GraphQL Network Inspector</h2>
+  <p>A better network inspector for viewing and debugging GraphQL requests.</p>
+</span>
 
-![Application Preview](docs/promo-large.png)
+![Application Preview](docs/main.jpg)
 
 A platform agnostic network inspector specifically built for GraphQL. Clearly see individual GraphQL requests including support for query batching.
 
-The browser plugin can be found on the [Chrome Webstore](https://chrome.google.com/webstore/detail/graphql-network-inspector/ndlbedplllcgconngcnfmkadhokfaaln)
+The plugin is available for both Chrome and Firefox:
 
-For product updates follow me on Twitter [@warrenjday](https://twitter.com/warrenjday)
+1. [Chrome Webstore](https://chrome.google.com/webstore/detail/graphql-network-inspector/ndlbedplllcgconngcnfmkadhokfaaln)
+
+2. [Firefox Addons](https://addons.mozilla.org/en-US/firefox/addon/graphql-network-inspector)
+
+## Local Development
+
+Install dependencies:
+
+```bash
+yarn
+```
+
+Run the development server:
+
+```bash
+yarn start
+```
+
+You can also test the extension in the browser by running:
+
+```bash
+yarn build --watch
+```
+
+Then load the `build` directory as an unpacked extension in your browser. Changes will be loaded automatically, however to see the changes you will need to close and reopen devtools.
 
 ## Contribute
 
