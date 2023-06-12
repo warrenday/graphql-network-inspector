@@ -21,7 +21,7 @@ const isExtensionsPopulated = (request: IGraphqlRequestBody) => {
 }
 
 const getVariables = ({ variables, extensions }: IGraphqlRequestBody) => {
-  if (variables) {
+  if (variables && isVariablesPopulated(variables)) {
     return variables
   }
 
