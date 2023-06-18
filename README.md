@@ -5,6 +5,9 @@
   <a href="https://twitter.com/warrenjday">
     <img alt="Twitter" src="https://img.shields.io/twitter/url.svg?label=%40warrenjday&style=social&url=https%3A%2F%2Ftwitter.com%2Fwarrenjday" />
   </a>
+  <a href="https://github.com/sponsors/warrenday">
+    <img alt="GitHub Sponsors" src="https://img.shields.io/github/sponsors/warrenday">
+  </a>
   <br />
   <br />
 </div>
