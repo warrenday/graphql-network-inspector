@@ -105,7 +105,7 @@ export const Table = <T extends BaseRowData>(props: TableProps<T>) => {
 
   return (
     <div
-      className="relative h-full flex flex-col scroll overflow-y-scroll"
+      className="relative h-full flex flex-col overflow-y-auto"
       ref={ref}
       data-testid="table-scroll"
     >
