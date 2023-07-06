@@ -7,5 +7,11 @@
   },
   "manifest_version": 3,
   "permissions": [],
-  "devtools_page": "devtools/devtools.html"
+  "devtools_page": "devtools/devtools.html",
+  "content_scripts": [
+    {
+      "matches": ["https://www.graphdev.app/draft?*"],
+      "js": ["contentScript.js"]
+    }
+  ]
 }

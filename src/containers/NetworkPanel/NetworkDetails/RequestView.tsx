@@ -11,6 +11,7 @@ import {
   useRequestViewSections,
 } from "@/hooks/useRequestViewSections"
 import { CaretIcon } from "../../../components/Icons/CaretIcon"
+import { Button } from "../../../components/Button"
 
 const isVariablesPopulated = (variables: Record<string, unknown>) => {
   return Object.keys(variables || {}).length > 0
@@ -25,7 +26,11 @@ const getVariables = ({ variables, extensions }: IGraphqlRequestBody) => {
     return variables
   }
 
-  if (extensions && 'variables' in extensions && typeof extensions.variables == 'string') {
+  if (
+    extensions &&
+    "variables" in extensions &&
+    typeof extensions.variables == "string"
+  ) {
     try {
       return JSON.parse(atob(extensions.variables))
     } catch (e) {
@@ -39,6 +44,7 @@ const getVariables = ({ variables, extensions }: IGraphqlRequestBody) => {
 interface IRequestViewProps {
   autoFormat: boolean
   requests: IGraphqlRequestBody[]
+  onShare: () => void
 }
 
 export const RequestView = (props: IRequestViewProps) => {
@@ -57,6 +63,7 @@ export const RequestView = (props: IRequestViewProps) => {
             autoFormat={autoFormat}
             index={shouldDisplayRequestIndex && index + 1}
             numberOfRequests={numberOfRequests}
+            onShare={props.onShare}
           />
         )
       })}
@@ -69,10 +76,11 @@ type SingleRequestViewProps = {
   autoFormat: boolean
   index: number | false
   numberOfRequests: number
+  onShare: () => void
 }
 
 const SingleRequestView = (props: SingleRequestViewProps) => {
-  const { request, autoFormat, index, numberOfRequests } = props
+  const { request, autoFormat, index, numberOfRequests, onShare } = props
 
   const displayQuery = !!request.query
   const variables = getVariables(request)
@@ -82,6 +90,7 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
   return (
     <PanelSection className="relative mb-3">
       <div className="flex items-center gap-2 absolute top-[8px] right-[8px] z-10 transition-opacity">
+        <Button onClick={onShare}>Share</Button>
         {displayQuery && (
           <CopyButton label="Copy Query" textToCopy={request.query} />
         )}

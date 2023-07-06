@@ -2,14 +2,16 @@ import { useMemo } from "react"
 import * as safeJson from "../../../helpers/safeJson"
 import { JsonView } from "@/components/CodeView"
 import { CopyButton } from "../../../components/CopyButton"
+import { Button } from "../../../components/Button"
 
 interface IResponseViewProps {
   response?: string
   collapsed?: number
+  onShare: () => void
 }
 
 export const ResponseView = (props: IResponseViewProps) => {
-  const { response, collapsed } = props
+  const { response, collapsed, onShare } = props
   const { formattedJson, parsedResponse } = useMemo(() => {
     const parsedResponse = safeJson.parse(response) || {}
     return {
@@ -20,10 +22,10 @@ export const ResponseView = (props: IResponseViewProps) => {
 
   return (
     <div className="relative p-4">
-      <CopyButton
-        textToCopy={formattedJson}
-        className="absolute right-3 top-3 z-10"
-      />
+      <div className="absolute right-3 top-3 z-10 flex gap-2">
+        <Button onClick={onShare}>Share</Button>
+        <CopyButton textToCopy={formattedJson} />
+      </div>
       <JsonView src={parsedResponse} collapsed={collapsed} />
     </div>
   )
