@@ -23,6 +23,7 @@ const prepareSharePayload = (networkRequest: NetworkRequest) => {
     status: networkRequest.status,
     method: networkRequest.method,
     time: networkRequest.time,
+    responseSize: networkRequest.response?.bodySize || 0,
     request: {
       headers: networkRequest.request.headers,
       body: networkRequest.request.body,
@@ -30,7 +31,6 @@ const prepareSharePayload = (networkRequest: NetworkRequest) => {
     response: {
       headers: networkRequest.response?.headers,
       body: responseBody,
-      size: networkRequest.response?.bodySize,
     },
   }
 
@@ -73,7 +73,7 @@ export const ShareMessageProvider = (props: IShareMessageProviderProps) => {
     // We start by creating a new tab. The new tab will send us
     // a ready, which we are listening for above.
     chrome.tabs.create({
-      url: `https://www.graphdev.app/draft?sessionId=${sessionId}`,
+      url: `${process.env.REACT_APP_SHARE_TARGET_URL}/draft?sessionId=${sessionId}`,
     })
   }
 

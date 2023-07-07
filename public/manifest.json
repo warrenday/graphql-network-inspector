@@ -10,7 +10,7 @@
   "devtools_page": "devtools/devtools.html",
   "content_scripts": [
     {
-      "matches": ["https://www.graphdev.app/draft?*"],
+      "matches": ["http://localhost:3000/draft?*"],
       "js": ["contentScript.js"]
     }
   ]
