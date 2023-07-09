@@ -10,6 +10,7 @@ import { CloseButton } from "@/components/CloseButton"
 import { useApolloTracing } from "@/hooks/useApolloTracing"
 import { useToggle } from "@/hooks/useToggle"
 import { useShareMessage } from "../../../hooks/useShareMessage"
+import { useMemo } from "react"
 
 export type NetworkDetailsProps = {
   data: NetworkRequest
@@ -27,6 +28,11 @@ export const NetworkDetails = (props: NetworkDetailsProps) => {
   const tracing = useApolloTracing(responseBody)
   const [autoFormat, toggleAutoFormat] = useToggle()
   const { shareNetworkRequest } = useShareMessage()
+  const operation = data.request.primaryOperation.operation
+  const isShareable = useMemo(
+    () => ["query", "mutation"].includes(operation),
+    [operation]
+  )
 
   const handleShare = () => {
     shareNetworkRequest(data)
@@ -58,7 +64,7 @@ export const NetworkDetails = (props: NetworkDetailsProps) => {
           title: "Request",
           component: (
             <RequestView
-              onShare={handleShare}
+              onShare={isShareable ? handleShare : undefined}
               requests={requestBody}
               autoFormat={autoFormat}
             />
@@ -75,7 +81,7 @@ export const NetworkDetails = (props: NetworkDetailsProps) => {
           title: "Response",
           component: (
             <ResponseView
-              onShare={handleShare}
+              onShare={isShareable ? handleShare : undefined}
               response={responseBody}
               collapsed={responseCollapsedCount}
             />

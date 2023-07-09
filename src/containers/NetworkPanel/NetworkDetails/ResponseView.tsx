@@ -7,7 +7,7 @@ import { Button } from "../../../components/Button"
 interface IResponseViewProps {
   response?: string
   collapsed?: number
-  onShare: () => void
+  onShare?: () => void
 }
 
 export const ResponseView = (props: IResponseViewProps) => {
@@ -23,7 +23,7 @@ export const ResponseView = (props: IResponseViewProps) => {
   return (
     <div className="relative p-4">
       <div className="absolute right-3 top-3 z-10 flex gap-2">
-        <Button onClick={onShare}>Share</Button>
+        {onShare && <Button onClick={onShare}>Share</Button>}
         <CopyButton textToCopy={formattedJson} />
       </div>
       <JsonView src={parsedResponse} collapsed={collapsed} />

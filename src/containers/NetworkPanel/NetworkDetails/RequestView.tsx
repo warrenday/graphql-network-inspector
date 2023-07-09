@@ -44,7 +44,7 @@ const getVariables = ({ variables, extensions }: IGraphqlRequestBody) => {
 interface IRequestViewProps {
   autoFormat: boolean
   requests: IGraphqlRequestBody[]
-  onShare: () => void
+  onShare?: () => void
 }
 
 export const RequestView = (props: IRequestViewProps) => {
@@ -76,7 +76,7 @@ type SingleRequestViewProps = {
   autoFormat: boolean
   index: number | false
   numberOfRequests: number
-  onShare: () => void
+  onShare?: () => void
 }
 
 const SingleRequestView = (props: SingleRequestViewProps) => {
@@ -90,7 +90,7 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
   return (
     <PanelSection className="relative mb-3">
       <div className="flex items-center gap-2 absolute top-[8px] right-[8px] z-10 transition-opacity">
-        <Button onClick={onShare}>Share</Button>
+        {onShare && <Button onClick={onShare}>Share</Button>}
         {displayQuery && (
           <CopyButton label="Copy Query" textToCopy={request.query} />
         )}
