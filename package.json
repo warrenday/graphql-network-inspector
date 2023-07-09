@@ -8,7 +8,7 @@
     "bundle": "yarn bundle:chrome && yarn bundle:firefox",
     "bundle:chrome": "yarn build && bestzip build-chrome.zip build/*",
     "bundle:firefox": "yarn build && node ./scripts/set-browser-specific-settings.js && cd build && bestzip ../build-firefox.zip *",
-    "postbuild": "NODE_ENV=production node ./scripts/set-manifest-version.js && node ./scripts/set-manifest-content-script.js",
+    "postbuild": "node ./scripts/set-manifest-version.js && NODE_ENV=production node ./scripts/set-manifest-content-script.js",
     "test": "craco test",
     "eject": "react-scripts eject",
     "lint": "eslint --max-warnings=0 src",
