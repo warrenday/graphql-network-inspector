@@ -71,9 +71,10 @@ export const ShareMessageProvider = (props: IShareMessageProviderProps) => {
     setPayload(prepareSharePayload(networkRequest))
 
     // We start by creating a new tab. The new tab will send us
-    // a ready, which we are listening for above.
+    // a ready message, which we are listening for above.
     window.open(
-      `${process.env.REACT_APP_SHARE_TARGET_URL}/draft?sessionId=${sessionId}`
+      `${process.env.REACT_APP_SHARE_TARGET_URL}/draft?sessionId=${sessionId}`,
+      "_blank"
     )
   }
 
