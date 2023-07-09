@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react"
-import { nanoid } from "nanoid"
+import uniqid from "uniqid"
 import { chromeProvider } from "../services/chromeProvider"
 import { NetworkRequest } from "./useNetworkMonitor"
 
@@ -44,7 +44,7 @@ export const ShareMessageProvider = (props: IShareMessageProviderProps) => {
   // The sessionId ensures that given multiple instances of
   // graphql inspector, only the correct one will receive the
   // "ready" message.
-  const [sessionId] = useState(nanoid())
+  const [sessionId] = useState(uniqid())
   const [payload, setPayload] = useState<string | null>(null)
 
   useEffect(() => {

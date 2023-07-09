@@ -3,8 +3,6 @@ import { NetworkTabsProvider } from "../../hooks/useNetworkTabs"
 import { useDarkTheme } from "../../hooks/useTheme"
 import { Main } from "../Main"
 import { RequestViewSectionsProvider } from "@/hooks/useRequestViewSections"
-import { useEffect, useState } from "react"
-import { nanoid } from "nanoid"
 import { ShareMessageProvider } from "../../hooks/useShareMessage"
 
 export const App = () => {
