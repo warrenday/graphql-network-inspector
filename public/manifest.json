@@ -7,5 +7,12 @@
   },
   "manifest_version": 3,
   "permissions": [],
-  "devtools_page": "devtools/devtools.html"
+  "devtools_page": "devtools/devtools.html",
+  "content_scripts": [
+    {
+      "matches": ["http://localhost:3000/draft?*"],
+      "js": ["contentScript.js"],
+      "run_at": "document_idle"
+    }
+  ]
 }

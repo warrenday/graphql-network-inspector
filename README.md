@@ -36,13 +36,7 @@ Run the development server:
 yarn start
 ```
 
-You can also test the extension in the browser by running:
-
-```bash
-yarn build --watch
-```
-
-Then load the `build` directory as an unpacked extension in your browser. Changes will be loaded automatically, however to see the changes you will need to close and reopen devtools.
+This will also cache files in the `build` so you can load the directory as an unpacked extension in your browser. Changes will be loaded automatically, however you often have to close and reopen devtools.
 
 ## Contribute
 

@@ -14,6 +14,7 @@ export type NetworkRequest = {
   status: number
   url: string
   time: number
+  method: string
   request: {
     primaryOperation: OperationDetails
     headers: Header[]
@@ -53,10 +54,11 @@ export const useNetworkMonitor = (): [NetworkRequest[], () => void] => {
           status: details.response.status,
           url: details.request.url,
           time: details.time === -1 || !details.time ? 0 : details.time,
+          method: details.request.method,
           request: {
             primaryOperation,
             headers: details.request.headers,
-            body: graphqlRequestBody.map(request => ({
+            body: graphqlRequestBody.map((request) => ({
               id: uuid(),
               ...request,
             })),

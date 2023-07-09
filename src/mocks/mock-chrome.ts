@@ -39,5 +39,9 @@ export const mockChrome = {
     getPlatformInfo: (cb) => {
       cb({ arch: "x86-64", nacl_arch: "x86-64", os: "mac" })
     },
+    onMessage: {
+      addListener: (cb) => {},
+      removeListener: (cb) => {},
+    },
   },
 } as typeof chrome
