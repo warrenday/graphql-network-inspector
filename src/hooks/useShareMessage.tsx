@@ -39,7 +39,6 @@ const prepareSharePayload = (networkRequest: NetworkRequest) => {
 
 export const ShareMessageProvider = (props: IShareMessageProviderProps) => {
   const { children } = props
-  const chrome = chromeProvider()
 
   // The sessionId ensures that given multiple instances of
   // graphql inspector, only the correct one will receive the
@@ -48,6 +47,8 @@ export const ShareMessageProvider = (props: IShareMessageProviderProps) => {
   const [payload, setPayload] = useState<string | null>(null)
 
   useEffect(() => {
+    const chrome = chromeProvider()
+
     const listener = (
       request: any,
       sender: chrome.runtime.MessageSender,
