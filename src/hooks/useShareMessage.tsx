@@ -65,7 +65,7 @@ export const ShareMessageProvider = (props: IShareMessageProviderProps) => {
     return () => {
       chrome.runtime.onMessage.removeListener(listener)
     }
-  }, [payload])
+  }, [payload, sessionId])
 
   const shareNetworkRequest = (networkRequest: NetworkRequest) => {
     setPayload(prepareSharePayload(networkRequest))
