@@ -72,9 +72,9 @@ export const ShareMessageProvider = (props: IShareMessageProviderProps) => {
 
     // We start by creating a new tab. The new tab will send us
     // a ready, which we are listening for above.
-    chrome.tabs.create({
-      url: `${process.env.REACT_APP_SHARE_TARGET_URL}/draft?sessionId=${sessionId}`,
-    })
+    window.open(
+      `${process.env.REACT_APP_SHARE_TARGET_URL}/draft?sessionId=${sessionId}`
+    )
   }
 
   return (
