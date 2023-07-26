@@ -23,7 +23,7 @@ export const ResponseView = (props: IResponseViewProps) => {
   return (
     <div className="relative p-4">
       <div className="absolute right-3 top-3 z-10 flex gap-2">
-        {onShare && <Button onClick={onShare}>Share</Button>}
+        {onShare && <Button onClick={onShare}>Replay</Button>}
         <CopyButton textToCopy={formattedJson} />
       </div>
       <JsonView src={parsedResponse} collapsed={collapsed} />

@@ -90,7 +90,7 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
   return (
     <PanelSection className="relative mb-3">
       <div className="flex items-center gap-2 absolute top-[8px] right-[8px] z-10 transition-opacity">
-        {onShare && <Button onClick={onShare}>Share</Button>}
+        {onShare && <Button onClick={onShare}>Replay</Button>}
         {displayQuery && (
           <CopyButton label="Copy Query" textToCopy={request.query} />
         )}
