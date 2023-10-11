@@ -1,17 +1,19 @@
 import { useState, useEffect } from "react"
 import RegexParser from "regex-parser"
-import { SplitPaneLayout } from "../../components/Layout"
+import { SplitPaneLayout } from "@/components/Layout"
+import { NetworkRequest } from "@/hooks/useNetworkMonitor"
+import { onNavigate } from "@/services/networkMonitor"
+import { OperationType } from "@/helpers/graphqlHelpers"
+import { WebSocketNetworkRequest } from "@/hooks/useWebSocketNetworkMonitor"
 import { NetworkTable } from "./NetworkTable"
 import { NetworkDetails } from "./NetworkDetails"
 import { Toolbar } from "../Toolbar"
-import { NetworkRequest } from "../../hooks/useNetworkMonitor"
-import { onNavigate } from "../../services/networkMonitor"
-import { OperationType } from "@/helpers/graphqlHelpers"
 
 interface NetworkPanelProps {
   selectedRowId: string | number | null
   setSelectedRowId: (selectedRowId: string | number | null) => void
   networkRequests: NetworkRequest[]
+  webSocketNetworkRequests: WebSocketNetworkRequest[]
   clearWebRequests: () => void
 }
 
@@ -63,8 +65,13 @@ const filterNetworkRequests = (
 }
 
 export const NetworkPanel = (props: NetworkPanelProps) => {
-  const { networkRequests, clearWebRequests, selectedRowId, setSelectedRowId } =
-    props
+  const {
+    networkRequests,
+    webSocketNetworkRequests,
+    clearWebRequests,
+    selectedRowId,
+    setSelectedRowId,
+  } = props
 
   const [filterValue, setFilterValue] = useState("")
   const [isPreserveLogs, setIsPreserveLogs] = useState(false)
@@ -74,7 +81,7 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
     query: true,
     mutation: true,
     persisted: true,
-    subscription: false,
+    subscription: true,
   })
 
   const { results: filterResults, errorMessage: filterError } =
@@ -102,6 +109,8 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
       [filter]: !quickFilters[filter],
     })
   }
+
+  const tableData = filterResults
 
   return (
     <SplitPaneLayout

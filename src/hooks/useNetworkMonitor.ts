@@ -30,7 +30,7 @@ export type NetworkRequest = {
   }
 }
 
-export const useNetworkMonitor = (): [NetworkRequest[], () => void] => {
+export const useNetworkMonitor = () => {
   const [webRequests, setWebRequests] = useState<NetworkRequest[]>([])
 
   const handleRequestFinished = useCallback(
@@ -118,5 +118,5 @@ export const useNetworkMonitor = (): [NetworkRequest[], () => void] => {
     return onRequestFinished(handleRequestFinished)
   }, [handleRequestFinished])
 
-  return [webRequests, clearWebRequests]
+  return [webRequests, clearWebRequests] as const
 }

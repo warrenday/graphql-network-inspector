@@ -7,9 +7,11 @@ import { SearchResults } from "./SearchResults"
 import { Header } from "@/components/Header"
 import { CloseButton } from "@/components/CloseButton"
 import { SearchInput } from "@/components/SearchInput"
+import { WebSocketNetworkRequest } from "@/hooks/useWebSocketNetworkMonitor"
 
 interface ISearchPanelProps {
   networkRequests: NetworkRequest[]
+  webSocketNetworkRequests: WebSocketNetworkRequest[]
   onResultClick: (
     searchResult: ISearchResult,
     searchResultType: NetworkTabs
