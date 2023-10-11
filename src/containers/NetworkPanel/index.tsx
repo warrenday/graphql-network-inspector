@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import RegexParser from "regex-parser"
 import { SplitPaneLayout } from "@/components/Layout"
 import { NetworkRequest } from "@/hooks/useNetworkMonitor"
 import { onNavigate } from "@/services/networkMonitor"
 import { OperationType } from "@/helpers/graphqlHelpers"
 import { WebSocketNetworkRequest } from "@/hooks/useWebSocketNetworkMonitor"
-import { NetworkTable } from "./NetworkTable"
+import { NetworkTable, NetworkTableDataRow } from "./NetworkTable"
 import { NetworkDetails } from "./NetworkDetails"
 import { Toolbar } from "../Toolbar"
 
@@ -110,7 +110,43 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
     })
   }
 
-  const tableData = filterResults
+  const networkTableData = useMemo((): NetworkTableDataRow[] => {
+    return filterResults.map((networkRequest) => {
+      const { operationName = "", operation } =
+        networkRequest.request.primaryOperation
+      return {
+        id: networkRequest.id,
+        type: operation,
+        name: operationName,
+        total: networkRequest.request.body.length,
+        status: networkRequest.status,
+        size: networkRequest.response?.bodySize || 0,
+        time: networkRequest.time,
+        url: networkRequest.url,
+        responseBody: networkRequest.response?.body || "",
+      }
+    })
+  }, [filterResults])
+
+  const websocketTableData = useMemo((): NetworkTableDataRow[] => {
+    return webSocketNetworkRequests.map((websocketRequest) => {
+      return {
+        id: websocketRequest.id,
+        type: "subscription",
+        name: "websocket",
+        total: 1,
+        status: websocketRequest.status,
+        size: 0,
+        time: 0,
+        url: websocketRequest.url,
+        responseBody: "",
+      }
+    })
+  }, [webSocketNetworkRequests])
+
+  const combinedTableData = useMemo(() => {
+    return [...websocketTableData, ...networkTableData]
+  }, [networkTableData, websocketTableData])
 
   return (
     <SplitPaneLayout
@@ -132,7 +168,7 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
       }
       leftPane={
         <NetworkTable
-          data={filterResults}
+          data={combinedTableData}
           error={filterError}
           selectedRowId={selectedRowId}
           onRowClick={setSelectedRowId}

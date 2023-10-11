@@ -5,7 +5,6 @@ import { Table, TableProps } from "../../../components/Table"
 import { Dot } from "../../../components/Dot"
 import { Badge } from "../../../components/Badge"
 import { getStatusColor } from "../../../helpers/getStatusColor"
-import { NetworkRequest } from "../../../hooks/useNetworkMonitor"
 import { useKeyDown } from "../../../hooks/useKeyDown"
 import {
   getErrorMessages,
@@ -28,10 +27,22 @@ const OperationColors: Record<OperationType, string> = {
   persisted: "text-yellow-400",
 }
 
+export interface NetworkTableDataRow {
+  id: string
+  type: OperationType
+  name: string
+  total: number
+  status: number
+  size: number
+  time: number
+  url: string
+  responseBody: string
+}
+
 export type NetworkTableProps = {
-  data: NetworkRequest[]
+  data: NetworkTableDataRow[]
   error?: string
-  onRowClick: (rowId: string | number, row: NetworkRequest) => void
+  onRowClick: (rowId: string | number, row: NetworkTableDataRow) => void
   onRowSelect: (rowId: string | number) => void
   selectedRowId?: string | number | null
   showSingleColumn?: boolean
@@ -39,17 +50,21 @@ export type NetworkTableProps = {
   onQuickFilterButtonClicked: (filter: OperationType) => void
 }
 
-const Operation = ({ request }: { request: NetworkRequest }) => {
-  const totalOperations = request.request.body.length
-  const { operation, operationName } = request.request.primaryOperation
+interface IOperationProps {
+  type: OperationType
+  name: string
+  total: number
+  responseBody: string
+}
 
-  const responseBody = request.response?.body
+const Operation = (props: IOperationProps) => {
+  const { type, name, total, responseBody } = props
   const errorMessages = useMemo(
     () => getErrorMessages(responseBody),
     [responseBody]
   )
 
-  const operationColor = OperationColors[operation]
+  const operationColor = OperationColors[type]
 
   return (
     <div className="flex items-center gap-2" data-testid="column-operation">
@@ -57,17 +72,15 @@ const Operation = ({ request }: { request: NetworkRequest }) => {
         <span
           className={errorMessages?.length ? "text-red-500" : operationColor}
         >
-          {OperationAliases[operation]}
+          {OperationAliases[type]}
         </span>
       </Badge>
 
-      <span className="font-bold">{operationName}</span>
+      <span className="font-bold">{name}</span>
 
       <div>
-        {totalOperations > 1 && (
-          <span className="font-bold opacity-75 mr-2">
-            +{totalOperations - 1}
-          </span>
+        {total > 1 && (
+          <span className="font-bold opacity-75 mr-2">+{total - 1}</span>
         )}
       </div>
       <div className="ml-auto mr-1">
@@ -148,11 +161,18 @@ export const NetworkTable = (props: NetworkTableProps) => {
   })
 
   const columns = useMemo(() => {
-    const columns: TableProps<NetworkRequest>["columns"] = [
+    const columns: TableProps<NetworkTableDataRow>["columns"] = [
       {
         id: "query",
         Header: "Query / Mutation",
-        accessor: (row) => <Operation request={row} />,
+        accessor: (row) => (
+          <Operation
+            type={row.type}
+            name={row.name}
+            total={row.total}
+            responseBody={row.responseBody}
+          />
+        ),
       },
       {
         Header: "Status",
@@ -160,7 +180,7 @@ export const NetworkTable = (props: NetworkTableProps) => {
       },
       {
         Header: "Size",
-        accessor: (row) => <ByteSize byteSize={row.response?.bodySize || 0} />,
+        accessor: (row) => <ByteSize byteSize={row.size || 0} />,
       },
       {
         Header: "Time",
