@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react"
 import { getHAR } from "../services/networkMonitor"
 import useLoop from "./useLoop"
+import { Header } from "./useNetworkMonitor"
 
 export interface WebSocketMessage {
   type: string
@@ -14,6 +15,12 @@ export interface WebSocketNetworkRequest {
   url: string
   method: string
   messages: WebSocketMessage[]
+  request: {
+    headers: Header[]
+  }
+  response: {
+    headers: Header[]
+  }
 }
 
 interface WebSocketHAREntryMessage {
@@ -53,6 +60,12 @@ const prepareWebSocketRequests = (
             data: message.data,
           }
         }),
+        request: {
+          headers: entry.request.headers,
+        },
+        response: {
+          headers: entry.response.headers,
+        },
       }
       return websocketEntry
     } else {

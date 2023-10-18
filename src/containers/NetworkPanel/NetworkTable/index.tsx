@@ -23,7 +23,7 @@ const OperationAliases: Record<OperationType, string> = {
 const OperationColors: Record<OperationType, string> = {
   query: "text-green-400",
   mutation: "text-indigo-400",
-  subscription: "",
+  subscription: "text-blue-400",
   persisted: "text-yellow-400",
 }
 

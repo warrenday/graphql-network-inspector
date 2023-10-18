@@ -1,6 +1,6 @@
 import { Tabs } from "@/components/Tabs"
 import { NetworkRequest } from "@/hooks/useNetworkMonitor"
-import { HeaderView } from "./HeaderView"
+import { HeaderView } from "../HeaderView"
 import { RequestView, RequestViewFooter } from "./RequestView"
 import { ResponseView } from "./ResponseView"
 import { TracingView } from "./TracingView"

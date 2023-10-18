@@ -1,7 +1,7 @@
 import { useMemo } from "react"
-import { Header } from "../../../../hooks/useNetworkMonitor"
+import { Header } from "../../../hooks/useNetworkMonitor"
 import { Panels, PanelSection } from "../PanelSection"
-import { CopyButton } from "../../../../components/CopyButton"
+import { CopyButton } from "../../../components/CopyButton"
 import { HeaderList } from "./HeaderList"
 
 interface IHeaderViewProps {

@@ -432,11 +432,12 @@ export const mockRequests = [
   createRequest({
     request: [
       {
-        operationName: 'hasUnseenAnnouncements',
+        operationName: "hasUnseenAnnouncements",
         extensions: {
           persistedQuery: {
             version: 1,
-            sha256Hash: "ecf4edb46db40b5132295c0291d62fb65d6759a9eedfa4d5d612dd5ec54a6b38",
+            sha256Hash:
+              "ecf4edb46db40b5132295c0291d62fb65d6759a9eedfa4d5d612dd5ec54a6b38",
           },
           variables: btoa('{"language":"pt"}'),
         },
@@ -477,4 +478,76 @@ export const mockRequests = [
       ],
     },
   }),
+  {
+    startedDateTime: "2021-01-01T00:00:00.000Z",
+    time: 1099.4580000406131,
+    request: {
+      url: "ws://graphql-network-monitor.com/graphql",
+      method: "GET",
+      headers: [
+        {
+          name: "Authorization",
+          value: "Bearer fe0e8768-3b2f-4f63-983d-1a74c26dde1e",
+        },
+        {
+          name: "access-control-allow-credentials",
+          value: true,
+        },
+        {
+          name: "access-control-allow-origin",
+          value: "https://www.google.com",
+        },
+        {
+          name: "set-cookie:",
+          value:
+            "SIDCC=fe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1e; expires=Thu, 14-Apr-2022 08:09:50 GMT; path=/; domain=.google.com; priority=high",
+        },
+      ],
+    },
+    response: {
+      status: 101,
+      headers: [
+        {
+          name: "Authorization",
+          value: "Bearer fe0e8768-3b2f-4f63-983d-1a74c26dde1e",
+        },
+        {
+          name: "access-control-allow-credentials",
+          value: true,
+        },
+        {
+          name: "access-control-allow-origin",
+          value: "https://www.google.com",
+        },
+        {
+          name: "set-cookie:",
+          value:
+            "SIDCC=fe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1e; expires=Thu, 14-Apr-2022 08:09:50 GMT; path=/; domain=.google.com; priority=high",
+        },
+      ],
+    },
+    _resourceType: "websocket",
+    _webSocketMessages: [
+      {
+        data: JSON.stringify(
+          { data: { reviewAdded: { stars: 4, episode: "NEWHOPE" } } },
+          undefined,
+          2
+        ),
+        opcode: 1,
+        time: 1099.4580000406131,
+        type: "send",
+      },
+      {
+        data: JSON.stringify(
+          { data: { reviewAdded: { stars: 4, episode: "NEWHOPE" } } },
+          undefined,
+          2
+        ),
+        opcode: 1,
+        time: 1099.4580000406131,
+        type: "send",
+      },
+    ],
+  },
 ]

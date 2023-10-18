@@ -4,7 +4,7 @@ import { CopyButton } from "@/components/CopyButton"
 import { IGraphqlRequestBody } from "@/helpers/graphqlHelpers"
 import * as safeJson from "@/helpers/safeJson"
 import { Bar } from "@/components/Bar"
-import { Panels, PanelSection } from "./PanelSection"
+import { Panels, PanelSection } from "../PanelSection"
 import { FC } from "react"
 import {
   RequestViewSectionType,

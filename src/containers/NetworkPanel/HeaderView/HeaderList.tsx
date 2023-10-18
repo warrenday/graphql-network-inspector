@@ -1,6 +1,6 @@
 import { useMarkSearch } from "@/hooks/useMark"
 import { Header } from "@/hooks/useNetworkMonitor"
-import useCopy from "../../../../hooks/useCopy"
+import useCopy from "../../../hooks/useCopy"
 
 interface IHeadersProps {
   headers: Header[]

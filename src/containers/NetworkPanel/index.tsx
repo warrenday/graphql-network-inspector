@@ -8,6 +8,7 @@ import { WebSocketNetworkRequest } from "@/hooks/useWebSocketNetworkMonitor"
 import { NetworkTable, NetworkTableDataRow } from "./NetworkTable"
 import { NetworkDetails } from "./NetworkDetails"
 import { Toolbar } from "../Toolbar"
+import WebSocketNetworkDetails from "./WebSocketNetworkDetails"
 
 interface NetworkPanelProps {
   selectedRowId: string | number | null
@@ -95,6 +96,12 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
     (request) => request.id === selectedRowId
   )
 
+  const selectedWebSocketRequest = webSocketNetworkRequests.find(
+    (request) => request.id === selectedRowId
+  )
+
+  const isRequestSelected = Boolean(selectedRequest || selectedWebSocketRequest)
+
   useEffect(() => {
     return onNavigate(() => {
       if (!isPreserveLogs) {
@@ -133,7 +140,7 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
       return {
         id: websocketRequest.id,
         type: "subscription",
-        name: "websocket",
+        name: "subscription",
         total: 1,
         status: websocketRequest.status,
         size: 0,
@@ -179,19 +186,29 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
         />
       }
       rightPane={
-        selectedRequest && (
+        isRequestSelected ? (
           <div
             className="dark:bg-gray-900 border-l border-gray-300 dark:border-gray-600 h-full"
             style={{ minWidth: 200 }}
           >
-            <NetworkDetails
-              data={selectedRequest}
-              onClose={() => {
-                setSelectedRowId(null)
-              }}
-            />
+            {selectedRequest && (
+              <NetworkDetails
+                data={selectedRequest}
+                onClose={() => {
+                  setSelectedRowId(null)
+                }}
+              />
+            )}
+            {selectedWebSocketRequest && (
+              <WebSocketNetworkDetails
+                data={selectedWebSocketRequest}
+                onClose={() => {
+                  setSelectedRowId(null)
+                }}
+              />
+            )}
           </div>
-        )
+        ) : undefined
       }
     />
   )
