@@ -5,3 +5,4 @@
 - Allow sorting of messages by time ascending/descending
 - Unit tests
 - Add subscription to filters and update design to fit
+- handle messages with variables
