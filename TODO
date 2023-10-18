@@ -4,3 +4,4 @@
 - Add x mins ago time to each message
 - Allow sorting of messages by time ascending/descending
 - Unit tests
+- Add subscription to filters and update design to fit
