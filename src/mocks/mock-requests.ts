@@ -529,21 +529,23 @@ export const mockRequests = [
     _resourceType: "websocket",
     _webSocketMessages: [
       {
-        data: JSON.stringify(
-          { data: { reviewAdded: { stars: 4, episode: "NEWHOPE" } } },
-          undefined,
-          2
-        ),
+        data: JSON.stringify({
+          type: "data",
+          payload: {
+            data: { reviewAdded: { stars: 4, episode: "NEWHOPE" } },
+          },
+        }),
         opcode: 1,
         time: 1099.4580000406131,
         type: "send",
       },
       {
-        data: JSON.stringify(
-          { data: { reviewAdded: { stars: 4, episode: "NEWHOPE" } } },
-          undefined,
-          2
-        ),
+        data: JSON.stringify({
+          type: "data",
+          payload: {
+            data: { reviewAdded: { stars: 4, episode: "NEWHOPE" } },
+          },
+        }),
         opcode: 1,
         time: 1099.4580000406131,
         type: "send",

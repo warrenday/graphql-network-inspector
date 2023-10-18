@@ -13,13 +13,15 @@ const MessageView = (props: MessageViewProps) => {
   return (
     <Panels>
       {messages.map((message) => {
+        const payload = JSON.stringify(message.data, null, 2)
+
         return (
           <PanelSection className="relative p-4">
             <CopyButton
-              textToCopy={message.data}
+              textToCopy={payload}
               className="absolute right-3 top-3 z-10"
             />
-            <CodeView text={message.data} language={"json"} className="p-4" />
+            <CodeView text={payload} language={"json"} className="p-4" />
           </PanelSection>
         )
       })}

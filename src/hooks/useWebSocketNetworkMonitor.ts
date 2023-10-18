@@ -2,11 +2,12 @@ import { useCallback, useState } from "react"
 import { getHAR } from "../services/networkMonitor"
 import useLoop from "./useLoop"
 import { Header } from "./useNetworkMonitor"
+import * as safeJson from "@/helpers/safeJson"
 
 export interface WebSocketMessage {
   type: string
   time: number
-  data: string
+  data: object
 }
 
 export interface WebSocketNetworkRequest {
@@ -53,11 +54,18 @@ const prepareWebSocketRequests = (
         status: entry.response.status,
         url: entry.request.url,
         method: entry.request.method,
-        messages: entry._webSocketMessages.map((message) => {
+        messages: entry._webSocketMessages.flatMap((message) => {
+          const data = safeJson.parse<{ type: string; payload: {} }>(
+            message.data
+          )
+          if (!data || data.type !== "data") {
+            return []
+          }
+
           return {
             type: message.type,
             time: message.time,
-            data: message.data,
+            data: data.payload,
           }
         }),
         request: {
