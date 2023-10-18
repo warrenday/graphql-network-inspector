@@ -1,8 +1,13 @@
-- Set default tab when opening websocket view
-- Try to improve some repeated code
-- Generate tidy up needed
-- Add x mins ago time to each message
-- Allow sorting of messages by time ascending/descending
+Must have
+
 - Unit tests
+- Set default tab when opening websocket view
+- Add x mins ago time to each message
 - Add subscription to filters and update design to fit
 - handle messages with variables
+
+Nice to have
+
+- Try to improve some repeated code
+- Generate tidy up needed
+- Allow sorting of messages by time ascending/descending
