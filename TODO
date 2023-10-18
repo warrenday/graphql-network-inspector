@@ -1,1 +1,6 @@
-Stop errors from crashing the app, error boundary!
+- Set default tab when opening websocket view
+- Try to improve some repeated code
+- Generate tidy up needed
+- Add x mins ago time to each message
+- Allow sorting of messages by time ascending/descending
+- Unit tests
