@@ -80,7 +80,13 @@ const prepareWebSocketRequests = (
   })
 }
 
-export const useWebSocketNetworkMonitor = () => {
+interface IUseWebSocketNetworkOptions {
+  isEnabled: boolean
+}
+
+export const useWebSocketNetworkMonitor = (
+  options: IUseWebSocketNetworkOptions = { isEnabled: true }
+) => {
   const [webSocketRequests, setWebSocketRequests] = useState<
     WebSocketNetworkRequest[]
   >([])
@@ -89,14 +95,13 @@ export const useWebSocketNetworkMonitor = () => {
     setWebSocketRequests([])
   }, [setWebSocketRequests])
 
-  useInterval(
-    useCallback(async () => {
-      const har = await getHAR()
-      const websocketRequests = prepareWebSocketRequests(har)
-      setWebSocketRequests(websocketRequests)
-    }, [setWebSocketRequests]),
-    1000
-  )
+  const fetchWebSocketRequests = useCallback(async () => {
+    const har = await getHAR()
+    const websocketRequests = prepareWebSocketRequests(har)
+    setWebSocketRequests(websocketRequests)
+  }, [setWebSocketRequests])
+
+  useInterval(fetchWebSocketRequests, 1000, { isRunning: options.isEnabled })
 
   return [webSocketRequests, clearWebSocketRequests] as const
 }

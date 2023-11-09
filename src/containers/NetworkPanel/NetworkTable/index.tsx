@@ -10,21 +10,14 @@ import {
   getErrorMessages,
   OperationType,
 } from "../../../helpers/graphqlHelpers"
-import { QuickFilters } from ".."
 import { QuickFiltersContainer } from "../QuickFiltersContainer"
+import theme from "../../../theme"
 
 const OperationAliases: Record<OperationType, string> = {
   query: "Q",
   mutation: "M",
   subscription: "S",
   persisted: "P",
-}
-
-const OperationColors: Record<OperationType, string> = {
-  query: "text-green-400",
-  mutation: "text-indigo-400",
-  subscription: "text-blue-400",
-  persisted: "text-yellow-400",
 }
 
 export interface NetworkTableDataRow {
@@ -39,15 +32,13 @@ export interface NetworkTableDataRow {
   responseBody: string
 }
 
-export type NetworkTableProps = {
+export type INetworkTableProps = {
   data: NetworkTableDataRow[]
   error?: string
   onRowClick: (rowId: string | number, row: NetworkTableDataRow) => void
   onRowSelect: (rowId: string | number) => void
   selectedRowId?: string | number | null
   showSingleColumn?: boolean
-  quickFilters: QuickFilters
-  onQuickFilterButtonClicked: (filter: OperationType) => void
 }
 
 interface IOperationProps {
@@ -64,7 +55,7 @@ const Operation = (props: IOperationProps) => {
     [responseBody]
   )
 
-  const operationColor = OperationColors[type]
+  const operationColor = theme.operationColors[type].text
 
   return (
     <div className="flex items-center gap-2" data-testid="column-operation">
@@ -119,7 +110,7 @@ const Time = ({ ms }: { ms: number }) => {
   return <div data-testid="column-time">{prettyTimeValue}</div>
 }
 
-export const NetworkTable = (props: NetworkTableProps) => {
+export const NetworkTable = (props: INetworkTableProps) => {
   const {
     data,
     error,
@@ -127,8 +118,6 @@ export const NetworkTable = (props: NetworkTableProps) => {
     onRowSelect,
     selectedRowId,
     showSingleColumn,
-    quickFilters,
-    onQuickFilterButtonClicked,
   } = props
 
   const ref = useRef<HTMLDivElement>(null)
@@ -211,10 +200,7 @@ export const NetworkTable = (props: NetworkTableProps) => {
       />
 
       <div className="overflow-hidden">
-        <QuickFiltersContainer
-          quickFilters={quickFilters}
-          onQuickFilterButtonClicked={onQuickFilterButtonClicked}
-        />
+        <QuickFiltersContainer />
       </div>
     </div>
   )

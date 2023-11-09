@@ -478,6 +478,7 @@ export const mockRequests = [
       ],
     },
   }),
+  // WebSocket (GraphQL subscription)
   {
     startedDateTime: "2021-01-01T00:00:00.000Z",
     time: 1099.4580000406131,
@@ -489,19 +490,6 @@ export const mockRequests = [
           name: "Authorization",
           value: "Bearer fe0e8768-3b2f-4f63-983d-1a74c26dde1e",
         },
-        {
-          name: "access-control-allow-credentials",
-          value: true,
-        },
-        {
-          name: "access-control-allow-origin",
-          value: "https://www.google.com",
-        },
-        {
-          name: "set-cookie:",
-          value:
-            "SIDCC=fe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1e; expires=Thu, 14-Apr-2022 08:09:50 GMT; path=/; domain=.google.com; priority=high",
-        },
       ],
     },
     response: {
@@ -510,19 +498,6 @@ export const mockRequests = [
         {
           name: "Authorization",
           value: "Bearer fe0e8768-3b2f-4f63-983d-1a74c26dde1e",
-        },
-        {
-          name: "access-control-allow-credentials",
-          value: true,
-        },
-        {
-          name: "access-control-allow-origin",
-          value: "https://www.google.com",
-        },
-        {
-          name: "set-cookie:",
-          value:
-            "SIDCC=fe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1e; expires=Thu, 14-Apr-2022 08:09:50 GMT; path=/; domain=.google.com; priority=high",
         },
       ],
     },

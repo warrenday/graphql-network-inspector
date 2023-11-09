@@ -9,6 +9,10 @@ import { NetworkTable, NetworkTableDataRow } from "./NetworkTable"
 import { NetworkDetails } from "./NetworkDetails"
 import { Toolbar } from "../Toolbar"
 import WebSocketNetworkDetails from "./WebSocketNetworkDetails"
+import {
+  IOperationFilters,
+  useOperationFilters,
+} from "../../hooks/useOperationFilters"
 
 interface NetworkPanelProps {
   selectedRowId: string | number | null
@@ -16,10 +20,6 @@ interface NetworkPanelProps {
   networkRequests: NetworkRequest[]
   webSocketNetworkRequests: WebSocketNetworkRequest[]
   clearWebRequests: () => void
-}
-
-export type QuickFilters = {
-  [key in OperationType]: boolean
 }
 
 const getRegex = (str: string) => {
@@ -39,7 +39,7 @@ const filterNetworkRequests = (
   options: {
     isInverted: boolean
     isRegex: boolean
-    quickFilters: QuickFilters
+    operationFilters: IOperationFilters
   }
 ): { results: NetworkRequest[]; errorMessage?: string } => {
   const regexResult = options.isRegex ? getRegex(filterValue) : null
@@ -51,7 +51,7 @@ const filterNetworkRequests = (
     const { operationName = "", operation } =
       networkRequest.request.primaryOperation
 
-    if (!options.quickFilters[operation]) {
+    if (!options.operationFilters[operation]) {
       return false
     }
 
@@ -78,19 +78,22 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
   const [isPreserveLogs, setIsPreserveLogs] = useState(false)
   const [isInverted, setIsInverted] = useState(false)
   const [isRegexActive, onIsRegexActiveChange] = useState(false)
-  const [quickFilters, setQuickFilters] = useState<QuickFilters>({
-    query: true,
-    mutation: true,
-    persisted: true,
-    subscription: true,
-  })
+  const { operationFilters } = useOperationFilters()
 
-  const { results: filterResults, errorMessage: filterError } =
+  const { results: filteredNetworkRequests, errorMessage: filterError } =
     filterNetworkRequests(networkRequests, filterValue, {
       isInverted,
       isRegex: isRegexActive,
-      quickFilters,
+      operationFilters,
     })
+
+  const filteredWebsocketNetworkRequests = useMemo(() => {
+    if (operationFilters.subscription) {
+      return webSocketNetworkRequests
+    } else {
+      return []
+    }
+  }, [operationFilters.subscription, webSocketNetworkRequests])
 
   const selectedRequest = networkRequests.find(
     (request) => request.id === selectedRowId
@@ -110,15 +113,8 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
     })
   }, [isPreserveLogs, clearWebRequests])
 
-  const handleQuickFilterButtonClicked = (filter: OperationType) => {
-    setQuickFilters({
-      ...quickFilters,
-      [filter]: !quickFilters[filter],
-    })
-  }
-
   const networkTableData = useMemo((): NetworkTableDataRow[] => {
-    return filterResults.map((networkRequest) => {
+    return filteredNetworkRequests.map((networkRequest) => {
       const { operationName = "", operation } =
         networkRequest.request.primaryOperation
       return {
@@ -133,10 +129,10 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
         responseBody: networkRequest.response?.body || "",
       }
     })
-  }, [filterResults])
+  }, [filteredNetworkRequests])
 
   const websocketTableData = useMemo((): NetworkTableDataRow[] => {
-    return webSocketNetworkRequests.map((websocketRequest) => {
+    return filteredWebsocketNetworkRequests.map((websocketRequest) => {
       return {
         id: websocketRequest.id,
         type: "subscription",
@@ -149,7 +145,7 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
         responseBody: "",
       }
     })
-  }, [webSocketNetworkRequests])
+  }, [filteredWebsocketNetworkRequests])
 
   const combinedTableData = useMemo(() => {
     return [...websocketTableData, ...networkTableData]
@@ -181,8 +177,6 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
           onRowClick={setSelectedRowId}
           onRowSelect={setSelectedRowId}
           showSingleColumn={Boolean(selectedRequest)}
-          quickFilters={quickFilters}
-          onQuickFilterButtonClicked={handleQuickFilterButtonClicked}
         />
       }
       rightPane={

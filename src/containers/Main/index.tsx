@@ -7,14 +7,18 @@ import { NetworkPanel } from "../NetworkPanel"
 import { SearchPanel } from "../SearchPanel"
 import { SupportPopover } from "../../components/SupportPopover"
 import { useWebSocketNetworkMonitor } from "../../hooks/useWebSocketNetworkMonitor"
+import { useOperationFilters } from "../../hooks/useOperationFilters"
 
 export const Main = () => {
   const [selectedRowId, setSelectedRowId] = useState<string | number | null>(
     null
   )
+  const { operationFilters } = useOperationFilters()
   const [networkRequests, clearWebRequests] = useNetworkMonitor()
   const [webSocketNetworkRequests, clearWebSocketNetworkRequests] =
-    useWebSocketNetworkMonitor()
+    useWebSocketNetworkMonitor({
+      isEnabled: operationFilters.subscription,
+    })
   const { isSearchOpen } = useSearch()
   const { setActiveTab } = useNetworkTabs()
 

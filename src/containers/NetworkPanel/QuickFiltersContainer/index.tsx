@@ -1,65 +1,87 @@
 import { Button } from "@/components/Button"
 import { OperationType } from "@/helpers/graphqlHelpers"
-import { QuickFilters } from "../"
 import { Bar } from "../../../components/Bar"
+import theme from "../../../theme"
+import { useOperationFilters } from "../../../hooks/useOperationFilters"
 
-export type QuickFiltersContainerProps = {
-  quickFilters: QuickFilters
-  onQuickFilterButtonClicked: (filter: OperationType) => void
-}
-
-type PillProps = {
+interface IPillProps {
   className: string
 }
 
-const Pill = (props: PillProps) => {
+const Pill = (props: IPillProps) => {
   const { className } = props
   return <div className={`h-3 w-3 rounded-full ${className}`} />
 }
 
-export const QuickFiltersContainer = (props: QuickFiltersContainerProps) => {
-  const { quickFilters, onQuickFilterButtonClicked } = props
+interface IQuickFilterButtonProps {
+  variant: "primary" | "ghost"
+  onClick: () => void
+  active: boolean
+  activeColor: string
+  children: React.ReactNode
+}
+
+const QuickFilterButton = (props: IQuickFilterButtonProps) => {
+  const { children, variant, onClick, active, activeColor } = props
+
+  return (
+    <Button
+      variant={variant}
+      onClick={onClick}
+      icon={<Pill className={active ? activeColor : "bg-gray-400"} />}
+    >
+      {children}
+    </Button>
+  )
+}
+
+export const QuickFiltersContainer = () => {
+  const { operationFilters, setOperationFilters } = useOperationFilters()
+
+  const handleQuickFilterToggle = (operationType: OperationType) => {
+    setOperationFilters((prevState) => {
+      return {
+        ...prevState,
+        [operationType]: !prevState[operationType],
+      }
+    })
+  }
 
   return (
     <Bar className="border-t pb-3">
       <div className="flex gap-2">
-        <Button
-          variant={quickFilters.query ? "primary" : "ghost"}
-          onClick={() => onQuickFilterButtonClicked("query")}
-          icon={
-            <Pill
-              className={quickFilters.query ? "bg-green-400" : "bg-gray-400"}
-            />
-          }
+        <QuickFilterButton
+          variant={operationFilters.query ? "primary" : "ghost"}
+          onClick={() => handleQuickFilterToggle("query")}
+          active={operationFilters.query}
+          activeColor={theme.operationColors.query.bg}
         >
           Queries
-        </Button>
-        <Button
-          variant={quickFilters.mutation ? "primary" : "ghost"}
-          onClick={() => onQuickFilterButtonClicked("mutation")}
-          icon={
-            <Pill
-              className={
-                quickFilters.mutation ? "bg-indigo-400" : "bg-gray-400"
-              }
-            />
-          }
+        </QuickFilterButton>
+        <QuickFilterButton
+          variant={operationFilters.mutation ? "primary" : "ghost"}
+          onClick={() => handleQuickFilterToggle("mutation")}
+          active={operationFilters.mutation}
+          activeColor={theme.operationColors.mutation.bg}
         >
           Mutations
-        </Button>
-        <Button
-          variant={quickFilters.persisted ? "primary" : "ghost"}
-          onClick={() => onQuickFilterButtonClicked("persisted")}
-          icon={
-            <Pill
-              className={
-                quickFilters.persisted ? "bg-yellow-400" : "bg-gray-400"
-              }
-            />
-          }
+        </QuickFilterButton>
+        <QuickFilterButton
+          variant={operationFilters.persisted ? "primary" : "ghost"}
+          onClick={() => handleQuickFilterToggle("persisted")}
+          active={operationFilters.persisted}
+          activeColor={theme.operationColors.persisted.bg}
         >
           Persisted
-        </Button>
+        </QuickFilterButton>
+        <QuickFilterButton
+          variant={operationFilters.subscription ? "primary" : "ghost"}
+          onClick={() => handleQuickFilterToggle("subscription")}
+          active={operationFilters.subscription}
+          activeColor={theme.operationColors.subscription.bg}
+        >
+          Subscriptions
+        </QuickFilterButton>
       </div>
     </Bar>
   )
