@@ -40,24 +40,22 @@ const isWebSocketEntry = (entry: any): entry is WebSocketHAREntry => {
   return entry._resourceType === "websocket"
 }
 
-const generateWebSocketId = (entry: chrome.devtools.network.HAREntry) => {
-  return `${entry.startedDateTime}-${entry.time}-${entry.request.url}`
-}
-
 const prepareWebSocketRequests = (
   har: chrome.devtools.network.HARLog
 ): WebSocketNetworkRequest[] => {
-  return har.entries.flatMap((entry) => {
+  return har.entries.flatMap((entry, i) => {
     if (isWebSocketEntry(entry)) {
       const websocketEntry: WebSocketNetworkRequest = {
-        id: generateWebSocketId(entry),
+        id: "subscription",
         status: entry.response.status,
         url: entry.request.url,
         method: entry.request.method,
-        messages: entry._webSocketMessages.flatMap((message) => {
-          const data = safeJson.parse<{ type: string; payload: {} }>(
-            message.data
-          )
+        // Reverse messages to get newest first
+        messages: entry._webSocketMessages.reverse().flatMap((message) => {
+          const data = safeJson.parse<{
+            type: string
+            payload: {}
+          }>(message.data)
           if (!data || data.type !== "data") {
             return []
           }

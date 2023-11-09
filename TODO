@@ -1,6 +1,5 @@
 Must have
 
-- Ensure subscription remains selected when new message is received
 - Unit tests
 - Set default tab when opening websocket view
 - Add x mins ago time to each message
