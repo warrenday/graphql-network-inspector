@@ -5,7 +5,16 @@ import { useEffect } from "react"
  * the callback given is memoized with useCallback.
  *
  */
-const useLoop = (cb: () => void, ms: number) => {
+const useInterval = (cb: () => void, ms: number) => {
+  // Run once on mount
+  useEffect(() => {
+    const run = async () => {
+      await cb()
+    }
+    run()
+  }, [cb])
+
+  // Run every `ms` milliseconds
   useEffect(() => {
     let timer: ReturnType<typeof window.setTimeout>
     const run = () => {
@@ -20,4 +29,4 @@ const useLoop = (cb: () => void, ms: number) => {
   }, [cb, ms])
 }
 
-export default useLoop
+export default useInterval

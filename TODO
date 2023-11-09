@@ -1,6 +1,7 @@
 Must have
 
 - Unit tests
+- Allow toggle on-off for subscription watching - since we poll HAR
 - Set default tab when opening websocket view
 - Add x mins ago time to each message
 - Add subscription to filters and update design to fit
@@ -10,5 +11,5 @@ Must have
 Nice to have
 
 - Try to improve some repeated code
-- Generate tidy up needed
+- General tidy up needed
 - Allow sorting of messages by time ascending/descending

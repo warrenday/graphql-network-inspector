@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react"
 import { getHAR } from "../services/networkMonitor"
-import useLoop from "./useLoop"
+import useInterval from "./useInterval"
 import { Header } from "./useNetworkMonitor"
 import * as safeJson from "@/helpers/safeJson"
 
@@ -89,7 +89,7 @@ export const useWebSocketNetworkMonitor = () => {
     setWebSocketRequests([])
   }, [setWebSocketRequests])
 
-  useLoop(
+  useInterval(
     useCallback(async () => {
       const har = await getHAR()
       const websocketRequests = prepareWebSocketRequests(har)
