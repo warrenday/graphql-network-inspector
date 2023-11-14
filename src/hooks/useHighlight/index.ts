@@ -21,16 +21,25 @@ export const useHighlight = (language: Language, code: string) => {
   const [markup, setMarkup] = useState("")
 
   useEffect(() => {
-    // Highlight small code blocks in the main thread
-    if (code.length < 500) {
+    const highlightOnMainThread = () => {
       const result = hljs.highlight(code, { language })
       setMarkup(result.value)
       setLoading(false)
+    }
+
+    // Highlight small code blocks in the main thread
+    if (code.length < 500) {
+      highlightOnMainThread()
       return
     }
 
     // Highlight large code blocks in a worker thread
     const worker = new Worker(new URL("./worker.ts", import.meta.url))
+    if (!worker) {
+      highlightOnMainThread()
+      return
+    }
+
     worker.onmessage = (event) => {
       setLoading(false)
       setMarkup(event.data)
