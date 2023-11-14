@@ -1,12 +1,12 @@
 import ReactJson from "@notdutzi/react-json-view"
 import { useDarkTheme } from "../../hooks/useTheme"
 
-type JsonViewProps = {
+interface IJsonViewProps {
   src: object
   collapsed?: number
 }
 
-export const JsonView = (props: JsonViewProps) => {
+export const JsonView = (props: IJsonViewProps) => {
   const isDarkTheme = useDarkTheme()
 
   return (

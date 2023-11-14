@@ -1,9 +1,9 @@
-import { render, fireEvent, within, waitFor } from "@testing-library/react"
+import { fireEvent, within, waitFor } from "@testing-library/react"
+import { render } from "../../test-utils"
 import { Main } from "./index"
 import { chromeProvider } from "../../services/chromeProvider"
 import { mockChrome } from "../../mocks/mock-chrome"
 import { act } from "react-dom/test-utils"
-import { ShareMessageProvider } from "../../hooks/useShareMessage"
 
 jest.mock("../../services/chromeProvider")
 
@@ -39,21 +39,13 @@ const mockOnNavigated = () => {
   }
 }
 
-const MainView = () => {
-  return (
-    <ShareMessageProvider>
-      <Main />
-    </ShareMessageProvider>
-  )
-}
-
 describe("Main", () => {
   beforeEach(() => {
     mockChromeProvider.mockReturnValue(mockChrome)
   })
 
   it("renders the table only by default", async () => {
-    const { queryByTestId, getByText } = render(<MainView />)
+    const { queryByTestId, getByText } = render(<Main />)
 
     await waitFor(() => {
       expect(getByText(/getMovie/i)).toBeInTheDocument()
@@ -64,7 +56,7 @@ describe("Main", () => {
   })
 
   it("opens the side panel when clicking a table row", async () => {
-    const { getByText, getByTestId } = render(<MainView />)
+    const { getByText, getByTestId } = render(<Main />)
 
     await waitFor(() => {
       expect(getByText(/getMovie/i)).toBeInTheDocument()
@@ -76,7 +68,7 @@ describe("Main", () => {
   })
 
   it("closes the side panel when clicking the 'x' button", async () => {
-    const { queryByTestId, getByTestId, getByText } = render(<MainView />)
+    const { queryByTestId, getByTestId, getByText } = render(<Main />)
 
     await waitFor(() => {
       expect(getByText(/getMovie/i)).toBeInTheDocument()
@@ -89,7 +81,7 @@ describe("Main", () => {
   })
 
   it("renders all network data within the table", async () => {
-    const { queryByTestId } = render(<MainView />)
+    const { queryByTestId } = render(<Main />)
     const table = queryByTestId("network-table")
     if (!table) {
       throw new Error("Table not found in dom")
@@ -104,7 +96,7 @@ describe("Main", () => {
   })
 
   it("renders correct values for each column within the table", async () => {
-    const { queryByTestId } = render(<MainView />)
+    const { queryByTestId } = render(<Main />)
     const table = queryByTestId("network-table")
     if (!table) {
       throw new Error("Table not found in dom")
@@ -147,7 +139,7 @@ describe("Main", () => {
   })
 
   it("clears the table of all network data when clicking the clear button", async () => {
-    const { queryByTestId, getByTestId } = render(<MainView />)
+    const { queryByTestId, getByTestId } = render(<Main />)
     const table = queryByTestId("network-table")
     const { queryAllByRole, getByText } = within(table!)
 
@@ -163,7 +155,7 @@ describe("Main", () => {
   it("clears the table of all network data when reloading", async () => {
     const triggerOnNavigated = mockOnNavigated()
 
-    const { queryByTestId } = render(<MainView />)
+    const { queryByTestId } = render(<Main />)
     const table = queryByTestId("network-table")
     const { queryAllByRole, getByText } = within(table!)
 
@@ -181,7 +173,7 @@ describe("Main", () => {
   it("does not clear the table of all network data when reloading and preserve log checked", async () => {
     const triggerOnNavigated = mockOnNavigated()
 
-    const { getByTestId, queryByTestId } = render(<MainView />)
+    const { getByTestId, queryByTestId } = render(<Main />)
     const table = queryByTestId("network-table")
     const { queryAllByRole, getByText } = within(table!)
 
@@ -201,7 +193,7 @@ describe("Main", () => {
   })
 
   it("filters network data with the given search query", async () => {
-    const { getByTestId, queryByTestId } = render(<MainView />)
+    const { getByTestId, queryByTestId } = render(<Main />)
     const table = queryByTestId("network-table")
     const { queryAllByRole, getByText } = within(table!)
     const filterInput = getByTestId("filter-input") as HTMLInputElement
@@ -227,7 +219,7 @@ describe("Main", () => {
   })
 
   it("filters network data with the given search query inverted", async () => {
-    const { getByTestId, queryByTestId } = render(<MainView />)
+    const { getByTestId, queryByTestId } = render(<Main />)
     const table = queryByTestId("network-table")
     const { queryAllByRole, getByText } = within(table!)
     const filterInput = getByTestId("filter-input") as HTMLInputElement
@@ -257,7 +249,7 @@ describe("Main", () => {
   })
 
   it("filters network data with the given regex query", async () => {
-    const { getByTestId, queryByTestId } = render(<MainView />)
+    const { getByTestId, queryByTestId } = render(<Main />)
     const table = queryByTestId("network-table")
     const { queryAllByRole, getByText } = within(table!)
     const filterInput = getByTestId("filter-input") as HTMLInputElement
@@ -287,7 +279,7 @@ describe("Main", () => {
   })
 
   it("extracts variables from extensions", async () => {
-    const { getByText, getByTestId } = render(<MainView />)
+    const { getByText, getByTestId } = render(<Main />)
 
     await waitFor(() => {
       expect(getByText(/hasUnseenAnnouncements/i)).toBeInTheDocument()

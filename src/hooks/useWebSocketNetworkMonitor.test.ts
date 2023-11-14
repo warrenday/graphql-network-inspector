@@ -7,9 +7,17 @@ jest.mock("../services/networkMonitor")
 const mockGetHAR = getHAR as jest.MockedFunction<any>
 
 describe("useWebSocketNetworkMonitor", () => {
+  beforeEach(() => {
+    jest.resetAllMocks()
+  })
+
   it("polls the HAR log and returns the websocket requests", async () => {
     mockGetHAR.mockResolvedValue({
       entries: [
+        {
+          // This is a normal request, not a websocket
+          // should not appear in output
+        },
         {
           _resourceType: "websocket",
           request: {
@@ -107,5 +115,23 @@ describe("useWebSocketNetworkMonitor", () => {
         ],
       },
     ])
+  })
+
+  it('does not poll the HAR log when "isEnabled" is false', async () => {
+    mockGetHAR.mockResolvedValue({
+      entries: [],
+    })
+
+    const { rerender, waitForNextUpdate } = renderHook(
+      (props) => useWebSocketNetworkMonitor(props),
+      { initialProps: { isEnabled: false } }
+    )
+
+    expect(mockGetHAR).not.toHaveBeenCalled()
+
+    rerender({ isEnabled: true })
+    await waitForNextUpdate()
+
+    expect(mockGetHAR).toHaveBeenCalledTimes(1)
   })
 })

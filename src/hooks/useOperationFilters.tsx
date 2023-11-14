@@ -30,7 +30,7 @@ export const OperationFiltersProvider: React.FC<{}> = ({ children }) => {
 export const useOperationFilters = () => {
   const context = useContext(OperationFilersContext)
 
-  if (context === undefined) {
+  if (!context) {
     throw new Error(
       "useOperationFilters must be used within a OperationFiltersProvider"
     )

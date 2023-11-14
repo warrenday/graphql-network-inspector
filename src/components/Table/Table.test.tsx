@@ -1,4 +1,5 @@
-import { render, fireEvent } from "@testing-library/react"
+import { fireEvent } from "@testing-library/react"
+import { render } from "../../test-utils"
 import { Table, TableProps } from "./index"
 
 const data = [
@@ -37,37 +38,41 @@ const columns: TableProps<typeof data[0]>["columns"] = [
   },
 ]
 
-test("outputs correct row index and data when a row is clicked", () => {
-  const mockOnRowClick = jest.fn()
-  const { getByText } = render(
-    <Table columns={columns} data={data} onRowClick={mockOnRowClick} />
-  )
+describe("Table", () => {
+  it("outputs correct row index and data when a row is clicked", () => {
+    const mockOnRowClick = jest.fn()
+    const { getByText } = render(
+      <Table columns={columns} data={data} onRowClick={mockOnRowClick} />
+    )
 
-  fireEvent.click(getByText(/Get Out/i))
+    fireEvent.click(getByText(/Get Out/i))
 
-  expect(mockOnRowClick).toHaveBeenCalledWith(2, {
-    id: 2,
-    title: "Get Out",
-    year: 2017,
-    rating: 5,
+    expect(mockOnRowClick).toHaveBeenCalledWith(2, {
+      id: 2,
+      title: "Get Out",
+      year: 2017,
+      rating: 5,
+    })
   })
-})
 
-test("data is empty - empty table message is rendered", () => {
-  const { getByText } = render(<Table columns={columns} data={[]} />)
+  it("data is empty - empty table message is rendered", () => {
+    const { getByText } = render(<Table columns={columns} data={[]} />)
 
-  // ensure the empty table message was rendered
-  expect(getByText("No requests have been detected")).toBeInTheDocument()
-})
+    // ensure the empty table message was rendered
+    expect(getByText("No requests have been detected")).toBeInTheDocument()
+  })
 
-test("data is empty and an error message is provided - error message is rendered", () => {
-  const { getByText, queryByText } = render(
-    <Table columns={columns} data={[]} error={"someErrorMessage"} />
-  )
+  it("data is empty and an error message is provided - error message is rendered", () => {
+    const { getByText, queryByText } = render(
+      <Table columns={columns} data={[]} error={"someErrorMessage"} />
+    )
 
-  // ensure the empty table message was not rendered
-  expect(queryByText("No requests have been detected")).not.toBeInTheDocument()
+    // ensure the empty table message was not rendered
+    expect(
+      queryByText("No requests have been detected")
+    ).not.toBeInTheDocument()
 
-  // ensure the error message was rendered
-  expect(getByText("someErrorMessage")).toBeInTheDocument()
+    // ensure the error message was rendered
+    expect(getByText("someErrorMessage")).toBeInTheDocument()
+  })
 })

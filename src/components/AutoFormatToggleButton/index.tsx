@@ -1,7 +1,7 @@
 import { Button } from "../Button"
 import { CodeIcon } from "../Icons/CodeIcon"
 
-type IAutoFormatToggleButtonProps = {
+interface IAutoFormatToggleButtonProps {
   active?: boolean
   onToggle?: (value: boolean) => void
   className?: string

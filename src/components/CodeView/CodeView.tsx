@@ -7,7 +7,7 @@ import { Spinner } from "../Spinner"
 import { config } from "../../config"
 import classes from "./CodeView.module.css"
 
-type CodeViewProps = {
+interface ICodeViewProps {
   text: string
   language: "graphql" | "json"
   autoFormat?: boolean
@@ -31,7 +31,7 @@ const CodeTooLargeMessage = () => {
   )
 }
 
-const CodeRenderer = (props: CodeViewProps) => {
+const CodeRenderer = (props: ICodeViewProps) => {
   const { text, language, autoFormat } = props
   const formattedText = useFormattedCode(text, language, autoFormat)
 
@@ -51,7 +51,7 @@ const CodeRenderer = (props: CodeViewProps) => {
   )
 }
 
-export const CodeView = (props: CodeViewProps) => {
+export const CodeView = (props: ICodeViewProps) => {
   const { text, language, autoFormat, className } = props
   const size = useByteSize(text.length, { unit: "mb" })
 
