@@ -8,6 +8,14 @@ export interface MessagePayload {
   code: string
 }
 
+const createWorker = () => {
+  try {
+    return new Worker(new URL("./worker.ts", import.meta.url))
+  } catch (e) {
+    return undefined
+  }
+}
+
 /**
  * Highlight the text in a worker thread and return the resulting markup.
  * This provides a performant async way to render the given text.
@@ -34,7 +42,7 @@ export const useHighlight = (language: Language, code: string) => {
     }
 
     // Highlight large code blocks in a worker thread
-    const worker = new Worker(new URL("./worker.ts", import.meta.url))
+    const worker = createWorker()
     if (!worker) {
       highlightOnMainThread()
       return
@@ -44,6 +52,7 @@ export const useHighlight = (language: Language, code: string) => {
       setLoading(false)
       setMarkup(event.data)
     }
+
     setLoading(true)
     const messagePayload: MessagePayload = { language, code }
     worker.postMessage(messagePayload)
