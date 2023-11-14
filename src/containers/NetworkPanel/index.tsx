@@ -41,7 +41,8 @@ const filterNetworkRequests = (
     operationFilters: IOperationFilters
   }
 ): { results: INetworkRequest[]; errorMessage?: string } => {
-  const regexResult = options.isRegex ? getRegex(filterValue) : null
+  const regexResult =
+    options.isRegex && filterValue ? getRegex(filterValue) : null
   if (regexResult?.errorMessage) {
     return { results: [], errorMessage: regexResult.errorMessage }
   }

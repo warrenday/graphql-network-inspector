@@ -1,9 +1,3 @@
-Must have
-
-- Set default tab when opening websocket view - in case of 3/4 tab open
-
 Nice to have
 
-- Try to improve some repeated code
-- General tidy up needed
 - Allow sorting of messages by time ascending/descending

@@ -87,6 +87,25 @@ const TableBody = <T extends IBaseRowData>({
   </tbody>
 )
 
+interface INoResultsProps {
+  message?: string
+  data: readonly any[]
+}
+
+const NoResults = (props: INoResultsProps) => {
+  const { message = "No requests have been detected", data } = props
+
+  if (data.length === 0) {
+    return (
+      <div className="w-full flex flex-1 items-center justify-center">
+        <div className="p-6 text-center">{message}</div>
+      </div>
+    )
+  }
+
+  return null
+}
+
 export const Table = <T extends IBaseRowData>(props: ITableProps<T>) => {
   const {
     columns,
@@ -125,23 +144,7 @@ export const Table = <T extends IBaseRowData>(props: ITableProps<T>) => {
           selectedRowId={selectedRowId}
         />
       </table>
-      {(() => {
-        if (error) {
-          return (
-            <div className="w-full flex flex-1 items-center justify-center">
-              <div className="p-6 text-center">{error}</div>
-            </div>
-          )
-        } else if (data.length === 0) {
-          return (
-            <div className="w-full flex flex-1 items-center justify-center">
-              <div className="p-6 text-center">
-                No requests have been detected
-              </div>
-            </div>
-          )
-        }
-      })()}
+      <NoResults message={error} data={data} />
     </div>
   )
 }
