@@ -11,7 +11,7 @@ import {
   useRequestViewSections,
 } from "@/hooks/useRequestViewSections"
 import { CaretIcon } from "../../../components/Icons/CaretIcon"
-import { Button } from "../../../components/Button"
+import { ShareButton } from "../../../components/ShareButton"
 
 const isVariablesPopulated = (variables: Record<string, unknown>) => {
   return Object.keys(variables || {}).length > 0
@@ -48,7 +48,7 @@ interface IRequestViewProps {
 }
 
 export const RequestView = (props: IRequestViewProps) => {
-  const { requests, autoFormat } = props
+  const { requests, autoFormat, onShare } = props
 
   const numberOfRequests = requests.length
   const shouldDisplayRequestIndex = numberOfRequests > 1
@@ -63,7 +63,7 @@ export const RequestView = (props: IRequestViewProps) => {
             autoFormat={autoFormat}
             index={shouldDisplayRequestIndex && index + 1}
             numberOfRequests={numberOfRequests}
-            onShare={props.onShare}
+            onShare={onShare}
           />
         )
       })}
@@ -90,7 +90,7 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
   return (
     <PanelSection className="relative mb-3">
       <div className="flex items-center gap-2 absolute top-[8px] right-[8px] z-10 transition-opacity">
-        {onShare && <Button onClick={onShare}>Replay</Button>}
+        {onShare && <ShareButton onClick={onShare} />}
         {displayQuery && (
           <CopyButton label="Copy Query" textToCopy={request.query} />
         )}

@@ -175,7 +175,6 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
           selectedRowId={selectedRowId}
           onRowClick={setSelectedRowId}
           onRowSelect={setSelectedRowId}
-          showSingleColumn={Boolean(selectedRequest)}
         />
       }
       rightPane={

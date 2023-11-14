@@ -2,9 +2,11 @@ import { useMemo } from "react"
 import * as safeJson from "@/helpers/safeJson"
 import { CopyButton } from "@/components/CopyButton"
 import { CodeView } from "@/components/CodeView"
+import { ShareButton } from "../../../components/ShareButton"
 
 interface IResponseRawViewProps {
   response?: string
+  onShare?: () => void
 }
 
 const useFormatResponse = (response?: string): string => {
@@ -29,15 +31,15 @@ const useFormatResponse = (response?: string): string => {
 }
 
 export const ResponseRawView = (props: IResponseRawViewProps) => {
-  const { response } = props
+  const { response, onShare } = props
   const formattedJson = useFormatResponse(response)
 
   return (
     <div className="relative p-4">
-      <CopyButton
-        textToCopy={formattedJson}
-        className="absolute right-3 top-3 z-10"
-      />
+      <div className="absolute right-3 top-3 z-10 flex gap-2">
+        {onShare && <ShareButton onClick={onShare} />}
+        <CopyButton textToCopy={formattedJson} />
+      </div>
       <CodeView text={formattedJson} language={"json"} className="p-4" />
     </div>
   )

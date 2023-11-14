@@ -90,7 +90,12 @@ export const NetworkDetails = (props: INetworkDetailsProps) => {
         {
           id: "response-raw",
           title: "Response (Raw)",
-          component: <ResponseRawView response={responseBody} />,
+          component: (
+            <ResponseRawView
+              onShare={isShareable ? handleShare : undefined}
+              response={responseBody}
+            />
+          ),
         },
         ...(tracing
           ? [

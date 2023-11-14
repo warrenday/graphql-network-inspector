@@ -2,7 +2,7 @@ import { useMemo } from "react"
 import * as safeJson from "../../../helpers/safeJson"
 import { JsonView } from "@/components/CodeView"
 import { CopyButton } from "../../../components/CopyButton"
-import { Button } from "../../../components/Button"
+import { ShareButton } from "../../../components/ShareButton"
 
 interface IResponseViewProps {
   response?: string
@@ -23,7 +23,7 @@ export const ResponseView = (props: IResponseViewProps) => {
   return (
     <div className="relative p-4">
       <div className="absolute right-3 top-3 z-10 flex gap-2">
-        {onShare && <Button onClick={onShare}>Replay</Button>}
+        {onShare && <ShareButton onClick={onShare} />}
         <CopyButton textToCopy={formattedJson} />
       </div>
       <JsonView src={parsedResponse} collapsed={collapsed} />
