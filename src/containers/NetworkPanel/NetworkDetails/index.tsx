@@ -1,5 +1,5 @@
 import { Tabs } from "@/components/Tabs"
-import { NetworkRequest } from "@/hooks/useNetworkMonitor"
+import { INetworkRequest } from "@/hooks/useNetworkMonitor"
 import { HeaderView } from "../HeaderView"
 import { RequestView, RequestViewFooter } from "./RequestView"
 import { ResponseView } from "./ResponseView"
@@ -12,12 +12,12 @@ import { useToggle } from "@/hooks/useToggle"
 import { useShareMessage } from "../../../hooks/useShareMessage"
 import { useMemo } from "react"
 
-export type NetworkDetailsProps = {
-  data: NetworkRequest
+export interface INetworkDetailsProps {
+  data: INetworkRequest
   onClose: () => void
 }
 
-export const NetworkDetails = (props: NetworkDetailsProps) => {
+export const NetworkDetails = (props: INetworkDetailsProps) => {
   const { data, onClose } = props
   const { activeTab, setActiveTab } = useNetworkTabs()
   const requestHeaders = data.request.headers

@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react"
 import { getHAR } from "../services/networkMonitor"
 import useInterval from "./useInterval"
-import { Header } from "./useNetworkMonitor"
+import { IHeader } from "./useNetworkMonitor"
 import * as safeJson from "@/helpers/safeJson"
 
 export interface WebSocketMessage {
@@ -17,10 +17,10 @@ export interface WebSocketNetworkRequest {
   method: string
   messages: WebSocketMessage[]
   request: {
-    headers: Header[]
+    headers: IHeader[]
   }
   response: {
-    headers: Header[]
+    headers: IHeader[]
   }
 }
 

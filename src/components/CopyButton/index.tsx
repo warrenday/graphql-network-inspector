@@ -1,13 +1,13 @@
 import { Button } from "../Button"
 import useCopy from "../../hooks/useCopy"
 
-type CopyButtonProps = {
+interface ICopyButtonProps {
   label?: string
   textToCopy: string
   className?: string
 }
 
-export const CopyButton = (props: CopyButtonProps) => {
+export const CopyButton = (props: ICopyButtonProps) => {
   const { textToCopy, className } = props
   const { isCopied, copy } = useCopy()
   const buttonLabel = props.label || "Copy"

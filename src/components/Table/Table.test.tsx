@@ -1,6 +1,6 @@
 import { fireEvent } from "@testing-library/react"
 import { render } from "../../test-utils"
-import { Table, TableProps } from "./index"
+import { Table, ITableProps } from "./index"
 
 const data = [
   {
@@ -23,7 +23,7 @@ const data = [
   },
 ]
 
-const columns: TableProps<typeof data[0]>["columns"] = [
+const columns: ITableProps<typeof data[0]>["columns"] = [
   {
     accessor: "title",
     Header: "Title",

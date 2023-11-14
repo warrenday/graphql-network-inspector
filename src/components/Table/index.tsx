@@ -9,19 +9,19 @@ import { useMaintainScrollBottom } from "../../hooks/useMaintainScrollBottom"
 
 type RowId = string | number
 
-export type TableProps<T extends {}> = TableOptions<T> & {
+export type ITableProps<T extends {}> = TableOptions<T> & {
   error?: string
   onRowClick?: (rowId: RowId, data: Row<T>["original"]) => void
   selectedRowId?: RowId | null
   isScollBottomMaintained?: boolean
 }
 
-type TableBodyProps<T extends {}> = TableInstance<T> & {
+type ITableBodyProps<T extends {}> = TableInstance<T> & {
   onRowClick?: (data: Row<T>) => void
   selectedRowId?: RowId | null
 }
 
-type BaseRowData = {
+type IBaseRowData = {
   id: RowId
 }
 
@@ -46,13 +46,13 @@ const TableHead = <T extends {}>({
   </thead>
 )
 
-const TableBody = <T extends BaseRowData>({
+const TableBody = <T extends IBaseRowData>({
   rows,
   getTableBodyProps,
   prepareRow,
   onRowClick,
   selectedRowId,
-}: TableBodyProps<T>) => (
+}: ITableBodyProps<T>) => (
   <tbody {...getTableBodyProps()}>
     {rows.map((row) => {
       prepareRow(row)
@@ -87,7 +87,7 @@ const TableBody = <T extends BaseRowData>({
   </tbody>
 )
 
-export const Table = <T extends BaseRowData>(props: TableProps<T>) => {
+export const Table = <T extends IBaseRowData>(props: ITableProps<T>) => {
   const {
     columns,
     data,

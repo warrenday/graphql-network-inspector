@@ -3,27 +3,30 @@ import { v4 as uuid } from "uuid"
 import {
   getPrimaryOperation,
   parseGraphqlRequest,
-  OperationDetails,
+  IOperationDetails,
   IGraphqlRequestBody,
 } from "../helpers/graphqlHelpers"
 import { onRequestFinished, getHAR } from "../services/networkMonitor"
 
-export type Header = { name: string; value?: string }
-export type NetworkRequest = {
+export interface IHeader {
+  name: string
+  value?: string
+}
+export interface INetworkRequest {
   id: string
   status: number
   url: string
   time: number
   method: string
   request: {
-    primaryOperation: OperationDetails
-    headers: Header[]
+    primaryOperation: IOperationDetails
+    headers: IHeader[]
     body: IGraphqlRequestBody[]
     headersSize: number
     bodySize: number
   }
   response?: {
-    headers?: Header[]
+    headers?: IHeader[]
     body?: string
     headersSize: number
     bodySize: number
@@ -31,7 +34,7 @@ export type NetworkRequest = {
 }
 
 export const useNetworkMonitor = () => {
-  const [webRequests, setWebRequests] = useState<NetworkRequest[]>([])
+  const [webRequests, setWebRequests] = useState<INetworkRequest[]>([])
 
   const handleRequestFinished = useCallback(
     (details: chrome.devtools.network.Request) => {
@@ -88,7 +91,7 @@ export const useNetworkMonitor = () => {
                 ...webRequest.response,
                 body: responseBody || "",
               },
-            } as NetworkRequest
+            } as INetworkRequest
           })
         })
       })

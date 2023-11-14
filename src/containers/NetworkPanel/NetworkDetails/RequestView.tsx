@@ -71,7 +71,7 @@ export const RequestView = (props: IRequestViewProps) => {
   )
 }
 
-type SingleRequestViewProps = {
+interface ISingleRequestViewProps {
   request: IGraphqlRequestBody
   autoFormat: boolean
   index: number | false
@@ -79,7 +79,7 @@ type SingleRequestViewProps = {
   onShare?: () => void
 }
 
-const SingleRequestView = (props: SingleRequestViewProps) => {
+const SingleRequestView = (props: ISingleRequestViewProps) => {
   const { request, autoFormat, index, numberOfRequests, onShare } = props
 
   const displayQuery = !!request.query
@@ -146,12 +146,12 @@ const SingleRequestView = (props: SingleRequestViewProps) => {
   )
 }
 
-type RequestViewSectionProps = {
+interface IRequestViewSectionProps {
   type: RequestViewSectionType
   title: string
 }
 
-const RequestViewSection: FC<RequestViewSectionProps> = (props) => {
+const RequestViewSection: FC<IRequestViewSectionProps> = (props) => {
   const { type, title, children } = props
   const { collapsedSections, setIsSectionCollapsed } = useRequestViewSections()
   const isCollapsed = !!collapsedSections[type]

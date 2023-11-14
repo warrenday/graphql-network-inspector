@@ -1,7 +1,7 @@
 import { stringify } from "./safeJson"
-import { Header, NetworkRequest } from "../hooks/useNetworkMonitor"
+import { IHeader, INetworkRequest } from "../hooks/useNetworkMonitor"
 
-const stringifyHeaders = (headers: Header[] = []) => {
+const stringifyHeaders = (headers: IHeader[] = []) => {
   return headers
     .map((header) => {
       return `${header.name}: ${header.value}`
@@ -10,7 +10,7 @@ const stringifyHeaders = (headers: Header[] = []) => {
 }
 
 export const getHeaderSearchContent = (
-  networkRequest: NetworkRequest
+  networkRequest: INetworkRequest
 ): string => {
   const requestHeaderText = stringifyHeaders(networkRequest.request.headers)
   const responseHeaderText = stringifyHeaders(networkRequest.response?.headers)
@@ -18,7 +18,7 @@ export const getHeaderSearchContent = (
 }
 
 export const getRequestSearchContent = (
-  networkRequest: NetworkRequest
+  networkRequest: INetworkRequest
 ): string => {
   return networkRequest.request.body
     .map((body) => {
@@ -28,7 +28,7 @@ export const getRequestSearchContent = (
 }
 
 export const getResponseSearchContent = (
-  networkRequest: NetworkRequest
+  networkRequest: INetworkRequest
 ): string => {
   return networkRequest.response?.body || ""
 }

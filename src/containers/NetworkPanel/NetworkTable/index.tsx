@@ -1,7 +1,7 @@
 import { useMemo, useRef } from "react"
 import prettyBytes from "pretty-bytes"
 import prettyMs from "pretty-ms"
-import { Table, TableProps } from "../../../components/Table"
+import { Table, ITableProps } from "../../../components/Table"
 import { Dot } from "../../../components/Dot"
 import { Badge } from "../../../components/Badge"
 import { getStatusColor } from "../../../helpers/getStatusColor"
@@ -20,7 +20,7 @@ const OperationAliases: Record<OperationType, string> = {
   persisted: "P",
 }
 
-export interface NetworkTableDataRow {
+export interface INetworkTableDataRow {
   id: string
   type: OperationType
   name: string
@@ -32,10 +32,10 @@ export interface NetworkTableDataRow {
   responseBody: string
 }
 
-export type INetworkTableProps = {
-  data: NetworkTableDataRow[]
+export interface INetworkTableProps {
+  data: INetworkTableDataRow[]
   error?: string
-  onRowClick: (rowId: string | number, row: NetworkTableDataRow) => void
+  onRowClick: (rowId: string | number, row: INetworkTableDataRow) => void
   onRowSelect: (rowId: string | number) => void
   selectedRowId?: string | number | null
   showSingleColumn?: boolean
@@ -150,7 +150,7 @@ export const NetworkTable = (props: INetworkTableProps) => {
   })
 
   const columns = useMemo(() => {
-    const columns: TableProps<NetworkTableDataRow>["columns"] = [
+    const columns: ITableProps<INetworkTableDataRow>["columns"] = [
       {
         id: "query",
         Header: "Query / Mutation",

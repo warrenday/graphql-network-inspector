@@ -1,19 +1,19 @@
 import { createContext, useContext, useEffect, useState } from "react"
 import uniqid from "uniqid"
 import { chromeProvider } from "../services/chromeProvider"
-import { NetworkRequest } from "./useNetworkMonitor"
+import { INetworkRequest } from "./useNetworkMonitor"
 
-interface IShareMessageContextType {
-  shareNetworkRequest: (networkRequest: NetworkRequest) => void
+interface IShareMessageContext {
+  shareNetworkRequest: (networkRequest: INetworkRequest) => void
 }
 
-const ShareMessageContext = createContext<IShareMessageContextType>(null!)
+const ShareMessageContext = createContext<IShareMessageContext>(null!)
 
 interface IShareMessageProviderProps {
   children: React.ReactNode
 }
 
-const prepareSharePayload = (networkRequest: NetworkRequest) => {
+const prepareSharePayload = (networkRequest: INetworkRequest) => {
   const responseBody = networkRequest.response?.body
     ? JSON.parse(networkRequest.response?.body)
     : {}
@@ -68,7 +68,7 @@ export const ShareMessageProvider = (props: IShareMessageProviderProps) => {
     }
   }, [payload, sessionId])
 
-  const shareNetworkRequest = (networkRequest: NetworkRequest) => {
+  const shareNetworkRequest = (networkRequest: INetworkRequest) => {
     setPayload(prepareSharePayload(networkRequest))
 
     // We start by creating a new tab. The new tab will send us

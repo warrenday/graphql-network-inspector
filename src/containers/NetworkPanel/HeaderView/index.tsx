@@ -1,12 +1,12 @@
 import { useMemo } from "react"
-import { Header } from "../../../hooks/useNetworkMonitor"
+import { IHeader } from "../../../hooks/useNetworkMonitor"
 import { Panels, PanelSection } from "../PanelSection"
 import { CopyButton } from "../../../components/CopyButton"
 import { HeaderList } from "./HeaderList"
 
 interface IHeaderViewProps {
-  requestHeaders: Header[]
-  responseHeaders: Header[]
+  requestHeaders: IHeader[]
+  responseHeaders: IHeader[]
 }
 
 export const HeaderView = (props: IHeaderViewProps) => {

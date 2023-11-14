@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import { NetworkRequest } from "@/hooks/useNetworkMonitor"
+import { INetworkRequest } from "@/hooks/useNetworkMonitor"
 import { useSearch } from "@/hooks/useSearch"
 import { NetworkTabs } from "@/hooks/useNetworkTabs"
 import { getSearchResults, ISearchResult } from "@/services/searchService"
@@ -10,7 +10,7 @@ import { SearchInput } from "@/components/SearchInput"
 import { WebSocketNetworkRequest } from "@/hooks/useWebSocketNetworkMonitor"
 
 interface ISearchPanelProps {
-  networkRequests: NetworkRequest[]
+  networkRequests: INetworkRequest[]
   webSocketNetworkRequests: WebSocketNetworkRequest[]
   onResultClick: (
     searchResult: ISearchResult,

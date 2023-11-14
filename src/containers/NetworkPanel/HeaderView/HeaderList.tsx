@@ -1,16 +1,16 @@
 import { useMarkSearch } from "@/hooks/useMark"
-import { Header } from "@/hooks/useNetworkMonitor"
+import { IHeader } from "@/hooks/useNetworkMonitor"
 import useCopy from "../../../hooks/useCopy"
 
 interface IHeadersProps {
-  headers: Header[]
+  headers: IHeader[]
 }
 
-const HeaderListItem = (props: { header: Header }) => {
+const HeaderListItem = (props: { header: IHeader }) => {
   const { header } = props
   const { isCopied, copy } = useCopy()
 
-  const handleClick = (header: Header) => {
+  const handleClick = (header: IHeader) => {
     copy(`"${header.name}": "${header.value}"`)
   }
 

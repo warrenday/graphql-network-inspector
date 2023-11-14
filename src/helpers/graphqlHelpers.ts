@@ -10,7 +10,7 @@ export interface IGraphqlRequestBody {
   extensions?: Record<string, unknown>
 }
 
-export type OperationDetails = {
+export interface IOperationDetails {
   operationName: string
   operation: OperationType
 }
@@ -153,7 +153,7 @@ export const parseGraphqlRequest = (
 
 export const getPrimaryOperationForGetRequest = (
   details: chrome.devtools.network.Request
-): OperationDetails | null => {
+): IOperationDetails | null => {
   const operationNameParam = details.request.queryString.find(
     (qs) => qs.name === "operationName"
   )
@@ -296,7 +296,7 @@ const extractGraphQLPayloadFromRequest = (
 
 export const getPrimaryOperationForPostRequest = (
   details: chrome.devtools.network.Request
-): OperationDetails | null => {
+): IOperationDetails | null => {
   try {
     const request = extractGraphQLPayloadFromRequest(details)
     if (!request) {
@@ -349,7 +349,7 @@ export const getPrimaryOperationForPostRequest = (
 
 export const getPrimaryOperation = (
   details: chrome.devtools.network.Request
-): OperationDetails | null => {
+): IOperationDetails | null => {
   switch (details.request.method) {
     case "GET":
       return getPrimaryOperationForGetRequest(details)

@@ -2,15 +2,15 @@ import { ReactNode } from "react"
 import cx from "classnames"
 import { Header } from "../Header"
 
-export type Tab = {
+export type ITab = {
   id?: string
   title: string
   component: ReactNode
   bottomComponent?: ReactNode
 }
 
-export type TabsProps = {
-  tabs: Tab[]
+export interface ITabsProps {
+  tabs: ITab[]
   leftContent?: ReactNode
   rightContent?: ReactNode
   activeTab: number
@@ -18,7 +18,7 @@ export type TabsProps = {
   testId?: string
 }
 
-export const Tabs = (props: TabsProps) => {
+export const Tabs = (props: ITabsProps) => {
   const { tabs, leftContent, rightContent, activeTab, onTabClick, testId } =
     props
 

@@ -1,9 +1,9 @@
-import { NetworkTable, NetworkTableDataRow } from "./index"
+import { NetworkTable, INetworkTableDataRow } from "./index"
 import { fireEvent, within } from "@testing-library/react"
 import { render } from "../../../test-utils"
 import { DeepPartial } from "../../../types"
 
-const request: DeepPartial<NetworkTableDataRow> = {
+const request: DeepPartial<INetworkTableDataRow> = {
   time: 1000,
   status: 200,
   url: "https://someurl.com/graphql",
@@ -23,7 +23,7 @@ const data = [
     id: "3",
     ...request,
   },
-] as NetworkTableDataRow[]
+] as INetworkTableDataRow[]
 
 describe("NetworkTable", () => {
   it("Selects next row when pressing the down arrow", () => {

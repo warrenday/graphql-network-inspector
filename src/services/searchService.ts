@@ -3,7 +3,7 @@ import {
   getRequestSearchContent,
   getResponseSearchContent,
 } from "../helpers/getSearchContent"
-import { NetworkRequest } from "../hooks/useNetworkMonitor"
+import { INetworkRequest } from "../hooks/useNetworkMonitor"
 
 export interface ISearchResult {
   matches: {
@@ -11,12 +11,12 @@ export interface ISearchResult {
     response: boolean
     headers: boolean
   }
-  networkRequest: NetworkRequest
+  networkRequest: INetworkRequest
 }
 
 const getMatchedHeaders = (
   searchQuery: string,
-  networkRequests: NetworkRequest
+  networkRequests: INetworkRequest
 ): boolean => {
   return getHeaderSearchContent(networkRequests)
     .toLowerCase()
@@ -25,7 +25,7 @@ const getMatchedHeaders = (
 
 const getMatchedRequest = (
   searchQuery: string,
-  networkRequests: NetworkRequest
+  networkRequests: INetworkRequest
 ): boolean => {
   return getRequestSearchContent(networkRequests)
     .toLowerCase()
@@ -34,7 +34,7 @@ const getMatchedRequest = (
 
 const getMatchedResponse = (
   searchQuery: string,
-  networkRequests: NetworkRequest
+  networkRequests: INetworkRequest
 ): boolean => {
   return getResponseSearchContent(networkRequests)
     .toLowerCase()
@@ -43,7 +43,7 @@ const getMatchedResponse = (
 
 export const getSearchResults = (
   searchQuery: string,
-  networkRequests: NetworkRequest[]
+  networkRequests: INetworkRequest[]
 ): ISearchResult[] => {
   if (!searchQuery) {
     return []

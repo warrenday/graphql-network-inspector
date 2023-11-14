@@ -1,8 +1,8 @@
 import { useState } from "react"
 import { render, fireEvent } from "@testing-library/react"
-import { Tabs, Tab } from "./index"
+import { Tabs, ITab } from "./index"
 
-const tabs: Tab[] = [
+const tabs: ITab[] = [
   {
     title: "Tab One",
     component: <div>I am tab one</div>,
@@ -13,7 +13,7 @@ const tabs: Tab[] = [
   },
 ]
 
-const ControlledTabs = (props: { tabs: Tab[] }) => {
+const ControlledTabs = (props: { tabs: ITab[] }) => {
   const [activeTab, setActiveTab] = useState(0)
   return (
     <Tabs tabs={props.tabs} activeTab={activeTab} onTabClick={setActiveTab} />

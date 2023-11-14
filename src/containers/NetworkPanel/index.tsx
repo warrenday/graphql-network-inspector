@@ -1,11 +1,10 @@
 import { useState, useEffect, useMemo } from "react"
 import RegexParser from "regex-parser"
 import { SplitPaneLayout } from "@/components/Layout"
-import { NetworkRequest } from "@/hooks/useNetworkMonitor"
+import { INetworkRequest } from "@/hooks/useNetworkMonitor"
 import { onNavigate } from "@/services/networkMonitor"
-import { OperationType } from "@/helpers/graphqlHelpers"
 import { WebSocketNetworkRequest } from "@/hooks/useWebSocketNetworkMonitor"
-import { NetworkTable, NetworkTableDataRow } from "./NetworkTable"
+import { NetworkTable, INetworkTableDataRow } from "./NetworkTable"
 import { NetworkDetails } from "./NetworkDetails"
 import { Toolbar } from "../Toolbar"
 import WebSocketNetworkDetails from "./WebSocketNetworkDetails"
@@ -17,7 +16,7 @@ import {
 interface NetworkPanelProps {
   selectedRowId: string | number | null
   setSelectedRowId: (selectedRowId: string | number | null) => void
-  networkRequests: NetworkRequest[]
+  networkRequests: INetworkRequest[]
   webSocketNetworkRequests: WebSocketNetworkRequest[]
   clearWebRequests: () => void
 }
@@ -34,14 +33,14 @@ const getRegex = (str: string) => {
 }
 
 const filterNetworkRequests = (
-  networkRequests: NetworkRequest[],
+  networkRequests: INetworkRequest[],
   filterValue: string,
   options: {
     isInverted: boolean
     isRegex: boolean
     operationFilters: IOperationFilters
   }
-): { results: NetworkRequest[]; errorMessage?: string } => {
+): { results: INetworkRequest[]; errorMessage?: string } => {
   const regexResult = options.isRegex ? getRegex(filterValue) : null
   if (regexResult?.errorMessage) {
     return { results: [], errorMessage: regexResult.errorMessage }
@@ -113,7 +112,7 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
     })
   }, [isPreserveLogs, clearWebRequests])
 
-  const networkTableData = useMemo((): NetworkTableDataRow[] => {
+  const networkTableData = useMemo((): INetworkTableDataRow[] => {
     return filteredNetworkRequests.map((networkRequest) => {
       const { operationName = "", operation } =
         networkRequest.request.primaryOperation
@@ -131,7 +130,7 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
     })
   }, [filteredNetworkRequests])
 
-  const websocketTableData = useMemo((): NetworkTableDataRow[] => {
+  const websocketTableData = useMemo((): INetworkTableDataRow[] => {
     return filteredWebsocketNetworkRequests.map((websocketRequest) => {
       return {
         id: websocketRequest.id,
