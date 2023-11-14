@@ -1,9 +1,6 @@
 Must have
 
-- Unit tests
 - Set default tab when opening websocket view - in case of 3/4 tab open
-- Add x mins ago time to each message
-- handle messages with variables
 
 Nice to have
 

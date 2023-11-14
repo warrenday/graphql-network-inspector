@@ -11,7 +11,7 @@ const NetworkTabsContext = createContext<{
   activeTab: number
   setActiveTab: React.Dispatch<React.SetStateAction<number>>
 }>({
-  activeTab: 1,
+  activeTab: NetworkTabs.REQUEST,
   setActiveTab: () => null,
 })
 

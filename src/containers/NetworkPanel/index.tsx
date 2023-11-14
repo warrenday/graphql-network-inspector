@@ -3,7 +3,7 @@ import RegexParser from "regex-parser"
 import { SplitPaneLayout } from "@/components/Layout"
 import { INetworkRequest } from "@/hooks/useNetworkMonitor"
 import { onNavigate } from "@/services/networkMonitor"
-import { WebSocketNetworkRequest } from "@/hooks/useWebSocketNetworkMonitor"
+import { IWebSocketNetworkRequest } from "@/hooks/useWebSocketNetworkMonitor"
 import { NetworkTable, INetworkTableDataRow } from "./NetworkTable"
 import { NetworkDetails } from "./NetworkDetails"
 import { Toolbar } from "../Toolbar"
@@ -17,7 +17,7 @@ interface NetworkPanelProps {
   selectedRowId: string | number | null
   setSelectedRowId: (selectedRowId: string | number | null) => void
   networkRequests: INetworkRequest[]
-  webSocketNetworkRequests: WebSocketNetworkRequest[]
+  webSocketNetworkRequests: IWebSocketNetworkRequest[]
   clearWebRequests: () => void
 }
 

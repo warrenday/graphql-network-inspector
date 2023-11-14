@@ -4,18 +4,27 @@ import useInterval from "./useInterval"
 import { IHeader } from "./useNetworkMonitor"
 import * as safeJson from "@/helpers/safeJson"
 
-export interface WebSocketMessage {
+export interface IWebSocketMessage {
+  /**
+   * typically "receive" or "send"
+   */
   type: string
+  /**
+   * Time request occured in milliseconds
+   */
   time: number
-  data: object
+  /**
+   * Data sent or received
+   */
+  data: {}
 }
 
-export interface WebSocketNetworkRequest {
+export interface IWebSocketNetworkRequest {
   id: string
   status: number
   url: string
   method: string
-  messages: WebSocketMessage[]
+  messages: IWebSocketMessage[]
   request: {
     headers: IHeader[]
   }
@@ -24,7 +33,7 @@ export interface WebSocketNetworkRequest {
   }
 }
 
-interface WebSocketHAREntryMessage {
+interface IWebSocketHAREntryMessage {
   data: string
   opcode: number
   time: number
@@ -33,7 +42,7 @@ interface WebSocketHAREntryMessage {
 
 interface WebSocketHAREntry {
   _resourceType: "websocket"
-  _webSocketMessages: WebSocketHAREntryMessage[]
+  _webSocketMessages: IWebSocketHAREntryMessage[]
 }
 
 const isWebSocketEntry = (entry: any): entry is WebSocketHAREntry => {
@@ -42,16 +51,16 @@ const isWebSocketEntry = (entry: any): entry is WebSocketHAREntry => {
 
 const prepareWebSocketRequests = (
   har: chrome.devtools.network.HARLog
-): WebSocketNetworkRequest[] => {
+): IWebSocketNetworkRequest[] => {
   return har.entries.flatMap((entry, i) => {
     if (isWebSocketEntry(entry)) {
-      const websocketEntry: WebSocketNetworkRequest = {
-        id: "subscription",
+      const websocketEntry: IWebSocketNetworkRequest = {
+        id: `subscription-${i}`,
         status: entry.response.status,
         url: entry.request.url,
         method: entry.request.method,
         // Reverse messages to get newest first
-        messages: entry._webSocketMessages.reverse().flatMap((message) => {
+        messages: entry._webSocketMessages.flatMap((message) => {
           const data = safeJson.parse<{
             type: string
             payload: {}
@@ -88,7 +97,7 @@ export const useWebSocketNetworkMonitor = (
   options: IUseWebSocketNetworkOptions = { isEnabled: true }
 ) => {
   const [webSocketRequests, setWebSocketRequests] = useState<
-    WebSocketNetworkRequest[]
+    IWebSocketNetworkRequest[]
   >([])
 
   const clearWebSocketRequests = useCallback(() => {

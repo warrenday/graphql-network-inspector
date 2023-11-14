@@ -507,11 +507,11 @@ export const mockRequests = [
         data: JSON.stringify({
           type: "data",
           payload: {
-            data: { reviewAdded: { stars: 4, episode: "NEWHOPE" } },
+            data: { reviewAdded: { stars: 4, episode: "CLONE_WARS" } },
           },
         }),
         opcode: 1,
-        time: 1099.4580000406131,
+        time: 1699975911.862162,
         type: "send",
       },
       {
@@ -522,7 +522,7 @@ export const mockRequests = [
           },
         }),
         opcode: 1,
-        time: 1099.4580000406131,
+        time: 1699975982.2748342,
         type: "send",
       },
     ],

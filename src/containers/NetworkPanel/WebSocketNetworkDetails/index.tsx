@@ -1,12 +1,13 @@
+import { useEffect } from "react"
 import { CloseButton } from "../../../components/CloseButton"
 import { Tabs } from "../../../components/Tabs"
-import { useNetworkTabs } from "../../../hooks/useNetworkTabs"
-import { WebSocketNetworkRequest } from "../../../hooks/useWebSocketNetworkMonitor"
+import { NetworkTabs, useNetworkTabs } from "../../../hooks/useNetworkTabs"
+import { IWebSocketNetworkRequest } from "../../../hooks/useWebSocketNetworkMonitor"
 import { HeaderView } from "../HeaderView"
 import MessageView from "./MessageView"
 
 interface WebSocketNetworkDetailsProps {
-  data: WebSocketNetworkRequest
+  data: IWebSocketNetworkRequest
   onClose: () => void
 }
 
@@ -15,6 +16,14 @@ const WebSocketNetworkDetails = (props: WebSocketNetworkDetailsProps) => {
   const { activeTab, setActiveTab } = useNetworkTabs()
   const requestHeaders = data.request.headers
   const responseHeaders = data.response?.headers || []
+
+  // Ensure we reset tab position if out of range for
+  // websocket view.
+  useEffect(() => {
+    if (activeTab !== NetworkTabs.HEADER && activeTab !== NetworkTabs.REQUEST) {
+      setActiveTab(NetworkTabs.REQUEST)
+    }
+  }, [activeTab, setActiveTab])
 
   return (
     <Tabs
