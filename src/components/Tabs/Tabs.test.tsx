@@ -20,18 +20,20 @@ const ControlledTabs = (props: { tabs: ITab[] }) => {
   )
 }
 
-test("renders the first tab as the default active tab", () => {
-  const { queryByText } = render(<ControlledTabs tabs={tabs} />)
+describe("Tabs", () => {
+  it("renders the first tab as the default active tab", () => {
+    const { queryByText } = render(<ControlledTabs tabs={tabs} />)
 
-  expect(queryByText(/I am tab one/)).toBeInTheDocument()
-  expect(queryByText(/I am tab two/)).not.toBeInTheDocument()
-})
+    expect(queryByText(/I am tab one/)).toBeInTheDocument()
+    expect(queryByText(/I am tab two/)).not.toBeInTheDocument()
+  })
 
-test("changes the active tab when button clicked", () => {
-  const { getByText, queryByText } = render(<ControlledTabs tabs={tabs} />)
+  it("changes the active tab when button clicked", () => {
+    const { getByText, queryByText } = render(<ControlledTabs tabs={tabs} />)
 
-  fireEvent.click(getByText(/Tab Two/))
+    fireEvent.click(getByText(/Tab Two/))
 
-  expect(queryByText(/I am tab one/)).not.toBeInTheDocument()
-  expect(queryByText(/I am tab two/)).toBeInTheDocument()
+    expect(queryByText(/I am tab one/)).not.toBeInTheDocument()
+    expect(queryByText(/I am tab two/)).toBeInTheDocument()
+  })
 })
