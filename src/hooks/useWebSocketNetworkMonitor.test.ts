@@ -71,7 +71,7 @@ describe("useWebSocketNetworkMonitor", () => {
 
     expect(result.current[0]).toEqual([
       {
-        id: "subscription",
+        id: "subscription-1",
         status: 101,
         url: "ws://localhost:4000/graphql",
         method: "GET",
