@@ -29,6 +29,7 @@ const QuickFilterButton = (props: IQuickFilterButtonProps) => {
       variant={variant}
       onClick={onClick}
       icon={<Pill className={active ? activeColor : "bg-gray-400"} />}
+      className="whitespace-nowrap"
     >
       {children}
     </Button>
@@ -80,7 +81,7 @@ export const QuickFiltersContainer = () => {
           active={operationFilters.subscription}
           activeColor={theme.operationColors.subscription.bg}
         >
-          Subscriptions
+          Subscriptions (Beta)
         </QuickFilterButton>
       </div>
     </Bar>

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useState } from "react"
 import { SplitPaneLayout } from "@/components/Layout"
 import { useNetworkMonitor } from "@/hooks/useNetworkMonitor"
 import { useSearch } from "@/hooks/useSearch"
