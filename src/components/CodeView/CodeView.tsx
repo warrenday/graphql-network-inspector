@@ -38,6 +38,10 @@ const CodeRenderer = (props: ICodeViewProps) => {
   const { markup: jsonMarkup, loading } = useHighlight(language, formattedText)
   const ref = useMarkSearch(jsonMarkup)
 
+  // TODO
+  // When mark returns results. Show a component to jump to the next/previous
+  // When the component renders also jump to the first result.
+
   return (
     <DelayedLoader loading={loading} loader={<LoadingIndicator />}>
       <pre>
