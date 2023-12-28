@@ -1,3 +1,4 @@
+import { useMemo } from "react"
 import { Tabs } from "@/components/Tabs"
 import { INetworkRequest } from "@/hooks/useNetworkMonitor"
 import { HeaderView } from "../HeaderView"
@@ -10,8 +11,6 @@ import { CloseButton } from "@/components/CloseButton"
 import { useApolloTracing } from "@/hooks/useApolloTracing"
 import { useToggle } from "@/hooks/useToggle"
 import { useShareMessage } from "../../../hooks/useShareMessage"
-import { useEffect, useMemo } from "react"
-import { useSearch } from "../../../hooks/useSearch"
 
 export interface INetworkDetailsProps {
   data: INetworkRequest
