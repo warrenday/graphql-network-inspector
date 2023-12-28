@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react"
+import { useCallback, useEffect, useRef } from "react"
 import Mark from "mark.js"
 import { useSearch } from "./useSearch"
 
@@ -8,7 +8,11 @@ import { useSearch } from "./useSearch"
  *
  * @returns ref to the element to mark
  */
-export const useMark = (searchQuery: string, content?: string) => {
+export const useMark = (
+  searchQuery: string,
+  content?: string,
+  done?: () => void
+) => {
   const ref = useRef(null)
 
   useEffect(() => {
@@ -20,12 +24,13 @@ export const useMark = (searchQuery: string, content?: string) => {
     mark.mark(searchQuery, {
       caseSensitive: false,
       separateWordSearch: false,
+      done,
     })
 
     return () => {
       mark.unmark()
     }
-  }, [ref, searchQuery, content])
+  }, [ref, searchQuery, content, done])
 
   return ref
 }
@@ -38,7 +43,14 @@ export const useMark = (searchQuery: string, content?: string) => {
  */
 export const useMarkSearch = (content?: string) => {
   const { searchQuery } = useSearch()
-  const ref = useMark(searchQuery, content)
+
+  // Once mark is complete we can jump to the first result
+  const onMarkDone = useCallback(() => {
+    const element = document.querySelector('mark[data-markjs="true"]')
+    element?.scrollIntoView()
+  }, [])
+
+  const ref = useMark(searchQuery, content, onMarkDone)
 
   return ref
 }

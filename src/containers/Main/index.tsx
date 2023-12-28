@@ -5,7 +5,6 @@ import { useSearch } from "@/hooks/useSearch"
 import { useNetworkTabs } from "@/hooks/useNetworkTabs"
 import { NetworkPanel } from "../NetworkPanel"
 import { SearchPanel } from "../SearchPanel"
-import { SupportPopover } from "../../components/SupportPopover"
 import { useWebSocketNetworkMonitor } from "../../hooks/useWebSocketNetworkMonitor"
 import { useOperationFilters } from "../../hooks/useOperationFilters"
 
@@ -52,7 +51,6 @@ export const Main = () => {
           />
         }
       />
-      <SupportPopover />
     </>
   )
 }

@@ -10,7 +10,8 @@ import { CloseButton } from "@/components/CloseButton"
 import { useApolloTracing } from "@/hooks/useApolloTracing"
 import { useToggle } from "@/hooks/useToggle"
 import { useShareMessage } from "../../../hooks/useShareMessage"
-import { useMemo } from "react"
+import { useEffect, useMemo } from "react"
+import { useSearch } from "../../../hooks/useSearch"
 
 export interface INetworkDetailsProps {
   data: INetworkRequest
