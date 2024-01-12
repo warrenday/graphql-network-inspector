@@ -1,8 +1,8 @@
 import { render } from "@testing-library/react"
 import { useMark } from "./useMark"
 
-const TestComponent = (props: { search: string }) => {
-  const ref = useMark(props.search)
+const TestComponent = (props: { search: string; done?: () => void }) => {
+  const ref = useMark(props.search, "", props.done)
   return (
     <div ref={ref} data-testid="target">
       The quick brown fox jumps over the lazy dog again
@@ -32,10 +32,18 @@ describe("useMark", () => {
 
     const markedElements = container.querySelectorAll("mark")
 
-    // There are three "a"s in the test text and they should all be marked
     expect(markedElements).toHaveLength(1)
     markedElements.forEach((element) => {
       expect(element).toHaveTextContent("brown fox")
     })
+  })
+
+  it("should call done callback when mark finished", () => {
+    const search = "Brown Fox"
+    const done = jest.fn()
+
+    render(<TestComponent search={search} done={done} />)
+
+    expect(done).toHaveBeenCalledTimes(1)
   })
 })

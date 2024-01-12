@@ -24,7 +24,7 @@ export const useMark = (
     mark.mark(searchQuery, {
       caseSensitive: false,
       separateWordSearch: false,
-      done,
+      done: () => done?.(),
     })
 
     return () => {
@@ -37,7 +37,8 @@ export const useMark = (
 
 /**
  * Mark text that has been searched from the search provider.
- * @param content Optional content to listen for changes to causing mark to re-run.
+ *
+ * @param content Optional string to cause mark to re-run when changed.
  *
  * @returns ref to the element to mark
  */

@@ -15,3 +15,5 @@ Object.defineProperty(window, "matchMedia", {
     dispatchEvent: jest.fn(),
   }),
 })
+
+window.HTMLElement.prototype.scrollIntoView = function () {}
