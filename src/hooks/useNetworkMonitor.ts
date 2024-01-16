@@ -6,12 +6,19 @@ import {
   IOperationDetails,
   IGraphqlRequestBody,
 } from "../helpers/graphqlHelpers"
-import { onRequestFinished, getHAR } from "../services/networkMonitor"
+import {
+  onRequestFinished,
+  onBeforeRequest,
+  onBeforeSendHeaders,
+  getHAR,
+} from "../services/networkMonitor"
+import mergeBy from "mergeby"
 
 export interface IHeader {
   name: string
   value?: string
 }
+
 export interface INetworkRequest {
   id: string
   status: number
@@ -21,20 +28,124 @@ export interface INetworkRequest {
   request: {
     primaryOperation: IOperationDetails
     headers: IHeader[]
-    body: IGraphqlRequestBody[]
     headersSize: number
+    body: IGraphqlRequestBody[]
     bodySize: number
   }
   response?: {
-    headers?: IHeader[]
-    body?: string
+    headers: IHeader[]
     headersSize: number
+    body: string
     bodySize: number
   }
 }
 
-export const useNetworkMonitor = () => {
-  const [webRequests, setWebRequests] = useState<INetworkRequest[]>([])
+// Ephemeral interface to allow us to build a network request
+// from the various events that fire. We'll ensure the request is complete
+// and populated before we output from the useNetworkMonitor hook.
+interface IIncompleteNetworkRequest extends Omit<INetworkRequest, "request"> {
+  request?: Partial<INetworkRequest["request"]>
+}
+
+const isComplete = (
+  networkRequest: IIncompleteNetworkRequest
+): networkRequest is INetworkRequest => {
+  return (
+    networkRequest.request !== undefined &&
+    networkRequest.request.headers !== undefined &&
+    networkRequest.request.body !== undefined
+  )
+}
+
+export const useNetworkMonitor = (): [INetworkRequest[], () => void] => {
+  const [webRequests, setWebRequests] = useState<IIncompleteNetworkRequest[]>(
+    []
+  )
+
+  const handleBeforeRequest = useCallback(
+    (details: chrome.webRequest.WebRequestBodyDetails) => {
+      const rawBody = details.requestBody?.raw?.[0]?.bytes
+      const decoder = new TextDecoder("utf-8")
+      const body = rawBody ? decoder.decode(rawBody) : undefined
+      // TODO i think there is different encoding if it is a form data request
+      // so we need to test and handle.
+
+      const primaryOperation = getPrimaryOperation(details)
+      if (!primaryOperation) {
+        return
+      }
+
+      const graphqlRequestBody = parseGraphqlRequest(details)
+      if (!graphqlRequestBody) {
+        return
+      }
+
+      setWebRequests((webRequests) => {
+        const matchingWebRequestIndex = webRequests.findIndex(
+          (webRequest) => webRequest.id === details.requestId
+        )
+
+        // id: details.requestId,
+        // status: 0,
+        // url: details.url,
+        // time: 0,
+        // method: details.method,
+
+        const newWebRequest: Partial<IIncompleteNetworkRequest> = {
+          request: {
+            primaryOperation,
+            body: graphqlRequestBody.map((requestBody) => ({
+              id: uuid(),
+              ...requestBody,
+            })),
+            bodySize: body ? body.length : 0,
+          },
+        }
+
+        if (matchingWebRequestIndex) {
+          return webRequests.map((webRequest, index) => {
+            if (index !== matchingWebRequestIndex) {
+              return webRequest
+            }
+            return {
+              ...webRequest,
+              request: {
+                ...webRequest.request,
+                newWebRequest,
+              },
+            }
+          })
+        } else {
+          return webRequests.concat(newWebRequest)
+        }
+      })
+    },
+    [setWebRequests]
+  )
+
+  const handleBeforeSendHeaders = useCallback(
+    (details: chrome.webRequest.WebRequestHeadersDetails) => {
+      setWebRequests((webRequests) => {
+        return mergeBy(
+          webRequests,
+          {
+            id: details.requestId,
+            request: {
+              headers: details.requestHeaders,
+              headersSize: (details.requestHeaders || []).reduce(
+                (acc, header) =>
+                  acc + header.name.length + (header.value?.length || 0),
+                0
+              ),
+            },
+          },
+          "id",
+          true
+        )
+      })
+    },
+    [setWebRequests]
+  )
 
   const handleRequestFinished = useCallback(
     (details: chrome.devtools.network.Request) => {
@@ -61,9 +172,9 @@ export const useNetworkMonitor = () => {
           request: {
             primaryOperation,
             headers: details.request.headers,
-            body: graphqlRequestBody.map((request) => ({
+            body: graphqlRequestBody.map((requestBody) => ({
               id: uuid(),
-              ...request,
+              ...requestBody,
             })),
             headersSize: details.request.headersSize,
             bodySize: details.request.bodySize,
@@ -99,10 +210,11 @@ export const useNetworkMonitor = () => {
     [setWebRequests]
   )
 
-  const clearWebRequests = () => {
+  const clearWebRequests = useCallback(() => {
     setWebRequests([])
-  }
+  }, [setWebRequests])
 
+  // Collect historic network data in case any events fired before we started listening
   useEffect(() => {
     const fetchHistoricWebRequests = async () => {
       const HARLog = await getHAR()
@@ -115,11 +227,23 @@ export const useNetworkMonitor = () => {
 
     clearWebRequests()
     fetchHistoricWebRequests()
-  }, [handleRequestFinished])
+  }, [handleRequestFinished, clearWebRequests])
+
+  // Setup listeners for network data
+  useEffect(() => {
+    return onBeforeRequest(handleBeforeRequest)
+  }, [handleBeforeRequest])
+
+  useEffect(() => {
+    return onBeforeSendHeaders(handleBeforeSendHeaders)
+  }, [handleBeforeSendHeaders])
 
   useEffect(() => {
     return onRequestFinished(handleRequestFinished)
   }, [handleRequestFinished])
 
-  return [webRequests, clearWebRequests] as const
+  // Only return complete networkRequests.
+  const completeWebRequests = webRequests.filter(isComplete)
+
+  return [completeWebRequests, clearWebRequests] as const
 }
