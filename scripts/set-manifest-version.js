@@ -6,6 +6,7 @@ const run = async () => {
   const json = await fs.promises.readFile(manifestPath, "utf-8")
   const manifest = JSON.parse(json)
   manifest.version = packageJson.version
+  manifest.name = "GraphQL Network Inspector"
   await fs.promises.writeFile(manifestPath, JSON.stringify(manifest, null, 2))
 }
 run()
