@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from "react"
 import { v4 as uuid } from "uuid"
 import {
-  getPrimaryOperation,
-  parseGraphqlRequest,
   IOperationDetails,
   IGraphqlRequestBody,
+  parseGraphqlBody,
+  getFirstGraphqlOperation,
 } from "../helpers/graphqlHelpers"
 import {
   onRequestFinished,
@@ -12,7 +12,10 @@ import {
   onBeforeSendHeaders,
   getHAR,
 } from "../services/networkMonitor"
-import mergeBy from "mergeby"
+import {
+  getRequestBody,
+  matchWebAndNetworkRequest,
+} from "../helpers/networkHelpers"
 
 export interface IHeader {
   name: string
@@ -38,6 +41,10 @@ export interface INetworkRequest {
     body: string
     bodySize: number
   }
+  native: {
+    webRequest: chrome.webRequest.WebRequestBodyDetails
+    networkRequest?: chrome.devtools.network.Request
+  }
 }
 
 // Ephemeral interface to allow us to build a network request
@@ -47,7 +54,7 @@ interface IIncompleteNetworkRequest extends Omit<INetworkRequest, "request"> {
   request?: Partial<INetworkRequest["request"]>
 }
 
-const isComplete = (
+const isRequestComplete = (
   networkRequest: IIncompleteNetworkRequest
 ): networkRequest is INetworkRequest => {
   return (
@@ -64,60 +71,42 @@ export const useNetworkMonitor = (): [INetworkRequest[], () => void] => {
 
   const handleBeforeRequest = useCallback(
     (details: chrome.webRequest.WebRequestBodyDetails) => {
-      const rawBody = details.requestBody?.raw?.[0]?.bytes
-      const decoder = new TextDecoder("utf-8")
-      const body = rawBody ? decoder.decode(rawBody) : undefined
-      // TODO i think there is different encoding if it is a form data request
-      // so we need to test and handle.
-
-      const primaryOperation = getPrimaryOperation(details)
-      if (!primaryOperation) {
+      const body = getRequestBody(details)
+      if (!body) {
         return
       }
 
-      const graphqlRequestBody = parseGraphqlRequest(details)
+      const graphqlRequestBody = parseGraphqlBody(body)
       if (!graphqlRequestBody) {
         return
       }
 
+      const primaryOperation = getFirstGraphqlOperation(graphqlRequestBody)
+      if (!primaryOperation) {
+        return
+      }
+
       setWebRequests((webRequests) => {
-        const matchingWebRequestIndex = webRequests.findIndex(
-          (webRequest) => webRequest.id === details.requestId
-        )
-
-        // id: details.requestId,
-        // status: 0,
-        // url: details.url,
-        // time: 0,
-        // method: details.method,
-
-        const newWebRequest: Partial<IIncompleteNetworkRequest> = {
+        const newWebRequest: IIncompleteNetworkRequest = {
+          id: details.requestId,
+          status: 0,
+          url: details.url,
+          time: 0,
+          method: details.method,
           request: {
             primaryOperation,
             body: graphqlRequestBody.map((requestBody) => ({
-              id: uuid(),
               ...requestBody,
+              id: uuid(),
             })),
             bodySize: body ? body.length : 0,
           },
+          native: {
+            webRequest: details,
+          },
         }
 
-        if (matchingWebRequestIndex) {
-          return webRequests.map((webRequest, index) => {
-            if (index !== matchingWebRequestIndex) {
-              return webRequest
-            }
-            return {
-              ...webRequest,
-              request: {
-                ...webRequest.request,
-                newWebRequest,
-              },
-            }
-          })
-        } else {
-          return webRequests.concat(newWebRequest)
-        }
+        return webRequests.concat(newWebRequest)
       })
     },
     [setWebRequests]
@@ -126,11 +115,15 @@ export const useNetworkMonitor = (): [INetworkRequest[], () => void] => {
   const handleBeforeSendHeaders = useCallback(
     (details: chrome.webRequest.WebRequestHeadersDetails) => {
       setWebRequests((webRequests) => {
-        return mergeBy(
-          webRequests,
-          {
-            id: details.requestId,
+        return webRequests.map((webRequest) => {
+          if (webRequest.id !== details.requestId) {
+            return webRequest
+          }
+
+          return {
+            ...webRequest,
             request: {
+              ...webRequest.request,
               headers: details.requestHeaders,
               headersSize: (details.requestHeaders || []).reduce(
                 (acc, header) =>
@@ -138,10 +131,8 @@ export const useNetworkMonitor = (): [INetworkRequest[], () => void] => {
                 0
               ),
             },
-          },
-          "id",
-          true
-        )
+          }
+        })
       })
     },
     [setWebRequests]
@@ -149,60 +140,49 @@ export const useNetworkMonitor = (): [INetworkRequest[], () => void] => {
 
   const handleRequestFinished = useCallback(
     (details: chrome.devtools.network.Request) => {
-      const primaryOperation = getPrimaryOperation(details)
-
-      if (!primaryOperation) {
+      const body = getRequestBody(details)
+      if (!body) {
         return
       }
 
-      const requestId = uuid()
-      const graphqlRequestBody = parseGraphqlRequest(details)
-
+      const graphqlRequestBody = parseGraphqlBody(body)
       if (!graphqlRequestBody) {
         return
       }
 
-      setWebRequests((webRequests) =>
-        webRequests.concat({
-          id: requestId,
-          status: details.response.status,
-          url: details.request.url,
-          time: details.time === -1 || !details.time ? 0 : details.time,
-          method: details.request.method,
-          request: {
-            primaryOperation,
-            headers: details.request.headers,
-            body: graphqlRequestBody.map((requestBody) => ({
-              id: uuid(),
-              ...requestBody,
-            })),
-            headersSize: details.request.headersSize,
-            bodySize: details.request.bodySize,
-          },
-          response: {
-            headers: details.response.headers,
-            headersSize: details.response.headersSize,
-            bodySize:
-              details.response.bodySize === -1
-                ? details.response._transferSize || 0
-                : details.response.bodySize,
-          },
-        })
-      )
+      const primaryOperation = getFirstGraphqlOperation(graphqlRequestBody)
+      if (!primaryOperation) {
+        return
+      }
 
       details.getContent((responseBody) => {
         setWebRequests((webRequests) => {
           return webRequests.map((webRequest) => {
-            if (webRequest.id !== requestId) {
+            const isMatch = matchWebAndNetworkRequest(
+              webRequest.native?.webRequest,
+              details
+            )
+            if (!isMatch) {
               return webRequest
             }
+
             return {
               ...webRequest,
+              id: webRequest.id,
+              status: details.response.status,
+              url: details.request.url,
+              time: details.time === -1 || !details.time ? 0 : details.time,
+              method: details.request.method,
               response: {
-                ...webRequest.response,
-                body: responseBody || "",
+                headers: details.response.headers,
+                headersSize: details.response.headersSize,
+                bodySize:
+                  details.response.bodySize === -1
+                    ? details.response._transferSize || 0
+                    : details.response.bodySize,
+                body: responseBody,
               },
-            } as INetworkRequest
+            }
           })
         })
       })
@@ -243,7 +223,8 @@ export const useNetworkMonitor = (): [INetworkRequest[], () => void] => {
   }, [handleRequestFinished])
 
   // Only return complete networkRequests.
-  const completeWebRequests = webRequests.filter(isComplete)
+  const completeWebRequests = webRequests.filter(isRequestComplete)
 
+  // @ts-ignore
   return [completeWebRequests, clearWebRequests] as const
 }

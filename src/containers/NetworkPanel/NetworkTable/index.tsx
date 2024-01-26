@@ -95,7 +95,7 @@ const Status = ({ status }: { status?: number }) => {
           marginTop: "-1px",
         }}
       />
-      {status || "cancelled"}
+      {status || "pending"}
     </div>
   )
 }

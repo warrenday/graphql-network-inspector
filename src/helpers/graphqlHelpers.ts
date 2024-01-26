@@ -58,6 +58,7 @@ const isParsedGraphqlRequestValid = (
       payload.extensions?.persistedQuery
     const isVariablesValid =
       "variables" in payload ? typeof payload.variables === "object" : true
+
     return isQueryValid && isVariablesValid
   })
 
@@ -149,50 +150,6 @@ export const parseGraphqlRequest = (
     default:
       return null
   }
-}
-
-export const getPrimaryOperationForGetRequest = (
-  details: chrome.devtools.network.Request
-): IOperationDetails | null => {
-  const operationNameParam = details.request.queryString.find(
-    (qs) => qs.name === "operationName"
-  )
-
-  const operationName = operationNameParam?.value
-
-  if (!operationName) {
-    return null
-  }
-
-  const queryParam = details.request.queryString.find(
-    (qs) => qs.name === "query"
-  )
-
-  const query = queryParam && decodeQueryParam(queryParam.value)
-
-  if (!!query) {
-    return {
-      operationName: operationNameParam.value,
-      operation: "query",
-    }
-  }
-
-  const extensionsParam = details.request.queryString.find(
-    (qs) => qs.name === "extensions"
-  )
-
-  const extensions =
-    extensionsParam && extractExtensionsFromQueryParam(extensionsParam.value)
-  const isPersistedQuery = !!extensions?.persistedQuery
-
-  if (isPersistedQuery) {
-    return {
-      operationName: operationNameParam.value,
-      operation: "persisted",
-    }
-  }
-
-  return null
 }
 
 /**
@@ -294,6 +251,50 @@ const extractGraphQLPayloadFromRequest = (
   }
 }
 
+export const getPrimaryOperationForGetRequest = (
+  details: chrome.devtools.network.Request
+): IOperationDetails | null => {
+  const operationNameParam = details.request.queryString.find(
+    (qs) => qs.name === "operationName"
+  )
+
+  const operationName = operationNameParam?.value
+
+  if (!operationName) {
+    return null
+  }
+
+  const queryParam = details.request.queryString.find(
+    (qs) => qs.name === "query"
+  )
+
+  const query = queryParam && decodeQueryParam(queryParam.value)
+
+  if (!!query) {
+    return {
+      operationName: operationNameParam.value,
+      operation: "query",
+    }
+  }
+
+  const extensionsParam = details.request.queryString.find(
+    (qs) => qs.name === "extensions"
+  )
+
+  const extensions =
+    extensionsParam && extractExtensionsFromQueryParam(extensionsParam.value)
+  const isPersistedQuery = !!extensions?.persistedQuery
+
+  if (isPersistedQuery) {
+    return {
+      operationName: operationNameParam.value,
+      operation: "persisted",
+    }
+  }
+
+  return null
+}
+
 export const getPrimaryOperationForPostRequest = (
   details: chrome.devtools.network.Request
 ): IOperationDetails | null => {
@@ -357,6 +358,45 @@ export const getPrimaryOperation = (
       return getPrimaryOperationForPostRequest(details)
     default:
       return null
+  }
+}
+
+export const parseGraphqlBody = (body: string) => {
+  const requestPayload = JSON.parse(body)
+  const requestPayloads = Array.isArray(requestPayload)
+    ? requestPayload
+    : [requestPayload]
+
+  if (!isParsedGraphqlRequestValid(requestPayloads)) {
+    throw new Error("Parsed requestBody is invalid")
+  } else {
+    return requestPayloads
+  }
+}
+
+export const getFirstGraphqlOperation = (
+  graphqlBody: IGraphqlRequestBody[]
+) => {
+  if (graphqlBody[0].query) {
+    const documentNode = parseGraphqlQuery(graphqlBody[0].query)
+    const firstOperationDefinition = documentNode.definitions.find(
+      (def) => def.kind === "OperationDefinition"
+    ) as OperationDefinitionNode
+    const field = firstOperationDefinition.selectionSet.selections.find(
+      (selection) => selection.kind === "Field"
+    ) as FieldNode
+    const operationName =
+      firstOperationDefinition.name?.value || field?.name.value
+    const operation = firstOperationDefinition?.operation
+
+    if (!operationName) {
+      throw new Error("Operation name could not be determined")
+    }
+
+    return {
+      operationName,
+      operation,
+    }
   }
 }
 
