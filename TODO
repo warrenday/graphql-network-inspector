@@ -1,3 +1,6 @@
 Nice to have
 
 - Allow sorting of messages by time ascending/descending
+- Allow clearing of websocket messages
+- Render messages with graphql query and variables
+- Show collapsed view of messages
