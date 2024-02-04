@@ -10,7 +10,7 @@ interface IMessageViewProps {
 }
 
 /**
- * Retuens the time the message was sent in a human readable format
+ * Returns the time the message was sent in a human readable format
  *
  * @param time time in milliseconds
  * @returns

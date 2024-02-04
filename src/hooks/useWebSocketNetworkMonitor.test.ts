@@ -198,7 +198,7 @@ describe("useWebSocketNetworkMonitor", () => {
     ])
   })
 
-  it('only returns sent requests from entries to a url containing "graphql" term', async () => {
+  it('only returns messages from entries to a url containing "graphql" term', async () => {
     mockGetHAR.mockResolvedValue({
       entries: [
         {
