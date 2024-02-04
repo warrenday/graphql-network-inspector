@@ -505,9 +505,9 @@ export const mockRequests = [
     _webSocketMessages: [
       {
         data: JSON.stringify({
-          type: "data",
           payload: {
-            data: { reviewAdded: { stars: 4, episode: "CLONE_WARS" } },
+            query: "subscription { reviewAdded { stars episode } }",
+            variables: {},
           },
         }),
         opcode: 1,
@@ -516,14 +516,23 @@ export const mockRequests = [
       },
       {
         data: JSON.stringify({
-          type: "data",
+          payload: {
+            data: { reviewAdded: { stars: 4, episode: "CLONE_WARS" } },
+          },
+        }),
+        opcode: 1,
+        time: 1699975911.862162,
+        type: "receive",
+      },
+      {
+        data: JSON.stringify({
           payload: {
             data: { reviewAdded: { stars: 4, episode: "NEWHOPE" } },
           },
         }),
         opcode: 1,
         time: 1699975982.2748342,
-        type: "send",
+        type: "receive",
       },
     ],
   },

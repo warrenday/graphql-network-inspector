@@ -64,6 +64,14 @@ const isParsedGraphqlRequestValid = (
   return isValid
 }
 
+export const isGraphqlQuery = (queryString: string) => {
+  try {
+    return !!parseGraphqlQuery(queryString)
+  } catch (e) {
+    return false
+  }
+}
+
 export const parseGraphqlQuery = (queryString: any) => {
   return gql`
     ${queryString}

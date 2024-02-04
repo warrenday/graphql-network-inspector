@@ -3,6 +3,7 @@ import { getHAR } from "../services/networkMonitor"
 import useInterval from "./useInterval"
 import { IHeader } from "./useNetworkMonitor"
 import * as safeJson from "@/helpers/safeJson"
+import { isGraphqlQuery } from "../helpers/graphqlHelpers"
 
 export interface IWebSocketMessage {
   /**
@@ -16,7 +17,7 @@ export interface IWebSocketMessage {
   /**
    * Data sent or received
    */
-  data: {}
+  data: Record<string, any>
 }
 
 export interface IWebSocketNetworkRequest {
@@ -43,36 +44,64 @@ interface IWebSocketHAREntryMessage {
 interface WebSocketHAREntry {
   _resourceType: "websocket"
   _webSocketMessages: IWebSocketHAREntryMessage[]
+  request: {
+    url: string
+  }
 }
 
 const isWebSocketEntry = (entry: any): entry is WebSocketHAREntry => {
   return entry._resourceType === "websocket"
 }
 
+const isGraphQLWebsocketEntry = (entry: WebSocketHAREntry) => {
+  return entry.request.url.includes("graphql")
+}
+
+const isGraphQLPayload = (
+  type: string,
+  payload?: Record<string, any>
+): payload is {} => {
+  if (!payload) {
+    return false
+  }
+
+  if (type === "send") {
+    const hasQuery = payload.hasOwnProperty("query")
+    return hasQuery && isGraphqlQuery(payload.query)
+  }
+
+  if (type === "receive") {
+    return payload.hasOwnProperty("data")
+  }
+
+  return false
+}
+
 const prepareWebSocketRequests = (
   har: chrome.devtools.network.HARLog
 ): IWebSocketNetworkRequest[] => {
   return har.entries.flatMap((entry, i) => {
-    if (isWebSocketEntry(entry)) {
+    if (isWebSocketEntry(entry) && isGraphQLWebsocketEntry(entry)) {
       const websocketEntry: IWebSocketNetworkRequest = {
         id: `subscription-${i}`,
         status: entry.response.status,
         url: entry.request.url,
         method: entry.request.method,
-        // Reverse messages to get newest first
         messages: entry._webSocketMessages.flatMap((message) => {
-          const data = safeJson.parse<{
-            type: string
-            payload: {}
-          }>(message.data)
-          if (!data || data.type !== "data") {
+          const messageData =
+            safeJson.parse<{
+              payload: {}
+            }>(message.data) || undefined
+
+          const payload = messageData?.payload
+          if (!isGraphQLPayload(message.type, payload)) {
             return []
           }
 
           return {
             type: message.type,
             time: message.time,
-            data: data.payload,
+            data: payload,
           }
         }),
         request: {
@@ -110,7 +139,7 @@ export const useWebSocketNetworkMonitor = (
     setWebSocketRequests(websocketRequests)
   }, [setWebSocketRequests])
 
-  useInterval(fetchWebSocketRequests, 1000, { isRunning: options.isEnabled })
+  useInterval(fetchWebSocketRequests, 2000, { isRunning: options.isEnabled })
 
   return [webSocketRequests, clearWebSocketRequests] as const
 }
