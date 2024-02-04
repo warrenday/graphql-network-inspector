@@ -44,10 +44,17 @@ interface IWebSocketHAREntryMessage {
 interface WebSocketHAREntry {
   _resourceType: "websocket"
   _webSocketMessages: IWebSocketHAREntryMessage[]
+  request: {
+    url: string
+  }
 }
 
 const isWebSocketEntry = (entry: any): entry is WebSocketHAREntry => {
   return entry._resourceType === "websocket"
+}
+
+const isGraphQLWebsocketEntry = (entry: WebSocketHAREntry) => {
+  return entry.request.url.includes("graphql")
 }
 
 const isGraphQLPayload = (
@@ -74,13 +81,12 @@ const prepareWebSocketRequests = (
   har: chrome.devtools.network.HARLog
 ): IWebSocketNetworkRequest[] => {
   return har.entries.flatMap((entry, i) => {
-    if (isWebSocketEntry(entry)) {
+    if (isWebSocketEntry(entry) && isGraphQLWebsocketEntry(entry)) {
       const websocketEntry: IWebSocketNetworkRequest = {
         id: `subscription-${i}`,
         status: entry.response.status,
         url: entry.request.url,
         method: entry.request.method,
-
         messages: entry._webSocketMessages.flatMap((message) => {
           const messageData =
             safeJson.parse<{
