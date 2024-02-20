@@ -9,8 +9,8 @@ describe("searchString", () => {
     })
 
     expect(res).toEqual({
-      start: "ally ",
       match: "wan",
+      start: "ally ",
       end: "t to ",
     })
   })
@@ -23,8 +23,8 @@ describe("searchString", () => {
     })
 
     expect(res).toEqual({
-      start: "",
       match: "i",
+      start: "",
       end: " real",
     })
   })
@@ -37,9 +37,23 @@ describe("searchString", () => {
     })
 
     expect(res).toEqual({
-      start: "o be ",
       match: "searched",
+      start: "o be ",
       end: "",
+    })
+  })
+
+  it("returns the match for special characters", () => {
+    const res = searchString({
+      text: "hello world (and universe)",
+      search: "(a",
+      buffer: 5,
+    })
+
+    expect(res).toEqual({
+      match: "(a",
+      start: "orld ",
+      end: "nd un",
     })
   })
 })

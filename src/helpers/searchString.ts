@@ -4,13 +4,26 @@ interface ISearchStringArgs {
   buffer?: number
 }
 
+const escapeRegExp = (string: string) => {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") // $& means the whole matched string
+}
+
+const getSearchInput = (search: string) => {
+  const searchString = escapeRegExp(search)
+  try {
+    return new RegExp(searchString, "i")
+  } catch (e) {
+    return searchString
+  }
+}
+
 export const searchString = ({
   text,
   search,
   buffer = 12,
 }: ISearchStringArgs) => {
-  const searchRegex = new RegExp(search, "i")
-  const matchPosition = text.search(searchRegex)
+  const searchInput = getSearchInput(search)
+  const matchPosition = text.search(searchInput)
   const highlightLength = search.length
   const matchPositionEnd = matchPosition + highlightLength
 
