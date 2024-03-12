@@ -22,6 +22,15 @@ The plugin is available for both Chrome and Firefox:
 
 2. [Firefox Addons](https://addons.mozilla.org/en-US/firefox/addon/graphql-network-inspector)
 
+## Issue with extension not loading
+
+Some users have raised issues with the extension not loading. This may be due to custom settings in your devtools or conflicts with other extensions. If you are experiencing this issue please try the following:
+
+1. Open the devtools and navigate to the settings (cog icon in the top right).
+2. Scroll down to the bottom of the "Preferences" tab and click "Restore defaults and reload".
+
+If the issue persists please raise an issue with the details of your browser and we'll try to help.
+
 ## Local Development
 
 Install dependencies:
