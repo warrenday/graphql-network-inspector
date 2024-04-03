@@ -83,6 +83,7 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
   const { request, autoFormat, index, numberOfRequests, onShare } = props
 
   const displayQuery = !!request.query
+  const requestId = request.id
   const variables = getVariables(request)
   const displayVariables = isVariablesPopulated(variables)
   const displayExtensions = isExtensionsPopulated(request)
@@ -109,38 +110,43 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
       </div>
 
       <div className="flex flex-col">
-        {displayQuery && (
-          <RequestViewSection
-            type="query"
-            title={"Query" + (index ? ` (${index}/${numberOfRequests})` : "")}
-          >
-            <CodeView
-              text={request.query}
-              language={"graphql"}
-              autoFormat={autoFormat}
-              className="px-6"
-            />
-          </RequestViewSection>
-        )}
-        {displayVariables && (
-          <RequestViewSection type="variables" title="Variables">
-            <CodeView
-              text={safeJson.stringify(variables, undefined, 2)}
-              language={"json"}
-              className="px-6"
-            />
-          </RequestViewSection>
-        )}
-        {displayExtensions && (
-          <RequestViewSection type="extensions" title="Extensions">
-            <CodeView
-              text={safeJson.stringify(request.extensions, undefined, 2)}
-              language={"json"}
-              autoFormat={autoFormat}
-              className="px-6"
-            />
-          </RequestViewSection>
-        )}
+        <RequestViewSection type='request' requestId={requestId} title={`Request${(index ? ` (${index}/${numberOfRequests})` : "")}`}>
+          {displayQuery && (
+            <RequestViewSection
+              type="query"
+              title={"Query" + (index ? ` (${index}/${numberOfRequests})` : "")}
+              requestId={requestId}
+              level={1}
+            >
+              <CodeView
+                text={request.query}
+                language={"graphql"}
+                autoFormat={autoFormat}
+                className="px-6"
+              />
+            </RequestViewSection>
+          )}
+          {displayVariables && (
+            <RequestViewSection type="variables" title="Variables" requestId={requestId} level={1}
+            >
+              <CodeView
+                text={safeJson.stringify(variables, undefined, 2)}
+                language={"json"}
+                className="px-6"
+              />
+            </RequestViewSection>
+          )}
+          {displayExtensions && (
+            <RequestViewSection type="extensions" title="Extensions" requestId={requestId} level={1}>
+              <CodeView
+                text={safeJson.stringify(request.extensions, undefined, 2)}
+                language={"json"}
+                autoFormat={autoFormat}
+                className="px-6"
+              />
+            </RequestViewSection>
+          )}
+        </RequestViewSection>
       </div>
     </PanelSection>
   )
@@ -149,19 +155,24 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
 interface IRequestViewSectionProps {
   type: RequestViewSectionType
   title: string
+  requestId: string
+  level?: number
 }
 
 const RequestViewSection: FC<IRequestViewSectionProps> = (props) => {
-  const { type, title, children } = props
+  const { type, title, requestId, children, level } = props
   const { collapsedSections, setIsSectionCollapsed } = useRequestViewSections()
-  const isCollapsed = !!collapsedSections[type]
+  const keyForMap = `${type}-${requestId}`
+
+  const isCollapsed = !!collapsedSections[keyForMap]
 
   const handleToggleView = () => {
-    setIsSectionCollapsed(type, !collapsedSections[type])
+    setIsSectionCollapsed(keyForMap, !collapsedSections[keyForMap])
   }
+  const classNameForLevel = `ml-${(level ?? 0) * 4}`
 
   return (
-    <div>
+    <div className={classNameForLevel}>
       <button
         className="select-none w-full px-4 py-3 outline-[#2f80ed]"
         onClick={handleToggleView}
