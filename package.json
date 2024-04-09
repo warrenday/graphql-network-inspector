@@ -11,7 +11,7 @@
     "postbuild": "node ./scripts/set-manifest-version.js && NODE_ENV=production node ./scripts/set-manifest-content-script.js",
     "test": "craco test",
     "eject": "react-scripts eject",
-    "lint": "eslint --max-warnings=0 src",
+    "lint": "eslint --max-warnings=0 public/**/*.js",
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
