@@ -66,12 +66,12 @@ const isGraphQLPayload = (
   }
 
   if (type === "send") {
-    const hasQuery = payload.hasOwnProperty("query")
+    const hasQuery = "query" in payload
     return hasQuery && isGraphqlQuery(payload.query)
   }
 
   if (type === "receive") {
-    return payload.hasOwnProperty("data")
+    return "data" in payload
   }
 
   return false

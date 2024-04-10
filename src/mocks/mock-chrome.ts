@@ -1,8 +1,9 @@
 import { mockRequests } from "../mocks/mock-requests"
+import { DeepPartial } from "utility-types"
 
-let removeListeners: Record<string, () => void> = {}
+const removeListeners: Record<string, () => void> = {}
 
-export const mockChrome = {
+const mockedChrome: DeepPartial<typeof chrome> = {
   devtools: {
     panels: {
       themeName: "dark",
@@ -25,23 +26,32 @@ export const mockChrome = {
           removeListeners.onRequestFinished = () =>
             window.removeEventListener("keydown", handleKeydown)
         },
-        removeListener: (cb) => {
+        removeListener: () => {
           removeListeners.onRequestFinished()
         },
       },
       onNavigated: {
-        addListener: (cb) => {},
-        removeListener: (cb) => {},
+        addListener: () => {},
+        removeListener: () => {},
       },
     },
   },
   runtime: {
-    getPlatformInfo: (cb) => {
-      cb({ arch: "x86-64", nacl_arch: "x86-64", os: "mac" })
-    },
+    getPlatformInfo: ((cb) => {
+      const platformInfo: chrome.runtime.PlatformInfo = {
+        arch: "x86-64",
+        nacl_arch: "x86-64",
+        os: "mac",
+      }
+      cb(platformInfo)
+    }) as typeof chrome.runtime.getPlatformInfo,
     onMessage: {
-      addListener: (cb) => {},
-      removeListener: (cb) => {},
+      addListener: () => {},
+      removeListener: () => {},
     },
   },
-} as typeof chrome
+}
+
+const mockChrome = mockedChrome as typeof chrome
+
+export { mockChrome }

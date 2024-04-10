@@ -1,7 +1,7 @@
 import { renderHook } from "@testing-library/react-hooks"
+import { DeepPartial } from "utility-types"
 import { useWebSocketNetworkMonitor } from "./useWebSocketNetworkMonitor"
 import { getHAR } from "../services/networkMonitor"
-import { DeepPartial } from "../types"
 
 jest.mock("../services/networkMonitor")
 const mockGetHAR = getHAR as jest.MockedFunction<any>

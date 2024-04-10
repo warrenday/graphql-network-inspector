@@ -11,7 +11,7 @@
     "postbuild": "node ./scripts/set-manifest-version.js && NODE_ENV=production node ./scripts/set-manifest-content-script.js",
     "test": "craco test",
     "eject": "react-scripts eject",
-    "lint": "eslint --max-warnings=0 public/**/*.js",
+    "lint": "eslint --max-warnings=0 src/**/*.* public/**/*.js",
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
@@ -55,15 +55,20 @@
     "@types/react-table": "^7.0.22",
     "@types/uniqid": "^5.3.2",
     "@types/uuid": "^8.3.0",
+    "@typescript-eslint/eslint-plugin": "^7.6.0",
+    "@typescript-eslint/parser": "^7.6.0",
     "autoprefixer": "^9",
     "bestzip": "^2.2.0",
     "copy-webpack-plugin": "^6.4.1",
     "dedent": "^0.7.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "postcss": "^8.4.12",
     "prettier": "^2.6.2",
     "react-scripts": "^5.0.0",
     "tailwindcss": "^3.0.23",
-    "typescript": "^4.0.3"
+    "typescript": "^4.0.3",
+    "utility-types": "^3.11.0"
   },
   "_resolutions_comment_": "https://stackoverflow.com/a/71855781/2573621",
   "resolutions": {

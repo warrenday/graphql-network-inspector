@@ -1,6 +1,6 @@
 export const stringify = (
   value: any,
-  replacer?: (this: any, key: string, value: any) => any,
+  replacer?: () => any,
   space?: string | number
 ): string => {
   if (!value) {
@@ -15,7 +15,7 @@ export const stringify = (
 
 export const parse = <T extends {}>(
   text?: string,
-  reviver?: (this: any, key: string, value: any) => any
+  reviver?: () => any
 ): T | null => {
   try {
     return JSON.parse(text as string, reviver)
