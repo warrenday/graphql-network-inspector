@@ -1,3 +1,4 @@
+import { FC } from "react"
 import { AutoFormatToggleButton } from "@/components/AutoFormatToggleButton"
 import { CodeView } from "@/components/CodeView"
 import { CopyButton } from "@/components/CopyButton"
@@ -5,7 +6,6 @@ import { IGraphqlRequestBody } from "@/helpers/graphqlHelpers"
 import * as safeJson from "@/helpers/safeJson"
 import { Bar } from "@/components/Bar"
 import { Panels, PanelSection } from "../PanelSection"
-import { FC } from "react"
 import {
   RequestViewSectionType,
   useRequestViewSections,
@@ -71,6 +71,31 @@ export const RequestView = (props: IRequestViewProps) => {
   )
 }
 
+interface IRequestContainerProps {
+  requestId: string
+  index: number
+  totalRequests: number
+  children: React.ReactNode
+}
+
+const RequestContainer = (props: IRequestContainerProps) => {
+  const { requestId, totalRequests, index, children } = props
+
+  if (totalRequests > 1) {
+    return (
+      <RequestViewSection
+        type="request"
+        requestId={requestId}
+        title={`Request${index ? ` (${index}/${totalRequests})` : ""}`}
+      >
+        <div className="-mt-2">{children}</div>
+      </RequestViewSection>
+    )
+  } else {
+    return <>{children}</>
+  }
+}
+
 interface ISingleRequestViewProps {
   request: IGraphqlRequestBody
   autoFormat: boolean
@@ -110,11 +135,15 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
       </div>
 
       <div className="flex flex-col">
-        <RequestViewSection type='request' requestId={requestId} title={`Request${(index ? ` (${index}/${numberOfRequests})` : "")}`}>
+        <RequestContainer
+          requestId={requestId}
+          index={index || 0}
+          totalRequests={numberOfRequests}
+        >
           {displayQuery && (
             <RequestViewSection
               type="query"
-              title={"Query" + (index ? ` (${index}/${numberOfRequests})` : "")}
+              title={"Query"}
               requestId={requestId}
               level={1}
             >
@@ -127,7 +156,11 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
             </RequestViewSection>
           )}
           {displayVariables && (
-            <RequestViewSection type="variables" title="Variables" requestId={requestId} level={1}
+            <RequestViewSection
+              type="variables"
+              title="Variables"
+              requestId={requestId}
+              level={1}
             >
               <CodeView
                 text={safeJson.stringify(variables, undefined, 2)}
@@ -137,7 +170,12 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
             </RequestViewSection>
           )}
           {displayExtensions && (
-            <RequestViewSection type="extensions" title="Extensions" requestId={requestId} level={1}>
+            <RequestViewSection
+              type="extensions"
+              title="Extensions"
+              requestId={requestId}
+              level={1}
+            >
               <CodeView
                 text={safeJson.stringify(request.extensions, undefined, 2)}
                 language={"json"}
@@ -146,7 +184,7 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
               />
             </RequestViewSection>
           )}
-        </RequestViewSection>
+        </RequestContainer>
       </div>
     </PanelSection>
   )
@@ -177,9 +215,9 @@ const RequestViewSection: FC<IRequestViewSectionProps> = (props) => {
         className="select-none w-full px-4 py-3 outline-[#2f80ed]"
         onClick={handleToggleView}
       >
-        <div className="flex justify-be align-center tween items-center gap-2">
+        <div className="flex justify-be align-center tween items-center gap-2 text-gray-400">
           <CaretIcon className={"w-2.5 " + (isCollapsed ? "" : "rotate-90")} />
-          <span className="font-bold">{title}</span>
+          <span>{title}</span>
         </div>
       </button>
       {!isCollapsed && <div className="rounded-lg">{children}</div>}
