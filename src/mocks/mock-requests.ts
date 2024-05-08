@@ -21,7 +21,8 @@ const createRequest = ({
       headers: [
         {
           name: "Authorization",
-          value: "Bearer fe0e8768-3b2f-4f63-983d-1a74c26dde1e",
+          value:
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
         },
         {
           name: "access-control-allow-credentials",
