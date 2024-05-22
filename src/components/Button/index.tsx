@@ -10,7 +10,7 @@ const styles = {
     bg-gray-200 dark:bg-gray-700
     hover:bg-gray-300 dark:hover:bg-gray-600
   `,
-  ghost: ``,
+  ghost: `hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-gray-600 hover:dark:text-white z-10`,
 }
 
 interface IButtonProps {

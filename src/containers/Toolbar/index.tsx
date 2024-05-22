@@ -6,6 +6,7 @@ import { useSearch } from "../../hooks/useSearch"
 import { Textfield } from "@/components/Textfield"
 import { OverflowPopover } from "../../components/OverflowPopover"
 import { Bar } from "../../components/Bar"
+import { DocsIcon } from "../../components/Icons/DocsIcon"
 
 interface IToolbarProps {
   filterValue: string
@@ -82,6 +83,19 @@ export const Toolbar = (props: IToolbarProps) => {
           >
             Search
           </Button>,
+          <a
+            href="https://www.overstacked.io/docs/graphql-network-inspector"
+            target="_blank"
+          >
+            <Button
+              icon={<DocsIcon />}
+              testId="docs-button"
+              variant="ghost"
+              className="text-gray-500 dark:text-gray-400 -ml-2 whitespace-nowrap"
+            >
+              View Docs
+            </Button>
+          </a>,
         ]}
       />
     </Bar>
