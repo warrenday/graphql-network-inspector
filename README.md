@@ -11,9 +11,7 @@
 
 ![Application Preview](docs/main.jpg)
 
-A platform agnostic network inspector specifically built for GraphQL. Clearly see individual GraphQL requests including support for query batching.
-
-[View the full docs](https://www.overstacked.io/docs/graphql-network-inspector)
+A platform agnostic network inspector specifically built for GraphQL. Clearly see individual GraphQL requests including support for query batching. [View the full docs](https://www.overstacked.io/docs/graphql-network-inspector)
 
 The plugin is available for both Chrome and Firefox:
 
