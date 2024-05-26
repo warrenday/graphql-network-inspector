@@ -8,6 +8,6 @@ const colors: Record<string, string> = {
 }
 
 export const getStatusColor = (status: number = 0): string => {
-  const statusCode = String(Math.floor(status / 100) * 100)
+  const statusCode = String(status)
   return colors[statusCode] || colors["0"]
 }

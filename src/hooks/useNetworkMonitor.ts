@@ -13,56 +13,12 @@ import {
   getHAR,
 } from "../services/networkMonitor"
 import {
+  IIncompleteNetworkRequest,
+  INetworkRequest,
   getRequestBody,
+  isRequestComplete,
   matchWebAndNetworkRequest,
 } from "../helpers/networkHelpers"
-
-export interface IHeader {
-  name: string
-  value?: string
-}
-
-export interface INetworkRequest {
-  id: string
-  status: number
-  url: string
-  time: number
-  method: string
-  request: {
-    primaryOperation: IOperationDetails
-    headers: IHeader[]
-    headersSize: number
-    body: IGraphqlRequestBody[]
-    bodySize: number
-  }
-  response?: {
-    headers: IHeader[]
-    headersSize: number
-    body: string
-    bodySize: number
-  }
-  native: {
-    webRequest: chrome.webRequest.WebRequestBodyDetails
-    networkRequest?: chrome.devtools.network.Request
-  }
-}
-
-// Ephemeral interface to allow us to build a network request
-// from the various events that fire. We'll ensure the request is complete
-// and populated before we output from the useNetworkMonitor hook.
-interface IIncompleteNetworkRequest extends Omit<INetworkRequest, "request"> {
-  request?: Partial<INetworkRequest["request"]>
-}
-
-const isRequestComplete = (
-  networkRequest: IIncompleteNetworkRequest
-): networkRequest is INetworkRequest => {
-  return (
-    networkRequest.request !== undefined &&
-    networkRequest.request.headers !== undefined &&
-    networkRequest.request.body !== undefined
-  )
-}
 
 export const useNetworkMonitor = (): [INetworkRequest[], () => void] => {
   const [webRequests, setWebRequests] = useState<IIncompleteNetworkRequest[]>(

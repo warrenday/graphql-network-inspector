@@ -88,17 +88,18 @@ const Status = ({ status }: { status?: number }) => {
 
   const statusText = useMemo(() => {
     if (status === -1) {
-      return "pending"
+      return "(pending)"
     }
+
+    if (status === 0) {
+      return "(cancelled)"
+    }
+
     return status
   }, [status])
 
   return (
-    <div
-      className="flex items-center"
-      style={{ color: status === 0 ? "#DC2626" : undefined }}
-      data-testid="column-status"
-    >
+    <div className="flex items-center" data-testid="column-status">
       <div
         className="w-3 h-3 rounded-full mr-2"
         style={{
@@ -107,7 +108,7 @@ const Status = ({ status }: { status?: number }) => {
           marginTop: "-1px",
         }}
       />
-      {statusText || "(cancelled)"}
+      {statusText}
     </div>
   )
 }

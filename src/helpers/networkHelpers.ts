@@ -1,9 +1,59 @@
+import { IGraphqlRequestBody, IOperationDetails } from "./graphqlHelpers"
+
+export interface IHeader {
+  name: string
+  value?: string
+}
+
+export interface INetworkRequest {
+  id: string
+  status: number
+  url: string
+  time: number
+  method: string
+  request: {
+    primaryOperation: IOperationDetails
+    headers: IHeader[]
+    headersSize: number
+    body: IGraphqlRequestBody[]
+    bodySize: number
+  }
+  response?: {
+    headers: IHeader[]
+    headersSize: number
+    body: string
+    bodySize: number
+  }
+  native: {
+    webRequest: chrome.webRequest.WebRequestBodyDetails
+    networkRequest?: chrome.devtools.network.Request
+  }
+}
+
+// Ephemeral interface to allow us to build a network request
+// from the various events that fire. We'll ensure the request is complete
+// and populated before we output from the useNetworkMonitor hook.
+export interface IIncompleteNetworkRequest
+  extends Omit<INetworkRequest, "request"> {
+  request?: Partial<INetworkRequest["request"]>
+}
+
 const isNetworkRequest = (
   details:
     | chrome.devtools.network.Request
     | chrome.webRequest.WebRequestBodyDetails
 ): details is chrome.devtools.network.Request => {
   return "response" in details
+}
+
+export const isRequestComplete = (
+  networkRequest: IIncompleteNetworkRequest
+): networkRequest is INetworkRequest => {
+  return (
+    networkRequest.request !== undefined &&
+    networkRequest.request.headers !== undefined &&
+    networkRequest.request.body !== undefined
+  )
 }
 
 const getRequestBodyFromWebRequestBodyDetails = (

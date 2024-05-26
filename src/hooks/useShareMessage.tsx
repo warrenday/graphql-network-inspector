@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react"
 import uniqid from "uniqid"
 import { chromeProvider } from "../services/chromeProvider"
-import { INetworkRequest } from "./useNetworkMonitor"
+import { INetworkRequest } from "@/helpers/networkHelpers"
 
 interface IShareMessageContext {
   shareNetworkRequest: (networkRequest: INetworkRequest) => void

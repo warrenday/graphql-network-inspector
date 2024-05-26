@@ -1,8 +1,8 @@
 import { useMemo } from "react"
-import { IHeader } from "../../../hooks/useNetworkMonitor"
 import { Panels, PanelSection } from "../PanelSection"
 import { CopyButton } from "../../../components/CopyButton"
 import { HeaderList } from "./HeaderList"
+import { IHeader } from "../../../helpers/networkHelpers"
 
 interface IHeaderViewProps {
   requestHeaders: IHeader[]

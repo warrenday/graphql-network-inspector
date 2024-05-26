@@ -1,8 +1,8 @@
 import { useMarkSearch } from "@/hooks/useMark"
-import { IHeader } from "@/hooks/useNetworkMonitor"
 import useCopy from "@/hooks/useCopy"
 import parseAuthHeader from "./parseAuthHeader"
 import { useState } from "react"
+import { IHeader } from "../../../helpers/networkHelpers"
 
 interface IHeadersProps {
   headers: IHeader[]
