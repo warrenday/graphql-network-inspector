@@ -40,6 +40,17 @@ export interface IIncompleteNetworkRequest
   request?: Partial<INetworkRequest['request']>
 }
 
+/**
+ * Determine if the details object is a network request
+ * or a web request.
+ *
+ * This is necessary because the two apis have different
+ * structures, we use each api to detect the start and end
+ * of a request.
+ *
+ * @param details the details object to check
+ * @returns true if the object is a network request
+ */
 const isNetworkRequest = (
   details:
     | chrome.devtools.network.Request

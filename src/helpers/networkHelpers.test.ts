@@ -1,3 +1,4 @@
+import { DeepPartial } from 'utility-types'
 import {
   getRequestBodyFromUrl,
   matchWebAndNetworkRequest,
@@ -46,84 +47,112 @@ describe('networkHelpers.getRequestBodyFromUrl', () => {
 
 describe('networkHelpers.matchWebAndNetworkRequest', () => {
   it('matches a web request with a network request', () => {
-    const webRequest = {
+    const webRequest: DeepPartial<chrome.webRequest.WebRequestBodyDetails> = {
       url: 'http://example.com',
       method: 'GET',
+      requestBody: {
+        raw: [{ bytes: new TextEncoder().encode('body') }],
+      },
     }
-    const networkRequest = {
+    const networkRequest: DeepPartial<chrome.devtools.network.Request> = {
       request: {
         url: 'http://example.com',
         method: 'GET',
       },
     }
 
-    const match = matchWebAndNetworkRequest(webRequest, networkRequest)
+    const match = matchWebAndNetworkRequest(
+      webRequest as any,
+      networkRequest as any
+    )
     expect(match).toBe(true)
   })
 
   it('does not match request with different URLs', () => {
-    const webRequest = {
+    const webRequest: DeepPartial<chrome.webRequest.WebRequestBodyDetails> = {
       url: 'http://example.com',
       method: 'GET',
+      requestBody: {
+        raw: [{ bytes: new TextEncoder().encode('body') }],
+      },
     }
-    const networkRequest = {
+    const networkRequest: DeepPartial<chrome.devtools.network.Request> = {
       request: {
-        url: 'http://example.com/other',
+        url: 'http://example.com',
         method: 'GET',
       },
     }
 
-    const match = matchWebAndNetworkRequest(webRequest, networkRequest)
+    const match = matchWebAndNetworkRequest(
+      webRequest as any,
+      networkRequest as any
+    )
     expect(match).toBe(false)
   })
 
   it('does not match requests with different methods', () => {
-    const webRequest = {
+    const webRequest: DeepPartial<chrome.webRequest.WebRequestBodyDetails> = {
       url: 'http://example.com',
       method: 'GET',
+      requestBody: {
+        raw: [{ bytes: new TextEncoder().encode('body') }],
+      },
     }
-    const networkRequest = {
+    const networkRequest: DeepPartial<chrome.devtools.network.Request> = {
       request: {
         url: 'http://example.com',
-        method: 'POST',
+        method: 'GET',
       },
     }
 
-    const match = matchWebAndNetworkRequest(webRequest, networkRequest)
+    const match = matchWebAndNetworkRequest(
+      webRequest as any,
+      networkRequest as any
+    )
     expect(match).toBe(false)
   })
 
   it('does not match requests with different bodies', () => {
-    const webRequest = {
+    const webRequest: DeepPartial<chrome.webRequest.WebRequestBodyDetails> = {
       url: 'http://example.com',
       method: 'GET',
+      requestBody: {
+        raw: [{ bytes: new TextEncoder().encode('body') }],
+      },
     }
-    const networkRequest = {
+    const networkRequest: DeepPartial<chrome.devtools.network.Request> = {
       request: {
         url: 'http://example.com',
         method: 'GET',
-        body: 'body',
       },
     }
 
-    const match = matchWebAndNetworkRequest(webRequest, networkRequest)
+    const match = matchWebAndNetworkRequest(
+      webRequest as any,
+      networkRequest as any
+    )
     expect(match).toBe(false)
   })
 
   it('does not match requests with different headers', () => {
-    const webRequest = {
+    const webRequest: DeepPartial<chrome.webRequest.WebRequestBodyDetails> = {
       url: 'http://example.com',
       method: 'GET',
+      requestBody: {
+        raw: [{ bytes: new TextEncoder().encode('body') }],
+      },
     }
-    const networkRequest = {
+    const networkRequest: DeepPartial<chrome.devtools.network.Request> = {
       request: {
         url: 'http://example.com',
         method: 'GET',
-        headers: 'headers',
       },
     }
 
-    const match = matchWebAndNetworkRequest(webRequest, networkRequest)
+    const match = matchWebAndNetworkRequest(
+      webRequest as any,
+      networkRequest as any
+    )
     expect(match).toBe(false)
   })
 })
