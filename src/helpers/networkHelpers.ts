@@ -77,19 +77,16 @@ const getRequestBodyFromUrl = (url: string): IGraphqlRequestBody => {
   const urlObj = new URL(url)
   const query = urlObj.searchParams.get("query")
   const variables = urlObj.searchParams.get("variables")
+  const operationName = urlObj.searchParams.get("operationName")
 
   if (!query) {
     throw new Error("No query found in URL")
   }
 
-  // TODO, we need to also get operationName from url
-  // https://dgraph.io/docs/graphql/graphql-clients/endpoint/graphql-get-request/
-  // In which case we need to update the IGraphqlRequestBody interface
-  // and also update getFirstGraphqlOperation.
-
   return {
     id: "TODO",
     query,
+    operationName: operationName || undefined,
     variables: variables ? JSON.parse(variables) : undefined,
   }
 }

@@ -6,6 +6,7 @@ export type OperationType = "query" | "mutation" | "subscription" | "persisted"
 export interface IGraphqlRequestBody {
   id: string
   query: string
+  operationName?: string
   variables?: Record<string, unknown>
   extensions?: Record<string, unknown>
 }
@@ -106,8 +107,11 @@ export const getFirstGraphqlOperation = (
     const field = firstOperationDefinition.selectionSet.selections.find(
       (selection) => selection.kind === "Field"
     ) as FieldNode
+
     const operationName =
-      firstOperationDefinition.name?.value || field?.name.value
+      graphqlBody[0].operationName ||
+      firstOperationDefinition.name?.value ||
+      field?.name.value
     const operation = firstOperationDefinition?.operation
 
     if (!operationName) {
