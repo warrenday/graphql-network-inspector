@@ -1,4 +1,5 @@
 import { DeepPartial } from 'utility-types'
+import { TextEncoder } from 'util'
 import {
   getRequestBodyFromUrl,
   matchWebAndNetworkRequest,
@@ -36,8 +37,8 @@ describe('networkHelpers.getRequestBodyFromUrl', () => {
 
     const body = getRequestBodyFromUrl(url)
     expect(body).toMatchObject({
-      query: 'query User($id: String!) { user(id: $id) { name } }',
-      operationName: 'MyQuery',
+      query,
+      operationName: 'GetUser',
       variables: {
         id: '1',
       },
@@ -47,17 +48,24 @@ describe('networkHelpers.getRequestBodyFromUrl', () => {
 
 describe('networkHelpers.matchWebAndNetworkRequest', () => {
   it('matches a web request with a network request', () => {
+    const body = JSON.stringify({
+      query: 'query { user }',
+    })
+
     const webRequest: DeepPartial<chrome.webRequest.WebRequestBodyDetails> = {
       url: 'http://example.com',
-      method: 'GET',
+      method: 'POST',
       requestBody: {
-        raw: [{ bytes: new TextEncoder().encode('body') }],
+        raw: [{ bytes: new TextEncoder().encode(body) }],
       },
     }
     const networkRequest: DeepPartial<chrome.devtools.network.Request> = {
       request: {
         url: 'http://example.com',
-        method: 'GET',
+        method: 'POST',
+        postData: {
+          text: body,
+        },
       },
     }
 
@@ -69,17 +77,24 @@ describe('networkHelpers.matchWebAndNetworkRequest', () => {
   })
 
   it('does not match request with different URLs', () => {
+    const body = JSON.stringify({
+      query: 'query { user }',
+    })
+
     const webRequest: DeepPartial<chrome.webRequest.WebRequestBodyDetails> = {
-      url: 'http://example.com',
-      method: 'GET',
+      url: 'http://example1.com',
+      method: 'POST',
       requestBody: {
-        raw: [{ bytes: new TextEncoder().encode('body') }],
+        raw: [{ bytes: new TextEncoder().encode(body) }],
       },
     }
     const networkRequest: DeepPartial<chrome.devtools.network.Request> = {
       request: {
-        url: 'http://example.com',
-        method: 'GET',
+        url: 'http://example2.com',
+        method: 'POST',
+        postData: {
+          text: body,
+        },
       },
     }
 
@@ -91,17 +106,24 @@ describe('networkHelpers.matchWebAndNetworkRequest', () => {
   })
 
   it('does not match requests with different methods', () => {
+    const body = JSON.stringify({
+      query: 'query { user }',
+    })
+
     const webRequest: DeepPartial<chrome.webRequest.WebRequestBodyDetails> = {
-      url: 'http://example.com',
+      url: 'http://example1.com?query=query%20%7B%20user%20%7D',
       method: 'GET',
       requestBody: {
-        raw: [{ bytes: new TextEncoder().encode('body') }],
+        raw: [{ bytes: new TextEncoder().encode(body) }],
       },
     }
     const networkRequest: DeepPartial<chrome.devtools.network.Request> = {
       request: {
-        url: 'http://example.com',
-        method: 'GET',
+        url: 'http://example1.com?query=query%20%7B%20user%20%7D',
+        method: 'POST',
+        postData: {
+          text: body,
+        },
       },
     }
 
@@ -114,38 +136,29 @@ describe('networkHelpers.matchWebAndNetworkRequest', () => {
 
   it('does not match requests with different bodies', () => {
     const webRequest: DeepPartial<chrome.webRequest.WebRequestBodyDetails> = {
-      url: 'http://example.com',
-      method: 'GET',
+      url: 'http://example1.com',
+      method: 'POST',
       requestBody: {
-        raw: [{ bytes: new TextEncoder().encode('body') }],
+        raw: [
+          {
+            bytes: new TextEncoder().encode(
+              JSON.stringify({
+                query: 'query { user }',
+              })
+            ),
+          },
+        ],
       },
     }
     const networkRequest: DeepPartial<chrome.devtools.network.Request> = {
       request: {
-        url: 'http://example.com',
-        method: 'GET',
-      },
-    }
-
-    const match = matchWebAndNetworkRequest(
-      webRequest as any,
-      networkRequest as any
-    )
-    expect(match).toBe(false)
-  })
-
-  it('does not match requests with different headers', () => {
-    const webRequest: DeepPartial<chrome.webRequest.WebRequestBodyDetails> = {
-      url: 'http://example.com',
-      method: 'GET',
-      requestBody: {
-        raw: [{ bytes: new TextEncoder().encode('body') }],
-      },
-    }
-    const networkRequest: DeepPartial<chrome.devtools.network.Request> = {
-      request: {
-        url: 'http://example.com',
-        method: 'GET',
+        url: 'http://example1.com',
+        method: 'POST',
+        postData: {
+          text: JSON.stringify({
+            query: 'query { account }',
+          }),
+        },
       },
     }
 

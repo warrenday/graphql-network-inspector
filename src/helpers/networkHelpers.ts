@@ -1,3 +1,4 @@
+import { TextDecoder } from 'util'
 import { IGraphqlRequestBody, IOperationDetails } from './graphqlHelpers'
 
 export interface IHeader {
