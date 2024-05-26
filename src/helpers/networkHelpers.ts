@@ -1,4 +1,4 @@
-import { IGraphqlRequestBody, IOperationDetails } from "./graphqlHelpers"
+import { IGraphqlRequestBody, IOperationDetails } from './graphqlHelpers'
 
 export interface IHeader {
   name: string
@@ -36,8 +36,8 @@ export interface INetworkRequest {
  * and populated before we output from the useNetworkMonitor hook.
  * */
 export interface IIncompleteNetworkRequest
-  extends Omit<INetworkRequest, "request"> {
-  request?: Partial<INetworkRequest["request"]>
+  extends Omit<INetworkRequest, 'request'> {
+  request?: Partial<INetworkRequest['request']>
 }
 
 const isNetworkRequest = (
@@ -45,7 +45,7 @@ const isNetworkRequest = (
     | chrome.devtools.network.Request
     | chrome.webRequest.WebRequestBodyDetails
 ): details is chrome.devtools.network.Request => {
-  return "response" in details
+  return 'response' in details
 }
 
 /**
@@ -73,18 +73,18 @@ export const isRequestComplete = (
  * @param url the URL to parse
  * @returns the request body
  */
-const getRequestBodyFromUrl = (url: string): IGraphqlRequestBody => {
+export const getRequestBodyFromUrl = (url: string): IGraphqlRequestBody => {
   const urlObj = new URL(url)
-  const query = urlObj.searchParams.get("query")
-  const variables = urlObj.searchParams.get("variables")
-  const operationName = urlObj.searchParams.get("operationName")
+  const query = urlObj.searchParams.get('query')
+  const variables = urlObj.searchParams.get('variables')
+  const operationName = urlObj.searchParams.get('operationName')
 
   if (!query) {
-    throw new Error("No query found in URL")
+    throw new Error('No query found in URL')
   }
 
   return {
-    id: "TODO",
+    id: 'TODO',
     query,
     operationName: operationName || undefined,
     variables: variables ? JSON.parse(variables) : undefined,
@@ -97,12 +97,12 @@ const getRequestBodyFromWebRequestBodyDetails = (
   // TODO i think there is different encoding if it is a form data request
   // so we need to test and handle.
 
-  if (details.method === "GET") {
+  if (details.method === 'GET') {
     const body = getRequestBodyFromUrl(details.url)
     return JSON.stringify(body)
   } else {
     const rawBody = details.requestBody?.raw?.[0]?.bytes
-    const decoder = new TextDecoder("utf-8")
+    const decoder = new TextDecoder('utf-8')
     const body = rawBody ? decoder.decode(rawBody) : undefined
     return body
   }
@@ -111,7 +111,7 @@ const getRequestBodyFromWebRequestBodyDetails = (
 const getRequestBodyFromNetworkRequest = (
   details: chrome.devtools.network.Request
 ): string | undefined => {
-  if (details.request.method === "GET") {
+  if (details.request.method === 'GET') {
     const body = getRequestBodyFromUrl(details.request.url)
     return JSON.stringify(body)
   } else {
