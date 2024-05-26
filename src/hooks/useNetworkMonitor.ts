@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useState } from "react"
 import { v4 as uuid } from "uuid"
 import {
-  IOperationDetails,
-  IGraphqlRequestBody,
   parseGraphqlBody,
   getFirstGraphqlOperation,
 } from "../helpers/graphqlHelpers"
