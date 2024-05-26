@@ -9,6 +9,11 @@ const run = async () => {
       id: "warrenjday@graphqlnetworkinspector.com",
     },
   }
+
+  // Remove background scripts from the manifest as this is only
+  // supported in Chrome.
+  delete manifest.background.service_worker
+
   await fs.promises.writeFile(manifestPath, JSON.stringify(manifest, null, 2))
 }
 run()
