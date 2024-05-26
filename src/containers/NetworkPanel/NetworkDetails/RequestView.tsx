@@ -1,3 +1,4 @@
+import { FC } from "react"
 import { AutoFormatToggleButton } from "@/components/AutoFormatToggleButton"
 import { CodeView } from "@/components/CodeView"
 import { CopyButton } from "@/components/CopyButton"
@@ -5,7 +6,6 @@ import { IGraphqlRequestBody } from "@/helpers/graphqlHelpers"
 import * as safeJson from "@/helpers/safeJson"
 import { Bar } from "@/components/Bar"
 import { Panels, PanelSection } from "../PanelSection"
-import { FC } from "react"
 import {
   RequestViewSectionType,
   useRequestViewSections,
@@ -71,6 +71,31 @@ export const RequestView = (props: IRequestViewProps) => {
   )
 }
 
+interface IRequestContainerProps {
+  requestId: string
+  index: number
+  totalRequests: number
+  children: React.ReactNode
+}
+
+const RequestContainer = (props: IRequestContainerProps) => {
+  const { requestId, totalRequests, index, children } = props
+
+  if (totalRequests > 1) {
+    return (
+      <RequestViewSection
+        type="request"
+        requestId={requestId}
+        title={`Request${index ? ` (${index}/${totalRequests})` : ""}`}
+      >
+        <div className="-mt-2">{children}</div>
+      </RequestViewSection>
+    )
+  } else {
+    return <>{children}</>
+  }
+}
+
 interface ISingleRequestViewProps {
   request: IGraphqlRequestBody
   autoFormat: boolean
@@ -83,6 +108,7 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
   const { request, autoFormat, index, numberOfRequests, onShare } = props
 
   const displayQuery = !!request.query
+  const requestId = request.id
   const variables = getVariables(request)
   const displayVariables = isVariablesPopulated(variables)
   const displayExtensions = isExtensionsPopulated(request)
@@ -109,38 +135,56 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
       </div>
 
       <div className="flex flex-col">
-        {displayQuery && (
-          <RequestViewSection
-            type="query"
-            title={"Query" + (index ? ` (${index}/${numberOfRequests})` : "")}
-          >
-            <CodeView
-              text={request.query}
-              language={"graphql"}
-              autoFormat={autoFormat}
-              className="px-6"
-            />
-          </RequestViewSection>
-        )}
-        {displayVariables && (
-          <RequestViewSection type="variables" title="Variables">
-            <CodeView
-              text={safeJson.stringify(variables, undefined, 2)}
-              language={"json"}
-              className="px-6"
-            />
-          </RequestViewSection>
-        )}
-        {displayExtensions && (
-          <RequestViewSection type="extensions" title="Extensions">
-            <CodeView
-              text={safeJson.stringify(request.extensions, undefined, 2)}
-              language={"json"}
-              autoFormat={autoFormat}
-              className="px-6"
-            />
-          </RequestViewSection>
-        )}
+        <RequestContainer
+          requestId={requestId}
+          index={index || 0}
+          totalRequests={numberOfRequests}
+        >
+          {displayQuery && (
+            <RequestViewSection
+              type="query"
+              title={"Query"}
+              requestId={requestId}
+              level={1}
+            >
+              <CodeView
+                text={request.query}
+                language={"graphql"}
+                autoFormat={autoFormat}
+                className="px-6"
+              />
+            </RequestViewSection>
+          )}
+          {displayVariables && (
+            <RequestViewSection
+              type="variables"
+              title="Variables"
+              requestId={requestId}
+              level={1}
+            >
+              <CodeView
+                text={safeJson.stringify(variables, undefined, 2)}
+                language={"json"}
+                className="px-6"
+              />
+            </RequestViewSection>
+          )}
+          {displayExtensions && (
+            <RequestViewSection
+              type="extensions"
+              title="Extensions"
+              requestId={requestId}
+              level={1}
+            >
+              <CodeView
+                text={safeJson.stringify(request.extensions, undefined, 2)}
+                language={"json"}
+                autoFormat={autoFormat}
+                className="px-6"
+              />
+            </RequestViewSection>
+          )}
+        </RequestContainer>
       </div>
     </PanelSection>
   )
@@ -149,26 +193,31 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
 interface IRequestViewSectionProps {
   type: RequestViewSectionType
   title: string
+  requestId: string
+  level?: number
 }
 
 const RequestViewSection: FC<IRequestViewSectionProps> = (props) => {
-  const { type, title, children } = props
+  const { type, title, requestId, children, level } = props
   const { collapsedSections, setIsSectionCollapsed } = useRequestViewSections()
-  const isCollapsed = !!collapsedSections[type]
+  const keyForMap = `${type}-${requestId}`
+
+  const isCollapsed = !!collapsedSections[keyForMap]
 
   const handleToggleView = () => {
-    setIsSectionCollapsed(type, !collapsedSections[type])
+    setIsSectionCollapsed(keyForMap, !collapsedSections[keyForMap])
   }
+  const classNameForLevel = `ml-${(level ?? 0) * 4}`
 
   return (
-    <div>
+    <div className={classNameForLevel}>
       <button
         className="select-none w-full px-4 py-3 outline-[#2f80ed]"
         onClick={handleToggleView}
       >
-        <div className="flex justify-be align-center tween items-center gap-2">
+        <div className="flex justify-be align-center tween items-center gap-2 text-gray-400">
           <CaretIcon className={"w-2.5 " + (isCollapsed ? "" : "rotate-90")} />
-          <span className="font-bold">{title}</span>
+          <span>{title}</span>
         </div>
       </button>
       {!isCollapsed && <div className="rounded-lg">{children}</div>}

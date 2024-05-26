@@ -1,7 +1,7 @@
 import { NetworkTable, INetworkTableDataRow } from "./index"
 import { fireEvent, within } from "@testing-library/react"
+import { DeepPartial } from "utility-types"
 import { render } from "../../../test-utils"
-import { DeepPartial } from "../../../types"
 
 const request: DeepPartial<INetworkTableDataRow> = {
   time: 1000,

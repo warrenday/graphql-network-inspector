@@ -2,9 +2,6 @@
   <h1>GraphQL Network Inspector</h1>
   <h3>A better network inspector for viewing and debugging GraphQL requests.</h3>
   <img alt="MIT License" src="https://img.shields.io/github/license/warrenday/graphql-network-inspector" />
-  <a href="https://twitter.com/warrenjday">
-    <img alt="Twitter" src="https://img.shields.io/twitter/url.svg?label=%40warrenjday&style=social&url=https%3A%2F%2Ftwitter.com%2Fwarrenjday" />
-  </a>
   <a href="https://github.com/sponsors/warrenday">
     <img alt="GitHub Sponsors" src="https://img.shields.io/github/sponsors/warrenday">
   </a>
@@ -14,13 +11,36 @@
 
 ![Application Preview](docs/main.jpg)
 
-A platform agnostic network inspector specifically built for GraphQL. Clearly see individual GraphQL requests including support for query batching.
+A platform agnostic network inspector specifically built for GraphQL. Clearly see individual GraphQL requests including support for query batching. [View the full docs](https://www.overstacked.io/docs/graphql-network-inspector)
 
 The plugin is available for both Chrome and Firefox:
 
 1. [Chrome Webstore](https://chrome.google.com/webstore/detail/graphql-network-inspector/ndlbedplllcgconngcnfmkadhokfaaln)
 
 2. [Firefox Addons](https://addons.mozilla.org/en-US/firefox/addon/graphql-network-inspector)
+
+## Features
+
+We provide a number of productivity features to help you debug and understand your GraphQL requests:
+
+- Automatically parse and display requests as GraphQL queries.
+- Support for query batching, displaying each query individually.
+- Export requests to re-run and share with https://www.graphdev.app
+
+Some shortcuts you may find useful:
+
+- Click any header to copy to clipboard.
+- Double click any JWT token header to both decode and copy to clipboard.
+- Press `Cmd/Ctrl + F` to open the full search panel.
+
+## Issue with extension not loading
+
+Some users have raised issues with the extension not loading. This may be due to custom settings in your devtools or conflicts with other extensions. If you are experiencing this issue please try the following:
+
+1. Open the devtools and navigate to the settings (cog icon in the top right).
+2. Scroll down to the bottom of the "Preferences" tab and click "Restore defaults and reload".
+
+If the issue persists please raise an issue with the details of your browser and we'll try to help.
 
 ## Local Development
 
@@ -43,6 +63,12 @@ This will also cache files in the `build` so you can load the directory as an un
 PRs are welcome! The best way to do this is to first fork the repository, create a branch and open a pull request back to this repository.
 
 If you want to add a large feature please first raise an issue to discuss. This avoids wasted effort.
+
+## Sponsors
+
+GraphQL Network Inspector is proudly sponsored by:
+
+- The Guild https://the-guild.dev
 
 ## License
 

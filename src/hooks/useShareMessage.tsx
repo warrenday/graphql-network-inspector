@@ -62,6 +62,7 @@ export const ShareMessageProvider = (props: IShareMessageProviderProps) => {
         sendResponse({ message: "draft", payload })
       }
     }
+
     chrome.runtime.onMessage.addListener(listener)
     return () => {
       chrome.runtime.onMessage.removeListener(listener)

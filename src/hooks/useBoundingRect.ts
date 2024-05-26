@@ -1,6 +1,10 @@
 import { useLayoutEffect, useRef, useState } from "react"
 import { debounce } from "@/helpers/debounce"
 
+interface Listener {
+  (event?: UIEvent): void
+}
+
 export const useBoundingRect = () => {
   const container = useRef<HTMLDivElement>(null)
 
@@ -8,7 +12,7 @@ export const useBoundingRect = () => {
   const [height, setHeight] = useState(0)
 
   useLayoutEffect(() => {
-    const instantUpdate = (_?: UIEvent) => {
+    const instantUpdate: Listener = () => {
       if (container.current) {
         const { width, height } = container.current.getBoundingClientRect()
         setWidth(width)

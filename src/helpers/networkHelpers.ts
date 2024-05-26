@@ -3,7 +3,7 @@ const isNetworkRequest = (
     | chrome.devtools.network.Request
     | chrome.webRequest.WebRequestBodyDetails
 ): details is chrome.devtools.network.Request => {
-  return details.hasOwnProperty("response")
+  return "response" in details
 }
 
 const getRequestBodyFromWebRequestBodyDetails = (

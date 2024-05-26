@@ -65,6 +65,14 @@ const isParsedGraphqlRequestValid = (
   return isValid
 }
 
+export const isGraphqlQuery = (queryString: string) => {
+  try {
+    return !!parseGraphqlQuery(queryString)
+  } catch (e) {
+    return false
+  }
+}
+
 export const parseGraphqlQuery = (queryString: any) => {
   return gql`
     ${queryString}
@@ -90,7 +98,7 @@ const parseGraphqlGetRequest = (
   const variables =
     variablesParam && extractVariablesFromQueryParam(variablesParam.value)
 
-  if (!!query) {
+  if (query) {
     return [
       {
         query,
@@ -183,7 +191,7 @@ export const parseMultipartFormData = (
   const result: Record<string, string> = {}
 
   // Process each part
-  for (let part of parts) {
+  for (const part of parts) {
     // Trim and remove trailing dashes
     const trimmedPart = part.trim().replace(/-+$/, "")
 
@@ -205,7 +213,9 @@ export const parseMultipartFormData = (
     const name = nameMatch[1]
     try {
       result[name] = JSON.parse(body.replace(/\n/g, ""))
-    } catch (e) {}
+    } catch (e) {
+      // noop
+    }
   }
 
   return result
@@ -270,7 +280,7 @@ export const getPrimaryOperationForGetRequest = (
 
   const query = queryParam && decodeQueryParam(queryParam.value)
 
-  if (!!query) {
+  if (query) {
     return {
       operationName: operationNameParam.value,
       operation: "query",

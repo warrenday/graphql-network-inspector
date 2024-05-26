@@ -89,7 +89,7 @@ export const useNetworkMonitor = (): [INetworkRequest[], () => void] => {
       setWebRequests((webRequests) => {
         const newWebRequest: IIncompleteNetworkRequest = {
           id: details.requestId,
-          status: 0,
+          status: -1,
           url: details.url,
           time: 0,
           method: details.method,
