@@ -77,6 +77,105 @@ export const isRequestComplete = (
 }
 
 /**
+ * Get the boundary value from the content-type header
+ * of a multipart/form-data request.
+ *
+ * @param headers the headers to check
+ * @returns the boundary value
+ */
+const getMultipartFormDataBoundary = (
+  headers: IHeader[]
+): string | undefined => {
+  const contentType = headers.find(
+    (header) => header.name === 'content-type'
+  )?.value
+  if (!contentType) {
+    return
+  }
+
+  const boundary = contentType.split('boundary=')[1]
+  const isMultipart = contentType.includes('multipart/form-data')
+  if (!isMultipart || typeof boundary !== 'string') {
+    return
+  }
+
+  return boundary
+}
+
+/**
+ * Detect if the request is a multipart form data request
+ * by checking the content type header.
+ *
+ * @param headers the headers to check
+ * @returns true if the request is multipart form data
+ */
+const isMultipartFormData = (headers: IHeader[]): boolean => {
+  const boundary = getMultipartFormDataBoundary(headers)
+  return typeof boundary === 'string'
+}
+
+/**
+ * Parse a multipart/form-data request payload
+ * and return a map of the form data.
+ *
+ * Here is an example form data payload:
+ *
+ * ```text
+ * -----------------------------7da24f2e50046
+ * Content-Disposition: form-data; name="operations"
+ *
+ * {"query":"mutation($file: Upload!) { uploadFile(file: $file) { id } }","variables":{"file":null}}
+ * -----------------------------7da24f2e50046
+ * Content-Disposition: form-data; name="map"
+ *
+ * {"0":["variables.file"]}
+ * -----------------------------7da24f2e50046
+ * ```
+ *
+ * @param boundary boundary value of the multipart/form-data content-type header
+ * @param formDataString the form data request payload
+ * @returns
+ */
+export const getRequestBodyFromMultipartFormData = (
+  boundary: string,
+  formDataString: string
+): IGraphqlRequestBody => {
+  // Split on the form boundary
+  const parts = formDataString.split(boundary)
+  const result: Record<string, string> = {}
+
+  // Process each part
+  for (const part of parts) {
+    // Trim and remove trailing dashes
+    const trimmedPart = part.trim().replace(/-+$/, '')
+
+    // Ignore empty parts
+    if (trimmedPart === '' || trimmedPart === '--') {
+      continue
+    }
+
+    // Extract the header and body
+    const [header, ...bodyParts] = trimmedPart.split('\n')
+    const body = bodyParts.join('\n').trim()
+
+    // Extract the name from the header
+    const nameMatch = header.match(/name="([^"]*)"/)
+    if (!nameMatch) {
+      continue
+    }
+
+    const name = nameMatch[1]
+    try {
+      result[name] = JSON.parse(body.replace(/\n/g, ''))
+    } catch (e) {
+      // noop
+    }
+  }
+
+  return result
+}
+
+/**
  * For requests sent via GET, the request body is encoded in the URL.
  * This function will parse the URL and return the request body as
  * if it were a POST request.
@@ -129,20 +228,25 @@ export const getRequestBodyFromUrl = (url: string): IGraphqlRequestBody => {
 }
 
 const getRequestBodyFromWebRequestBodyDetails = (
-  details: chrome.webRequest.WebRequestBodyDetails
+  details: chrome.webRequest.WebRequestBodyDetails,
+  headers: IHeader[]
 ): string | undefined => {
-  // TODO i think there is different encoding if it is a form data request
-  // so we need to test and handle.
-
   if (details.method === 'GET') {
     const body = getRequestBodyFromUrl(details.url)
     return JSON.stringify(body)
-  } else {
-    const rawBody = details.requestBody?.raw?.[0]?.bytes
-    const decoder = new TextDecoder('utf-8')
-    const body = rawBody ? decoder.decode(rawBody) : undefined
-    return body
   }
+
+  const rawBody = details.requestBody?.raw?.[0]?.bytes
+  const decoder = new TextDecoder('utf-8')
+  const body = rawBody ? decoder.decode(rawBody) : undefined
+
+  const boundary = getMultipartFormDataBoundary(headers)
+  if (boundary && body) {
+    const res = getRequestBodyFromMultipartFormData(boundary, body)
+    return JSON.stringify(res)
+  }
+
+  return body
 }
 
 const getRequestBodyFromNetworkRequest = (
@@ -151,21 +255,36 @@ const getRequestBodyFromNetworkRequest = (
   if (details.request.method === 'GET') {
     const body = getRequestBodyFromUrl(details.request.url)
     return JSON.stringify(body)
-  } else {
-    const body = details.request.postData?.text
-    return body
   }
+
+  const body = details.request.postData?.text
+
+  const boundary = getMultipartFormDataBoundary(details.request.headers)
+  if (boundary && body) {
+    const res = getRequestBodyFromMultipartFormData(boundary, body)
+    return JSON.stringify(res)
+  }
+
+  return body
 }
 
-export const getRequestBody = (
-  details:
+export const getRequestBody = <
+  T extends
     | chrome.devtools.network.Request
     | chrome.webRequest.WebRequestBodyDetails
+>(
+  details: T,
+  ...headers: T extends chrome.webRequest.WebRequestBodyDetails
+    ? [IHeader[]]
+    : []
 ): string | undefined => {
   if (isNetworkRequest(details)) {
     return getRequestBodyFromNetworkRequest(details)
   } else {
-    return getRequestBodyFromWebRequestBodyDetails(details)
+    return getRequestBodyFromWebRequestBodyDetails(
+      details,
+      headers as IHeader[]
+    )
   }
 }
 
@@ -182,6 +301,7 @@ export const getRequestBody = (
 export const matchWebAndNetworkRequest = (
   webRequest: chrome.webRequest.WebRequestBodyDetails,
   networkRequest: chrome.devtools.network.Request
+  // TODO pass webRequest headers
 ): boolean => {
   const webRequestBody = getRequestBodyFromWebRequestBodyDetails(webRequest)
   const networkRequestBody = getRequestBodyFromNetworkRequest(networkRequest)

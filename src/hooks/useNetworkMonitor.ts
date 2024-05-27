@@ -1,22 +1,22 @@
-import { useCallback, useEffect, useState } from "react"
-import { v4 as uuid } from "uuid"
+import { useCallback, useEffect, useState } from 'react'
+import { v4 as uuid } from 'uuid'
 import {
   parseGraphqlBody,
   getFirstGraphqlOperation,
-} from "../helpers/graphqlHelpers"
+} from '../helpers/graphqlHelpers'
 import {
   onRequestFinished,
   onBeforeRequest,
   onBeforeSendHeaders,
   getHAR,
-} from "../services/networkMonitor"
+} from '../services/networkMonitor'
 import {
   IIncompleteNetworkRequest,
   INetworkRequest,
   getRequestBody,
   isRequestComplete,
   matchWebAndNetworkRequest,
-} from "../helpers/networkHelpers"
+} from '../helpers/networkHelpers'
 
 export const useNetworkMonitor = (): [INetworkRequest[], () => void] => {
   const [webRequests, setWebRequests] = useState<IIncompleteNetworkRequest[]>(
@@ -25,21 +25,6 @@ export const useNetworkMonitor = (): [INetworkRequest[], () => void] => {
 
   const handleBeforeRequest = useCallback(
     (details: chrome.webRequest.WebRequestBodyDetails) => {
-      const body = getRequestBody(details)
-      if (!body) {
-        return
-      }
-
-      const graphqlRequestBody = parseGraphqlBody(body)
-      if (!graphqlRequestBody) {
-        return
-      }
-
-      const primaryOperation = getFirstGraphqlOperation(graphqlRequestBody)
-      if (!primaryOperation) {
-        return
-      }
-
       setWebRequests((webRequests) => {
         const newWebRequest: IIncompleteNetworkRequest = {
           id: details.requestId,
@@ -47,14 +32,6 @@ export const useNetworkMonitor = (): [INetworkRequest[], () => void] => {
           url: details.url,
           time: 0,
           method: details.method,
-          request: {
-            primaryOperation,
-            body: graphqlRequestBody.map((requestBody) => ({
-              ...requestBody,
-              id: uuid(),
-            })),
-            bodySize: body ? body.length : 0,
-          },
           native: {
             webRequest: details,
           },
@@ -69,7 +46,25 @@ export const useNetworkMonitor = (): [INetworkRequest[], () => void] => {
   const handleBeforeSendHeaders = useCallback(
     (details: chrome.webRequest.WebRequestHeadersDetails) => {
       setWebRequests((webRequests) => {
-        return webRequests.map((webRequest) => {
+        return webRequests.flatMap((webRequest) => {
+          const body = getRequestBody(
+            webRequest.native.webRequest,
+            details.requestHeaders || []
+          )
+          if (!body) {
+            return []
+          }
+
+          const graphqlRequestBody = parseGraphqlBody(body)
+          if (!graphqlRequestBody) {
+            return []
+          }
+
+          const primaryOperation = getFirstGraphqlOperation(graphqlRequestBody)
+          if (!primaryOperation) {
+            return []
+          }
+
           if (webRequest.id !== details.requestId) {
             return webRequest
           }
@@ -77,7 +72,12 @@ export const useNetworkMonitor = (): [INetworkRequest[], () => void] => {
           return {
             ...webRequest,
             request: {
-              ...webRequest.request,
+              primaryOperation,
+              body: graphqlRequestBody.map((requestBody) => ({
+                ...requestBody,
+                id: uuid(),
+              })),
+              bodySize: body ? body.length : 0,
               headers: details.requestHeaders,
               headersSize: (details.requestHeaders || []).reduce(
                 (acc, header) =>
@@ -153,7 +153,7 @@ export const useNetworkMonitor = (): [INetworkRequest[], () => void] => {
     const fetchHistoricWebRequests = async () => {
       const HARLog = await getHAR()
       for (const entry of HARLog.entries) {
-        if ("getContent" in entry) {
+        if ('getContent' in entry) {
           handleRequestFinished(entry as chrome.devtools.network.Request)
         }
       }
