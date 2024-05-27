@@ -1,5 +1,7 @@
 import { TextDecoder } from 'util'
 import { IGraphqlRequestBody, IOperationDetails } from './graphqlHelpers'
+import decodeQueryParam from './decodeQueryParam'
+import { parse } from './safeJson'
 
 export interface IHeader {
   name: string
@@ -90,17 +92,40 @@ export const getRequestBodyFromUrl = (url: string): IGraphqlRequestBody => {
   const query = urlObj.searchParams.get('query')
   const variables = urlObj.searchParams.get('variables')
   const operationName = urlObj.searchParams.get('operationName')
+  const extensions = urlObj.searchParams.get('extensions')
 
-  if (!query) {
-    throw new Error('No query found in URL')
+  const decodedQuery = query ? decodeQueryParam(query) : undefined
+  const decodedVariables = variables ? decodeQueryParam(variables) : undefined
+  const decodedOperationName = operationName
+    ? decodeQueryParam(operationName)
+    : undefined
+  const decodedExtensions = extensions
+    ? decodeQueryParam(extensions)
+    : undefined
+
+  if (decodedQuery) {
+    return {
+      id: 'TODO',
+      query: decodedQuery,
+      operationName: decodedOperationName,
+      variables: decodedVariables ? JSON.parse(decodedVariables) : undefined,
+    }
   }
 
-  return {
-    id: 'TODO',
-    query,
-    operationName: operationName || undefined,
-    variables: variables ? JSON.parse(variables) : undefined,
+  // If not query found, check for persisted query
+  const persistedQuery = parse<{ persistedQuery: boolean }>(
+    decodedExtensions
+  )?.persistedQuery
+  if (persistedQuery) {
+    return {
+      id: 'TODO',
+      query: '',
+      extensions: decodedExtensions ? JSON.parse(decodedExtensions) : undefined,
+      variables: decodedVariables ? JSON.parse(decodedVariables) : undefined,
+    }
   }
+
+  throw new Error('Could not parse request body from URL')
 }
 
 const getRequestBodyFromWebRequestBodyDetails = (

@@ -9,7 +9,7 @@ describe('networkHelpers.getRequestBodyFromUrl', () => {
   it('throws an error when no query is found in the URL', () => {
     expect(() => {
       getRequestBodyFromUrl('http://example.com')
-    }).toThrow('No query found in URL')
+    }).toThrow('Could not parse request body from URL')
   })
 
   it('returns the request body from the URL', () => {
@@ -41,6 +41,71 @@ describe('networkHelpers.getRequestBodyFromUrl', () => {
       operationName: 'GetUser',
       variables: {
         id: '1',
+      },
+    })
+  })
+
+  it('returns the request body from an encoded URL', () => {
+    // Produce a URL with query parameters
+    const query = `
+      query GetUser($id: ID!) {
+        user(id: $id) {
+          id
+          name
+          email
+        }
+      }
+    `
+    const operationName = 'GetUser'
+    const variables = {
+      id: '1',
+    }
+    const baseUrl = 'https://your-graphql-endpoint.com/graphql'
+    // Encode the query parameters
+    const params = new URLSearchParams({
+      query: encodeURIComponent(query),
+      variables: encodeURIComponent(JSON.stringify(variables)),
+      operationName: encodeURIComponent(operationName),
+    })
+    const url = `${baseUrl}?${params.toString()}`
+
+    const body = getRequestBodyFromUrl(url)
+    expect(body).toMatchObject({
+      query,
+      operationName: 'GetUser',
+      variables: {
+        id: '1',
+      },
+    })
+  })
+
+  it('returns the request body for a persisted query', () => {
+    const extensions = {
+      persistedQuery: {
+        sha256Hash: '12345',
+      },
+    }
+    const variables = {
+      id: '1',
+    }
+    const baseUrl = 'https://your-graphql-endpoint.com/graphql'
+    // Encode the query parameters
+    const params = new URLSearchParams({
+      variables: encodeURIComponent(JSON.stringify(variables)),
+      extensions: encodeURIComponent(JSON.stringify(extensions)),
+    })
+    const url = `${baseUrl}?${params.toString()}`
+
+    const body = getRequestBodyFromUrl(url)
+    expect(body).toMatchObject({
+      query: '',
+      variables: {
+        id: '1',
+      },
+      extensions: {
+        persistedQuery: {
+          sha256Hash: '12345',
+        },
       },
     })
   })

@@ -31,15 +31,17 @@ describe('graphqlHelpers.getErrorMessages', () => {
 })
 
 describe('graphqlHelpers.getFirstGraphqlOperation', () => {
-  it('throws an error when no operation name can be determined', () => {
-    expect(() => {
-      getFirstGraphqlOperation([
-        {
-          id: '1',
-          query: 'query { field }',
-        },
-      ])
-    }).toThrow('Operation name could not be determined')
+  it('returns the operation name and type from unnamed query', () => {
+    const operation = getFirstGraphqlOperation([
+      {
+        id: '1',
+        query: 'query { field }',
+      },
+    ])
+    expect(operation).toEqual({
+      operationName: 'field',
+      operation: 'query',
+    })
   })
 
   it('returns the operation name and type from the query', () => {
@@ -59,24 +61,12 @@ describe('graphqlHelpers.getFirstGraphqlOperation', () => {
     const operation = getFirstGraphqlOperation([
       {
         id: '1',
-        query: 'query MyQuery { field }',
+        query: 'query Me { field }',
+        operationName: 'MyQuery',
       },
     ])
     expect(operation).toEqual({
       operationName: 'MyQuery',
-      operation: 'query',
-    })
-  })
-
-  it('returns the operation name and type when operationName is not provided', () => {
-    const operation = getFirstGraphqlOperation([
-      {
-        id: '1',
-        query: 'query { field }',
-      },
-    ])
-    expect(operation).toEqual({
-      operationName: 'field',
       operation: 'query',
     })
   })
