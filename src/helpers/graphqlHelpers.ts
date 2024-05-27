@@ -1,7 +1,7 @@
-import { FieldNode, GraphQLError, OperationDefinitionNode } from "graphql"
-import gql from "graphql-tag"
+import { FieldNode, GraphQLError, OperationDefinitionNode } from 'graphql'
+import gql from 'graphql-tag'
 
-export type OperationType = "query" | "mutation" | "subscription" | "persisted"
+export type OperationType = 'query' | 'mutation' | 'subscription' | 'persisted'
 
 export interface IGraphqlRequestBody {
   id: string
@@ -28,10 +28,10 @@ const isParsedGraphqlRequestValid = (
 ): requestPayloads is IGraphqlRequestBody[] => {
   const isValid = requestPayloads.every((payload) => {
     const isQueryValid =
-      ("query" in payload && typeof payload.query === "string") ||
+      ('query' in payload && typeof payload.query === 'string') ||
       payload.extensions?.persistedQuery
     const isVariablesValid =
-      "variables" in payload ? typeof payload.variables === "object" : true
+      'variables' in payload ? typeof payload.variables === 'object' : true
 
     return isQueryValid && isVariablesValid
   })
@@ -76,16 +76,22 @@ export const parseGraphqlQuery = (queryString: any) => {
  * @param body the body of a GraphQL request
  * @returns an array of request payloads
  */
-export const parseGraphqlBody = (body: string) => {
-  const requestPayload = JSON.parse(body)
-  const requestPayloads = Array.isArray(requestPayload)
-    ? requestPayload
-    : [requestPayload]
+export const parseGraphqlBody = (
+  body: string
+): IGraphqlRequestBody[] | undefined => {
+  try {
+    const requestPayload = JSON.parse(body)
+    const requestPayloads = Array.isArray(requestPayload)
+      ? requestPayload
+      : [requestPayload]
 
-  if (!isParsedGraphqlRequestValid(requestPayloads)) {
-    throw new Error("Parsed requestBody is invalid")
-  } else {
-    return requestPayloads
+    if (!isParsedGraphqlRequestValid(requestPayloads)) {
+      throw new Error('Parsed requestBody is invalid')
+    } else {
+      return requestPayloads
+    }
+  } catch (error) {
+    return undefined
   }
 }
 
@@ -102,10 +108,10 @@ export const getFirstGraphqlOperation = (
   if (graphqlBody[0].query) {
     const documentNode = parseGraphqlQuery(graphqlBody[0].query)
     const firstOperationDefinition = documentNode.definitions.find(
-      (def) => def.kind === "OperationDefinition"
+      (def) => def.kind === 'OperationDefinition'
     ) as OperationDefinitionNode
     const field = firstOperationDefinition.selectionSet.selections.find(
-      (selection) => selection.kind === "Field"
+      (selection) => selection.kind === 'Field'
     ) as FieldNode
 
     const operationName =
@@ -115,7 +121,7 @@ export const getFirstGraphqlOperation = (
     const operation = firstOperationDefinition?.operation
 
     if (!operationName) {
-      throw new Error("Operation name could not be determined")
+      throw new Error('Operation name could not be determined')
     }
 
     return {
@@ -139,8 +145,8 @@ export const getErrorMessages = (
   }
   try {
     const bodyParsed = JSON.parse(responseBody)
-    if ("errors" in bodyParsed) {
-      return bodyParsed.errors.map((error: GraphQLError) => error.message || "")
+    if ('errors' in bodyParsed) {
+      return bodyParsed.errors.map((error: GraphQLError) => error.message || '')
     }
     return []
   } catch (error) {

@@ -1,4 +1,3 @@
-import { TextDecoder } from 'util'
 import { IGraphqlRequestBody, IOperationDetails } from './graphqlHelpers'
 import decodeQueryParam from './decodeQueryParam'
 import { parse } from './safeJson'
@@ -276,13 +275,17 @@ export const getRequestBody = <
     ? [IHeader[]]
     : []
 ): string | undefined => {
-  if (isNetworkRequest(details)) {
-    return getRequestBodyFromNetworkRequest(details)
-  } else {
-    return getRequestBodyFromWebRequestBodyDetails(
-      details,
-      headers as IHeader[]
-    )
+  try {
+    if (isNetworkRequest(details)) {
+      return getRequestBodyFromNetworkRequest(details)
+    } else {
+      return getRequestBodyFromWebRequestBodyDetails(
+        details,
+        headers as IHeader[]
+      )
+    }
+  } catch (e) {
+    return undefined
   }
 }
 
@@ -310,10 +313,6 @@ export const matchWebAndNetworkRequest = (
   const isMethodMatch = webRequest.method === networkRequest.request.method
   const isBodyMatch = webRequestBody === networkRequestBody
   const isUrlMatch = webRequest.url === networkRequest.request.url
-  const isHeadersMatch = compareHeaders(
-    webRequestHeaders,
-    networkRequest.request.headers
-  )
 
-  return isMethodMatch && isBodyMatch && isUrlMatch && isHeadersMatch
+  return isMethodMatch && isBodyMatch && isUrlMatch
 }
