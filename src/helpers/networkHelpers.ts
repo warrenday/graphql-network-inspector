@@ -161,7 +161,16 @@ export const getRequestBodyFromMultipartFormData = (
     }
   }
 
-  return result
+  if (!result.query) {
+    throw new Error('Could not parse request body from multipart/form-data')
+  }
+
+  return {
+    id: result.id,
+    query: result.query,
+    operationName: result.operationName,
+    variables: result.variables ? JSON.parse(result.variables) : undefined,
+  }
 }
 
 /**
