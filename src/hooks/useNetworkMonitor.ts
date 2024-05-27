@@ -113,8 +113,9 @@ export const useNetworkMonitor = (): [INetworkRequest[], () => void] => {
         setWebRequests((webRequests) => {
           return webRequests.map((webRequest) => {
             const isMatch = matchWebAndNetworkRequest(
+              details,
               webRequest.native?.webRequest,
-              details
+              webRequest.request?.headers || []
             )
             if (!isMatch) {
               return webRequest

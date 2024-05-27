@@ -1,6 +1,7 @@
 import { DeepPartial } from 'utility-types'
 import { TextEncoder } from 'util'
 import {
+  IHeader,
   getRequestBodyFromUrl,
   matchWebAndNetworkRequest,
 } from './networkHelpers'
@@ -124,6 +125,7 @@ describe('networkHelpers.matchWebAndNetworkRequest', () => {
         raw: [{ bytes: new TextEncoder().encode(body) }],
       },
     }
+    const webRequestHeaders: IHeader[] = []
     const networkRequest: DeepPartial<chrome.devtools.network.Request> = {
       request: {
         url: 'http://example.com',
@@ -131,12 +133,14 @@ describe('networkHelpers.matchWebAndNetworkRequest', () => {
         postData: {
           text: body,
         },
+        headers: [],
       },
     }
 
     const match = matchWebAndNetworkRequest(
+      networkRequest as any,
       webRequest as any,
-      networkRequest as any
+      webRequestHeaders
     )
     expect(match).toBe(true)
   })
@@ -153,6 +157,7 @@ describe('networkHelpers.matchWebAndNetworkRequest', () => {
         raw: [{ bytes: new TextEncoder().encode(body) }],
       },
     }
+    const webRequestHeaders: IHeader[] = []
     const networkRequest: DeepPartial<chrome.devtools.network.Request> = {
       request: {
         url: 'http://example2.com',
@@ -160,12 +165,14 @@ describe('networkHelpers.matchWebAndNetworkRequest', () => {
         postData: {
           text: body,
         },
+        headers: [],
       },
     }
 
     const match = matchWebAndNetworkRequest(
+      networkRequest as any,
       webRequest as any,
-      networkRequest as any
+      webRequestHeaders
     )
     expect(match).toBe(false)
   })
@@ -182,6 +189,7 @@ describe('networkHelpers.matchWebAndNetworkRequest', () => {
         raw: [{ bytes: new TextEncoder().encode(body) }],
       },
     }
+    const webRequestHeaders: IHeader[] = []
     const networkRequest: DeepPartial<chrome.devtools.network.Request> = {
       request: {
         url: 'http://example1.com?query=query%20%7B%20user%20%7D',
@@ -189,12 +197,14 @@ describe('networkHelpers.matchWebAndNetworkRequest', () => {
         postData: {
           text: body,
         },
+        headers: [],
       },
     }
 
     const match = matchWebAndNetworkRequest(
+      networkRequest as any,
       webRequest as any,
-      networkRequest as any
+      webRequestHeaders
     )
     expect(match).toBe(false)
   })
@@ -215,6 +225,7 @@ describe('networkHelpers.matchWebAndNetworkRequest', () => {
         ],
       },
     }
+    const webRequestHeaders: IHeader[] = []
     const networkRequest: DeepPartial<chrome.devtools.network.Request> = {
       request: {
         url: 'http://example1.com',
@@ -224,12 +235,64 @@ describe('networkHelpers.matchWebAndNetworkRequest', () => {
             query: 'query { account }',
           }),
         },
+        headers: [],
       },
     }
 
     const match = matchWebAndNetworkRequest(
+      networkRequest as any,
       webRequest as any,
-      networkRequest as any
+      webRequestHeaders
+    )
+    expect(match).toBe(false)
+  })
+
+  it('does not match requests with different headers', () => {
+    const body = JSON.stringify({
+      query: 'query { user }',
+    })
+
+    const webRequest: DeepPartial<chrome.webRequest.WebRequestBodyDetails> = {
+      url: 'http://example.com',
+      method: 'POST',
+      requestBody: {
+        raw: [{ bytes: new TextEncoder().encode(body) }],
+      },
+    }
+    const webRequestHeaders: IHeader[] = [
+      {
+        name: 'Authorization',
+        value: '123',
+      },
+      {
+        name: 'Content-Type',
+        value: 'application/json',
+      },
+    ]
+    const networkRequest: DeepPartial<chrome.devtools.network.Request> = {
+      request: {
+        url: 'http://example.com',
+        method: 'POST',
+        postData: {
+          text: body,
+        },
+        headers: [
+          {
+            name: 'Authorization',
+            value: '123',
+          },
+          {
+            name: 'Content-Type',
+            value: 'application/graphql',
+          },
+        ],
+      },
+    }
+
+    const match = matchWebAndNetworkRequest(
+      networkRequest as any,
+      webRequest as any,
+      webRequestHeaders
     )
     expect(match).toBe(false)
   })

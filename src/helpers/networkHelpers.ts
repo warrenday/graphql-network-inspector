@@ -2,6 +2,7 @@ import { TextDecoder } from 'util'
 import { IGraphqlRequestBody, IOperationDetails } from './graphqlHelpers'
 import decodeQueryParam from './decodeQueryParam'
 import { parse } from './safeJson'
+import compareHeaders from './compareHeaders'
 
 export interface IHeader {
   name: string
@@ -100,18 +101,6 @@ const getMultipartFormDataBoundary = (
   }
 
   return boundary
-}
-
-/**
- * Detect if the request is a multipart form data request
- * by checking the content type header.
- *
- * @param headers the headers to check
- * @returns true if the request is multipart form data
- */
-const isMultipartFormData = (headers: IHeader[]): boolean => {
-  const boundary = getMultipartFormDataBoundary(headers)
-  return typeof boundary === 'string'
 }
 
 /**
@@ -299,18 +288,23 @@ export const getRequestBody = <
  *
  */
 export const matchWebAndNetworkRequest = (
+  networkRequest: chrome.devtools.network.Request,
   webRequest: chrome.webRequest.WebRequestBodyDetails,
-  networkRequest: chrome.devtools.network.Request
-  // TODO pass webRequest headers
+  webRequestHeaders: IHeader[]
 ): boolean => {
-  const webRequestBody = getRequestBodyFromWebRequestBodyDetails(webRequest)
+  const webRequestBody = getRequestBodyFromWebRequestBodyDetails(
+    webRequest,
+    webRequestHeaders
+  )
   const networkRequestBody = getRequestBodyFromNetworkRequest(networkRequest)
 
   const isMethodMatch = webRequest.method === networkRequest.request.method
   const isBodyMatch = webRequestBody === networkRequestBody
   const isUrlMatch = webRequest.url === networkRequest.request.url
-  // TODO can we match on request headers???
-  // const isHeaderMatch = webRequest.requestHeaders === networkRequest.request.headers
+  const isHeadersMatch = compareHeaders(
+    webRequestHeaders,
+    networkRequest.request.headers
+  )
 
-  return isMethodMatch && isBodyMatch && isUrlMatch
+  return isMethodMatch && isBodyMatch && isUrlMatch && isHeadersMatch
 }
