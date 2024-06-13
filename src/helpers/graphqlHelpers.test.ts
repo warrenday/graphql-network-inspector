@@ -70,4 +70,23 @@ describe('graphqlHelpers.getFirstGraphqlOperation', () => {
       operation: 'query',
     })
   })
+
+  it('returns the operation name for persisted queries', () => {
+    const operation = getFirstGraphqlOperation([
+      {
+        id: '1',
+        extensions: {
+          persistedQuery: {
+            version: 1,
+            sha256Hash: 'hash',
+          },
+        },
+        operationName: 'MyQuery',
+      },
+    ])
+    expect(operation).toEqual({
+      operationName: 'MyQuery',
+      operation: 'persisted',
+    })
+  })
 })
