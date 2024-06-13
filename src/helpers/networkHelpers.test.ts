@@ -274,7 +274,7 @@ describe('networkHelpers.getRequestBodyFromMultipartFormData', () => {
   })
 })
 
-describe('getRequestBody.getRequestBody', () => {
+describe('networkHelpers.getRequestBody', () => {
   it('returns request body from a multipart form data request', () => {
     const details: Partial<chrome.webRequest.WebRequestBodyDetails> = {
       requestBody: {
