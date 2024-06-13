@@ -105,6 +105,10 @@ export const parseGraphqlBody = (
 export const getFirstGraphqlOperation = (
   graphqlBody: IGraphqlRequestBody[]
 ): IOperationDetails | undefined => {
+  if (!graphqlBody.length) {
+    return
+  }
+
   if (graphqlBody[0].query) {
     const documentNode = parseGraphqlQuery(graphqlBody[0].query)
     const firstOperationDefinition = documentNode.definitions.find(
