@@ -1,7 +1,31 @@
-import { mockRequests } from '../mocks/mock-requests'
 import { DeepPartial } from 'utility-types'
+import EventEmitter from 'eventemitter3'
+import { IMockRequest, mockRequests } from '../mocks/mock-requests'
 
-const removeListeners: Record<string, () => void> = {}
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+// Configure an event to add more mock requests
+const eventEmitter = new EventEmitter<{
+  onBeforeRequest: { data: IMockRequest['webRequestBodyDetails'] }
+  onBeforeSendHeaders: { data: IMockRequest['webRequestHeaderDetails'] }
+  onRequestFinished: { data: IMockRequest['networkRequest'] }
+}>()
+const handleKeydown = (e: KeyboardEvent) => {
+  if (e.code === 'Digit1') {
+    mockRequests.forEach(async (request) => {
+      eventEmitter.emit('onBeforeRequest', {
+        data: request.webRequestBodyDetails,
+      })
+      await wait(100)
+      eventEmitter.emit('onBeforeSendHeaders', {
+        data: request.webRequestHeaderDetails,
+      })
+      await wait(100)
+      eventEmitter.emit('onRequestFinished', { data: request.networkRequest })
+    })
+  }
+}
+window.addEventListener('keydown', handleKeydown)
 
 const mockedChrome: DeepPartial<typeof chrome> = {
   devtools: {
@@ -10,26 +34,20 @@ const mockedChrome: DeepPartial<typeof chrome> = {
     },
     network: {
       getHAR: (cb) => {
-        cb({ entries: mockRequests } as any)
+        cb({
+          entries: mockRequests.map(
+            (mockRequest) => mockRequest.networkRequest
+          ),
+        } as any)
       },
       onRequestFinished: {
         addListener: (cb) => {
-          // 3. Dispatch from here
-
-          // On press key "1", add more mock requests to app
-          const handleKeydown = (e: KeyboardEvent) => {
-            if (e.code === 'Digit1') {
-              mockRequests.forEach((mockRequest) => {
-                cb(mockRequest as any)
-              })
-            }
-          }
-          window.addEventListener('keydown', handleKeydown)
-          removeListeners.onRequestFinished = () =>
-            window.removeEventListener('keydown', handleKeydown)
+          eventEmitter.on('onRequestFinished', (event) => {
+            cb(event.data)
+          })
         },
         removeListener: () => {
-          removeListeners.onRequestFinished()
+          eventEmitter.off('onRequestFinished')
         },
       },
       onNavigated: {
@@ -40,16 +58,24 @@ const mockedChrome: DeepPartial<typeof chrome> = {
   },
   webRequest: {
     onBeforeSendHeaders: {
-      addListener: () => {
-        // 2. TODO dispatch request headers from here
+      addListener: (cb) => {
+        eventEmitter.on('onBeforeSendHeaders', (event) => {
+          cb(event.data)
+        })
       },
-      removeListener: () => {},
+      removeListener: () => {
+        eventEmitter.off('onBeforeSendHeaders')
+      },
     },
     onBeforeRequest: {
-      addListener: () => {
-        // 1. TODO dispatch mock requests from here
+      addListener: (cb) => {
+        eventEmitter.on('onBeforeRequest', (event) => {
+          cb(event.data)
+        })
       },
-      removeListener: () => {},
+      removeListener: () => {
+        eventEmitter.off('onBeforeRequest')
+      },
     },
   },
   runtime: {

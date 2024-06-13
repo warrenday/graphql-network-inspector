@@ -99,6 +99,20 @@ export const useNetworkMonitor = (): [INetworkRequest[], () => void] => {
     (details: chrome.webRequest.WebRequestHeadersDetails) => {
       setWebRequests((webRequests) => {
         return webRequests.flatMap((webRequest) => {
+          // Don't overwrite the request if it's already complete
+          if (webRequest.response) {
+            return webRequest
+          }
+
+          // We only want to update the request which matches on id.
+          if (webRequest.id !== details.requestId) {
+            return webRequest
+          }
+
+          // Now we have both the headers and the body from the webRequest api
+          // we can determine if this is a graphql request.
+          //
+          // If it is not, we return an empty array so flatMap will remove it.
           const body = getRequestBody(
             webRequest.native.webRequest,
             details.requestHeaders || []
@@ -115,10 +129,6 @@ export const useNetworkMonitor = (): [INetworkRequest[], () => void] => {
           const primaryOperation = getFirstGraphqlOperation(graphqlRequestBody)
           if (!primaryOperation) {
             return []
-          }
-
-          if (webRequest.id !== details.requestId) {
-            return webRequest
           }
 
           return {
@@ -153,6 +163,11 @@ export const useNetworkMonitor = (): [INetworkRequest[], () => void] => {
       details.getContent((responseBody) => {
         setWebRequests((webRequests) => {
           return webRequests.map((webRequest) => {
+            // Don't overwrite the request if it's already complete
+            if (webRequest.response) {
+              return webRequest
+            }
+
             const isMatch = matchWebAndNetworkRequest(
               details,
               webRequest.native?.webRequest,
