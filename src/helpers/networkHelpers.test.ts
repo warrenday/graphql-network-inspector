@@ -2,6 +2,7 @@ import { DeepPartial } from 'utility-types'
 import { TextEncoder } from 'util'
 import {
   IHeader,
+  getRequestBody,
   getRequestBodyFromMultipartFormData,
   getRequestBodyFromUrl,
   matchWebAndNetworkRequest,
@@ -270,5 +271,47 @@ describe('networkHelpers.getRequestBodyFromMultipartFormData', () => {
         file: null,
       },
     })
+  })
+})
+
+describe('getRequestBody.getRequestBody', () => {
+  it('returns request body from a multipart form data request', () => {
+    const details: Partial<chrome.webRequest.WebRequestBodyDetails> = {
+      requestBody: {
+        raw: [
+          {
+            bytes: new TextEncoder().encode(
+              '------WebKitFormBoundaryfEJbArX25kAvAsQX\r\nContent-Disposition: form-data; name="operations"\r\n\r\n{"operationName":"singleUpload","variables":{"file":null},"query":"mutation singleUpload($file: Upload!) {\\n  singleUpload(file: $file) {\\n    id\\n    __typename\\n  }\\n}"}\r\n------WebKitFormBoundaryfEJbArX25kAvAsQX\r\nContent-Disposition: form-data; name="map"\r\n\r\n{"1":["variables.file"]}\r\n------WebKitFormBoundaryfEJbArX25kAvAsQX\r\nContent-Disposition: form-data; name="1"; filename="test.txt"\r\nContent-Type: text/plain\r\n\r\ntest\r\n------WebKitFormBoundaryfEJbArX25kAvAsQX--\r\n'
+            ),
+          },
+        ],
+      },
+    }
+
+    const headers: IHeader[] = [
+      {
+        name: 'content-type',
+        value:
+          'multipart/form-data; boundary=----WebKitFormBoundaryfEJbArX25kAvAsQX',
+      },
+    ]
+
+    const result = getRequestBody(details as any, headers)
+
+    expect(result).toEqual(
+      JSON.stringify({
+        id: 'TODO',
+        query: dedent`mutation singleUpload($file: Upload!) {
+        singleUpload(file: $file) {
+          id
+          __typename
+        }
+      }`,
+        operationName: 'singleUpload',
+        variables: {
+          file: null,
+        },
+      })
+    )
   })
 })

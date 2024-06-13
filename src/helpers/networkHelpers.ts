@@ -76,6 +76,14 @@ export const isRequestComplete = (
 }
 
 /**
+ * Decode the raw request body into a string
+ */
+const decodeRawBody = (raw: chrome.webRequest.UploadData[]) => {
+  const decoder = new TextDecoder('utf-8')
+  return raw.map((data) => decoder.decode(data.bytes)).join('')
+}
+
+/**
  * Get the boundary value from the content-type header
  * of a multipart/form-data request.
  *
@@ -232,11 +240,9 @@ const getRequestBodyFromWebRequestBodyDetails = (
     return JSON.stringify(body)
   }
 
-  const rawBody = details.requestBody?.raw?.[0]?.bytes
-  const decoder = new TextDecoder('utf-8')
-  const body = rawBody ? decoder.decode(rawBody) : undefined
-
+  const body = decodeRawBody(details.requestBody?.raw || [])
   const boundary = getMultipartFormDataBoundary(headers)
+
   if (boundary && body) {
     const res = getRequestBodyFromMultipartFormData(boundary, body)
     return JSON.stringify(res)
@@ -278,10 +284,7 @@ export const getRequestBody = <
     if (isNetworkRequest(details)) {
       return getRequestBodyFromNetworkRequest(details)
     } else {
-      return getRequestBodyFromWebRequestBodyDetails(
-        details,
-        headers as IHeader[]
-      )
+      return getRequestBodyFromWebRequestBodyDetails(details, headers[0] || [])
     }
   } catch (e) {
     return undefined
