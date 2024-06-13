@@ -1,17 +1,17 @@
-import { FC } from "react"
-import { AutoFormatToggleButton } from "@/components/AutoFormatToggleButton"
-import { CodeView } from "@/components/CodeView"
-import { CopyButton } from "@/components/CopyButton"
-import { IGraphqlRequestBody } from "@/helpers/graphqlHelpers"
-import * as safeJson from "@/helpers/safeJson"
-import { Bar } from "@/components/Bar"
-import { Panels, PanelSection } from "../PanelSection"
+import { FC } from 'react'
+import { AutoFormatToggleButton } from '@/components/AutoFormatToggleButton'
+import { CodeView } from '@/components/CodeView'
+import { CopyButton } from '@/components/CopyButton'
+import { IGraphqlRequestBody } from '@/helpers/graphqlHelpers'
+import * as safeJson from '@/helpers/safeJson'
+import { Bar } from '@/components/Bar'
+import { Panels, PanelSection } from '../PanelSection'
 import {
   RequestViewSectionType,
   useRequestViewSections,
-} from "@/hooks/useRequestViewSections"
-import { CaretIcon } from "../../../components/Icons/CaretIcon"
-import { ShareButton } from "../../../components/ShareButton"
+} from '@/hooks/useRequestViewSections'
+import { CaretIcon } from '../../../components/Icons/CaretIcon'
+import { ShareButton } from '../../../components/ShareButton'
 
 const isVariablesPopulated = (variables: Record<string, unknown>) => {
   return Object.keys(variables || {}).length > 0
@@ -28,8 +28,8 @@ const getVariables = ({ variables, extensions }: IGraphqlRequestBody) => {
 
   if (
     extensions &&
-    "variables" in extensions &&
-    typeof extensions.variables == "string"
+    'variables' in extensions &&
+    typeof extensions.variables == 'string'
   ) {
     try {
       return JSON.parse(atob(extensions.variables))
@@ -86,7 +86,7 @@ const RequestContainer = (props: IRequestContainerProps) => {
       <RequestViewSection
         type="request"
         requestId={requestId}
-        title={`Request${index ? ` (${index}/${totalRequests})` : ""}`}
+        title={`Request${index ? ` (${index}/${totalRequests})` : ''}`}
       >
         <div className="-mt-2">{children}</div>
       </RequestViewSection>
@@ -118,7 +118,7 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
       <div className="flex items-center gap-2 absolute top-[8px] right-[8px] z-10 transition-opacity">
         {onShare && <ShareButton onClick={onShare} />}
         {displayQuery && (
-          <CopyButton label="Copy Query" textToCopy={request.query} />
+          <CopyButton label="Copy Query" textToCopy={request.query || ''} />
         )}
         {displayVariables && (
           <CopyButton
@@ -143,13 +143,13 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
           {displayQuery && (
             <RequestViewSection
               type="query"
-              title={"Query"}
+              title={'Query'}
               requestId={requestId}
               level={1}
             >
               <CodeView
-                text={request.query}
-                language={"graphql"}
+                text={request.query || ''}
+                language={'graphql'}
                 autoFormat={autoFormat}
                 className="px-6"
               />
@@ -164,7 +164,7 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
             >
               <CodeView
                 text={safeJson.stringify(variables, undefined, 2)}
-                language={"json"}
+                language={'json'}
                 className="px-6"
               />
             </RequestViewSection>
@@ -178,7 +178,7 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
             >
               <CodeView
                 text={safeJson.stringify(request.extensions, undefined, 2)}
-                language={"json"}
+                language={'json'}
                 autoFormat={autoFormat}
                 className="px-6"
               />
@@ -216,7 +216,7 @@ const RequestViewSection: FC<IRequestViewSectionProps> = (props) => {
         onClick={handleToggleView}
       >
         <div className="flex justify-be align-center tween items-center gap-2 text-gray-400">
-          <CaretIcon className={"w-2.5 " + (isCollapsed ? "" : "rotate-90")} />
+          <CaretIcon className={'w-2.5 ' + (isCollapsed ? '' : 'rotate-90')} />
           <span>{title}</span>
         </div>
       </button>

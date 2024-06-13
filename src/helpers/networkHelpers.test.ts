@@ -2,9 +2,11 @@ import { DeepPartial } from 'utility-types'
 import { TextEncoder } from 'util'
 import {
   IHeader,
+  getRequestBodyFromMultipartFormData,
   getRequestBodyFromUrl,
   matchWebAndNetworkRequest,
 } from './networkHelpers'
+import dedent from 'dedent'
 
 describe('networkHelpers.getRequestBodyFromUrl', () => {
   it('throws an error when no query is found in the URL', () => {
@@ -245,5 +247,28 @@ describe('networkHelpers.matchWebAndNetworkRequest', () => {
       webRequestHeaders
     )
     expect(match).toBe(false)
+  })
+})
+
+describe('networkHelpers.getRequestBodyFromMultipartFormData', () => {
+  it('returns a graphql request payload from a multipart form data request', () => {
+    const boundary = '----WebKitFormBoundaryfEJbArX25kAvAsQX'
+    const formDataString =
+      '------WebKitFormBoundaryfEJbArX25kAvAsQX\r\nContent-Disposition: form-data; name="operations"\r\n\r\n{"operationName":"singleUpload","variables":{"file":null},"query":"mutation singleUpload($file: Upload!) {\\n  singleUpload(file: $file) {\\n    id\\n    __typename\\n  }\\n}"}\r\n------WebKitFormBoundaryfEJbArX25kAvAsQX\r\nContent-Disposition: form-data; name="map"\r\n\r\n{"1":["variables.file"]}\r\n------WebKitFormBoundaryfEJbArX25kAvAsQX\r\nContent-Disposition: form-data; name="1"; filename="test.txt"\r\nContent-Type: text/plain\r\n\r\ntest\r\n------WebKitFormBoundaryfEJbArX25kAvAsQX--\r\n'
+
+    const result = getRequestBodyFromMultipartFormData(boundary, formDataString)
+
+    expect(result).toMatchObject({
+      query: dedent`mutation singleUpload($file: Upload!) {
+        singleUpload(file: $file) {
+          id
+          __typename
+        }
+      }`,
+      operationName: 'singleUpload',
+      variables: {
+        file: null,
+      },
+    })
   })
 })

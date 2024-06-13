@@ -86,7 +86,7 @@ const getMultipartFormDataBoundary = (
   headers: IHeader[]
 ): string | undefined => {
   const contentType = headers.find(
-    (header) => header.name === 'content-type'
+    (header) => header.name.toLowerCase() === 'content-type'
   )?.value
   if (!contentType) {
     return
@@ -129,7 +129,7 @@ export const getRequestBodyFromMultipartFormData = (
 ): IGraphqlRequestBody => {
   // Split on the form boundary
   const parts = formDataString.split(boundary)
-  const result: Record<string, string> = {}
+  const result: Record<string, any> = {}
 
   // Process each part
   for (const part of parts) {
@@ -159,15 +159,15 @@ export const getRequestBodyFromMultipartFormData = (
     }
   }
 
-  if (!result.query) {
+  if (!result.operations.query) {
     throw new Error('Could not parse request body from multipart/form-data')
   }
 
   return {
-    id: result.id,
-    query: result.query,
-    operationName: result.operationName,
-    variables: result.variables ? JSON.parse(result.variables) : undefined,
+    id: 'TODO',
+    query: result.operations.query,
+    operationName: result.operations.operationName,
+    variables: result.operations.variables,
   }
 }
 
@@ -303,15 +303,19 @@ export const matchWebAndNetworkRequest = (
   webRequest: chrome.webRequest.WebRequestBodyDetails,
   webRequestHeaders: IHeader[]
 ): boolean => {
-  const webRequestBody = getRequestBodyFromWebRequestBodyDetails(
-    webRequest,
-    webRequestHeaders
-  )
-  const networkRequestBody = getRequestBodyFromNetworkRequest(networkRequest)
+  try {
+    const webRequestBody = getRequestBodyFromWebRequestBodyDetails(
+      webRequest,
+      webRequestHeaders
+    )
+    const networkRequestBody = getRequestBodyFromNetworkRequest(networkRequest)
 
-  const isMethodMatch = webRequest.method === networkRequest.request.method
-  const isBodyMatch = webRequestBody === networkRequestBody
-  const isUrlMatch = webRequest.url === networkRequest.request.url
+    const isMethodMatch = webRequest.method === networkRequest.request.method
+    const isBodyMatch = webRequestBody === networkRequestBody
+    const isUrlMatch = webRequest.url === networkRequest.request.url
 
-  return isMethodMatch && isBodyMatch && isUrlMatch
+    return isMethodMatch && isBodyMatch && isUrlMatch
+  } catch (e) {
+    return false
+  }
 }
