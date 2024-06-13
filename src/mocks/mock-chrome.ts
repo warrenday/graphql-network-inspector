@@ -1,12 +1,12 @@
-import { mockRequests } from "../mocks/mock-requests"
-import { DeepPartial } from "utility-types"
+import { mockRequests } from '../mocks/mock-requests'
+import { DeepPartial } from 'utility-types'
 
 const removeListeners: Record<string, () => void> = {}
 
 const mockedChrome: DeepPartial<typeof chrome> = {
   devtools: {
     panels: {
-      themeName: "dark",
+      themeName: 'dark',
     },
     network: {
       getHAR: (cb) => {
@@ -14,17 +14,19 @@ const mockedChrome: DeepPartial<typeof chrome> = {
       },
       onRequestFinished: {
         addListener: (cb) => {
+          // 3. Dispatch from here
+
           // On press key "1", add more mock requests to app
           const handleKeydown = (e: KeyboardEvent) => {
-            if (e.code === "Digit1") {
+            if (e.code === 'Digit1') {
               mockRequests.forEach((mockRequest) => {
                 cb(mockRequest as any)
               })
             }
           }
-          window.addEventListener("keydown", handleKeydown)
+          window.addEventListener('keydown', handleKeydown)
           removeListeners.onRequestFinished = () =>
-            window.removeEventListener("keydown", handleKeydown)
+            window.removeEventListener('keydown', handleKeydown)
         },
         removeListener: () => {
           removeListeners.onRequestFinished()
@@ -38,20 +40,24 @@ const mockedChrome: DeepPartial<typeof chrome> = {
   },
   webRequest: {
     onBeforeSendHeaders: {
-      addListener: () => {},
+      addListener: () => {
+        // 2. TODO dispatch request headers from here
+      },
       removeListener: () => {},
     },
     onBeforeRequest: {
-      addListener: () => {},
+      addListener: () => {
+        // 1. TODO dispatch mock requests from here
+      },
       removeListener: () => {},
     },
   },
   runtime: {
     getPlatformInfo: ((cb) => {
       const platformInfo: chrome.runtime.PlatformInfo = {
-        arch: "x86-64",
-        nacl_arch: "x86-64",
-        os: "mac",
+        arch: 'x86-64',
+        nacl_arch: 'x86-64',
+        os: 'mac',
       }
       cb(platformInfo)
     }) as typeof chrome.runtime.getPlatformInfo,

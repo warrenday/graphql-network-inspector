@@ -11,6 +11,7 @@ import {
   getHAR,
 } from '../services/networkMonitor'
 import {
+  IHeader,
   IIncompleteNetworkRequest,
   INetworkRequest,
   getRequestBody,
@@ -145,6 +146,90 @@ export const useNetworkMonitor = (): [INetworkRequest[], () => void] => {
     [setWebRequests]
   )
 
+  const handleHAREntries = useCallback(
+    async (entries: chrome.devtools.network.Request[]) => {
+      const validEntries = entries.filter((details) => {
+        if (!('getContent' in details)) {
+          return false
+        }
+
+        const body = getRequestBody(details)
+        if (!body) {
+          return false
+        }
+
+        const graphqlRequestBody = parseGraphqlBody(body)
+        if (!graphqlRequestBody) {
+          return false
+        }
+
+        const primaryOperation = getFirstGraphqlOperation(graphqlRequestBody)
+        if (!primaryOperation) {
+          return false
+        }
+
+        return true
+      })
+
+      const entriesWithContent = await Promise.all(
+        validEntries.map((entry) => {
+          return new Promise<INetworkRequest>((resolve) => {
+            entry.getContent((responseBody) => {
+              const body = getRequestBody(entry)
+              if (!body) {
+                return
+              }
+
+              const graphqlRequestBody = parseGraphqlBody(body)
+              if (!graphqlRequestBody) {
+                return
+              }
+
+              const primaryOperation =
+                getFirstGraphqlOperation(graphqlRequestBody)
+              if (!primaryOperation) {
+                return
+              }
+
+              resolve({
+                id: uuid(),
+                status: entry.response.status,
+                url: entry.request.url,
+                time: entry.time === -1 || !entry.time ? 0 : entry.time,
+                method: entry.request.method,
+                request: {
+                  primaryOperation,
+                  body: graphqlRequestBody.map((requestBody) => ({
+                    ...requestBody,
+                    id: uuid(),
+                  })),
+                  bodySize: body ? body.length : 0,
+                  headers: entry.request.headers,
+                  headersSize: entry.request.headersSize,
+                },
+                response: {
+                  headers: entry.response.headers,
+                  headersSize: entry.response.headersSize,
+                  bodySize:
+                    entry.response.bodySize === -1
+                      ? entry.response._transferSize || 0
+                      : entry.response.bodySize,
+                  body: responseBody,
+                },
+                native: {
+                  webRequest: {} as any,
+                },
+              })
+            })
+          })
+        })
+      )
+
+      setWebRequests(entriesWithContent)
+    },
+    [setWebRequests]
+  )
+
   const clearWebRequests = useCallback(() => {
     setWebRequests([])
   }, [setWebRequests])
@@ -153,16 +238,12 @@ export const useNetworkMonitor = (): [INetworkRequest[], () => void] => {
   useEffect(() => {
     const fetchHistoricWebRequests = async () => {
       const HARLog = await getHAR()
-      for (const entry of HARLog.entries) {
-        if ('getContent' in entry) {
-          handleRequestFinished(entry as chrome.devtools.network.Request)
-        }
-      }
+      handleHAREntries(HARLog.entries as chrome.devtools.network.Request[])
     }
 
     clearWebRequests()
     fetchHistoricWebRequests()
-  }, [handleRequestFinished, clearWebRequests])
+  }, [handleHAREntries, clearWebRequests])
 
   // Setup listeners for network data
   useEffect(() => {
