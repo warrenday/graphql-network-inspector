@@ -113,7 +113,7 @@ const createRequest = (args: IMockRequestInput): IMockRequest => {
       },
       redirectURL: '',
       headersSize: 100,
-      bodySize: 100,
+      bodySize: 3360,
       headers: [],
     },
     getContent: (cb: Function) => {

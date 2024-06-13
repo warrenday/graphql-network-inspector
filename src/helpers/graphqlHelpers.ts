@@ -104,7 +104,7 @@ export const parseGraphqlBody = (
  */
 export const getFirstGraphqlOperation = (
   graphqlBody: IGraphqlRequestBody[]
-) => {
+): IOperationDetails | undefined => {
   if (graphqlBody[0].query) {
     const documentNode = parseGraphqlQuery(graphqlBody[0].query)
     const firstOperationDefinition = documentNode.definitions.find(
@@ -127,6 +127,13 @@ export const getFirstGraphqlOperation = (
     return {
       operationName,
       operation,
+    }
+  }
+
+  if (graphqlBody[0].extensions?.persistedQuery) {
+    return {
+      operationName: graphqlBody[0].operationName || 'Persisted Query',
+      operation: 'persisted',
     }
   }
 }
