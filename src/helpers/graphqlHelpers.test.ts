@@ -34,7 +34,6 @@ describe('graphqlHelpers.getFirstGraphqlOperation', () => {
   it('returns the operation name and type from unnamed query', () => {
     const operation = getFirstGraphqlOperation([
       {
-        id: '1',
         query: 'query { field }',
       },
     ])
@@ -47,7 +46,6 @@ describe('graphqlHelpers.getFirstGraphqlOperation', () => {
   it('returns the operation name and type from the query', () => {
     const operation = getFirstGraphqlOperation([
       {
-        id: '1',
         query: 'query MyQuery { field }',
       },
     ])
@@ -60,7 +58,6 @@ describe('graphqlHelpers.getFirstGraphqlOperation', () => {
   it('returns the operation name and type when operatioName is explicity provided', () => {
     const operation = getFirstGraphqlOperation([
       {
-        id: '1',
         query: 'query Me { field }',
         operationName: 'MyQuery',
       },
@@ -74,7 +71,6 @@ describe('graphqlHelpers.getFirstGraphqlOperation', () => {
   it('returns the operation name for persisted queries', () => {
     const operation = getFirstGraphqlOperation([
       {
-        id: '1',
         extensions: {
           persistedQuery: {
             version: 1,

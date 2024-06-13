@@ -172,7 +172,6 @@ export const getRequestBodyFromMultipartFormData = (
   }
 
   return {
-    id: 'TODO',
     query: result.operations.query,
     operationName: result.operations.operationName,
     variables: result.operations.variables,
@@ -208,7 +207,6 @@ export const getRequestBodyFromUrl = (url: string): IGraphqlRequestBody => {
 
   if (decodedQuery) {
     return {
-      id: 'TODO',
       query: decodedQuery,
       operationName: decodedOperationName,
       variables: decodedVariables ? JSON.parse(decodedVariables) : undefined,
@@ -221,7 +219,6 @@ export const getRequestBodyFromUrl = (url: string): IGraphqlRequestBody => {
   )?.persistedQuery
   if (persistedQuery) {
     return {
-      id: 'TODO',
       query: '',
       extensions: decodedExtensions ? JSON.parse(decodedExtensions) : undefined,
       variables: decodedVariables ? JSON.parse(decodedVariables) : undefined,

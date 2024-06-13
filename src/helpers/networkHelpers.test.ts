@@ -300,7 +300,6 @@ describe('networkHelpers.getRequestBody', () => {
 
     expect(result).toEqual(
       JSON.stringify({
-        id: 'TODO',
         query: dedent`mutation singleUpload($file: Upload!) {
         singleUpload(file: $file) {
           id

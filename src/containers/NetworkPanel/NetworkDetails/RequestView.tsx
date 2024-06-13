@@ -58,7 +58,7 @@ export const RequestView = (props: IRequestViewProps) => {
       {requests.map((request, index) => {
         return (
           <SingleRequestView
-            key={request.id}
+            key={index}
             request={request}
             autoFormat={autoFormat}
             index={shouldDisplayRequestIndex && index + 1}
@@ -72,20 +72,19 @@ export const RequestView = (props: IRequestViewProps) => {
 }
 
 interface IRequestContainerProps {
-  requestId: string
   index: number
   totalRequests: number
   children: React.ReactNode
 }
 
 const RequestContainer = (props: IRequestContainerProps) => {
-  const { requestId, totalRequests, index, children } = props
+  const { totalRequests, index, children } = props
 
   if (totalRequests > 1) {
     return (
       <RequestViewSection
         type="request"
-        requestId={requestId}
+        index={index}
         title={`Request${index ? ` (${index}/${totalRequests})` : ''}`}
       >
         <div className="-mt-2">{children}</div>
@@ -107,8 +106,8 @@ interface ISingleRequestViewProps {
 const SingleRequestView = (props: ISingleRequestViewProps) => {
   const { request, autoFormat, index, numberOfRequests, onShare } = props
 
+  const requestIndex = index || 0
   const displayQuery = !!request.query
-  const requestId = request.id
   const variables = getVariables(request)
   const displayVariables = isVariablesPopulated(variables)
   const displayExtensions = isExtensionsPopulated(request)
@@ -135,16 +134,12 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
       </div>
 
       <div className="flex flex-col">
-        <RequestContainer
-          requestId={requestId}
-          index={index || 0}
-          totalRequests={numberOfRequests}
-        >
+        <RequestContainer index={requestIndex} totalRequests={numberOfRequests}>
           {displayQuery && (
             <RequestViewSection
               type="query"
               title={'Query'}
-              requestId={requestId}
+              index={requestIndex}
               level={1}
             >
               <CodeView
@@ -159,7 +154,7 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
             <RequestViewSection
               type="variables"
               title="Variables"
-              requestId={requestId}
+              index={requestIndex}
               level={1}
             >
               <CodeView
@@ -173,7 +168,7 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
             <RequestViewSection
               type="extensions"
               title="Extensions"
-              requestId={requestId}
+              index={requestIndex}
               level={1}
             >
               <CodeView
@@ -193,14 +188,14 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
 interface IRequestViewSectionProps {
   type: RequestViewSectionType
   title: string
-  requestId: string
+  index: number
   level?: number
 }
 
 const RequestViewSection: FC<IRequestViewSectionProps> = (props) => {
-  const { type, title, requestId, children, level } = props
+  const { type, title, index, children, level } = props
   const { collapsedSections, setIsSectionCollapsed } = useRequestViewSections()
-  const keyForMap = `${type}-${requestId}`
+  const keyForMap = `${type}-${index}`
 
   const isCollapsed = !!collapsedSections[keyForMap]
 
