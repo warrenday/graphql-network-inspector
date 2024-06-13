@@ -1,5 +1,3 @@
-import { TextEncoder } from 'util'
-
 const url = 'http://graphql-network-monitor.com/graphql'
 
 interface IMockRequestInput {
@@ -20,6 +18,27 @@ export interface IMockRequest {
 
 const createRequest = (args: IMockRequestInput): IMockRequest => {
   const { request, response } = args
+
+  const requestHeaders = [
+    {
+      name: 'Authorization',
+      value:
+        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
+    },
+    {
+      name: 'access-control-allow-credentials',
+      value: 'true',
+    },
+    {
+      name: 'access-control-allow-origin',
+      value: 'https://www.google.com',
+    },
+    {
+      name: 'set-cookie:',
+      value:
+        'SIDCC=fe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1e; expires=Thu, 14-Apr-2022 08:09:50 GMT; path=/; domain=.google.com; priority=high',
+    },
+  ]
 
   const webRequestBodyDetails: chrome.webRequest.WebRequestBodyDetails = {
     frameId: 0,
@@ -51,7 +70,7 @@ const createRequest = (args: IMockRequestInput): IMockRequest => {
     timeStamp: 1699975911.862162,
     type: 'xmlhttprequest',
     url,
-    requestHeaders: [],
+    requestHeaders,
   }
 
   const networkRequest: chrome.devtools.network.Request = {
@@ -81,7 +100,7 @@ const createRequest = (args: IMockRequestInput): IMockRequest => {
       },
       method: 'POST',
       headersSize: 100,
-      headers: [],
+      headers: requestHeaders,
     },
     response: {
       status: 200,
