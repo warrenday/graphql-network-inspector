@@ -1,3 +1,5 @@
+import { TextEncoder } from 'util'
+
 const url = 'http://graphql-network-monitor.com/graphql'
 
 interface IMockRequestInput {
@@ -26,7 +28,7 @@ const createRequest = (args: IMockRequestInput): IMockRequest => {
     type: 'xmlhttprequest',
     timeStamp: 1699975911.862162,
     requestId: '1',
-    url: 'http://graphql-network-monitor.com/graphql',
+    url,
     method: 'POST',
     requestBody: {
       raw: [
@@ -48,7 +50,7 @@ const createRequest = (args: IMockRequestInput): IMockRequest => {
     tabId: 1,
     timeStamp: 1699975911.862162,
     type: 'xmlhttprequest',
-    url: 'http://graphql-network-monitor.com/graphql',
+    url,
     requestHeaders: [],
   }
 

@@ -1,7 +1,6 @@
 import { IGraphqlRequestBody, IOperationDetails } from './graphqlHelpers'
 import decodeQueryParam from './decodeQueryParam'
 import { parse } from './safeJson'
-import compareHeaders from './compareHeaders'
 
 export interface IHeader {
   name: string
