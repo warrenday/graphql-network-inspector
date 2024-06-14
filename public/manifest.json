@@ -6,7 +6,8 @@
     "128": "icon.png"
   },
   "manifest_version": 3,
-  "permissions": [],
+  "permissions": ["webRequest"],
+  "host_permissions": ["<all_urls>"],
   "devtools_page": "devtools/devtools.html",
   "content_scripts": [
     {

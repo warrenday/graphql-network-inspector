@@ -1,6 +1,6 @@
-import { IHeader } from "@/hooks/useNetworkMonitor"
 import * as jwt from "@/helpers/jwt"
 import * as safeJson from "@/helpers/safeJson"
+import { IHeader } from "@/helpers/networkHelpers"
 
 const decodeHeaderValue = (headerValue: string) => {
   try {

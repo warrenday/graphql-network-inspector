@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import { INetworkRequest } from "@/hooks/useNetworkMonitor"
+import { INetworkRequest } from "@/helpers/networkHelpers"
 import { useSearch } from "@/hooks/useSearch"
 import { NetworkTabs } from "@/hooks/useNetworkTabs"
 import { getSearchResults, ISearchResult } from "@/services/searchService"

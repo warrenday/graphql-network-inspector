@@ -1,9 +1,9 @@
+import { INetworkRequest } from "@/helpers/networkHelpers"
 import {
   getHeaderSearchContent,
   getRequestSearchContent,
   getResponseSearchContent,
-} from "../helpers/getSearchContent"
-import { INetworkRequest } from "../hooks/useNetworkMonitor"
+} from "@/helpers/getSearchContent"
 
 export interface ISearchResult {
   matches: {

@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import { Tabs } from "@/components/Tabs"
-import { INetworkRequest } from "@/hooks/useNetworkMonitor"
+import { INetworkRequest } from "@/helpers/networkHelpers"
 import { HeaderView } from "../HeaderView"
 import { RequestView, RequestViewFooter } from "./RequestView"
 import { ResponseView } from "./ResponseView"

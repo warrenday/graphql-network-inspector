@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react"
 import { getHAR } from "../services/networkMonitor"
 import useInterval from "./useInterval"
-import { IHeader } from "./useNetworkMonitor"
+import { IHeader } from "@/helpers/networkHelpers"
 import * as safeJson from "@/helpers/safeJson"
 import { isGraphqlQuery } from "../helpers/graphqlHelpers"
 

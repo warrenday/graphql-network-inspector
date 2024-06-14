@@ -1,17 +1,17 @@
-import { FC } from "react"
-import { AutoFormatToggleButton } from "@/components/AutoFormatToggleButton"
-import { CodeView } from "@/components/CodeView"
-import { CopyButton } from "@/components/CopyButton"
-import { IGraphqlRequestBody } from "@/helpers/graphqlHelpers"
-import * as safeJson from "@/helpers/safeJson"
-import { Bar } from "@/components/Bar"
-import { Panels, PanelSection } from "../PanelSection"
+import { FC } from 'react'
+import { AutoFormatToggleButton } from '@/components/AutoFormatToggleButton'
+import { CodeView } from '@/components/CodeView'
+import { CopyButton } from '@/components/CopyButton'
+import { IGraphqlRequestBody } from '@/helpers/graphqlHelpers'
+import * as safeJson from '@/helpers/safeJson'
+import { Bar } from '@/components/Bar'
+import { Panels, PanelSection } from '../PanelSection'
 import {
   RequestViewSectionType,
   useRequestViewSections,
-} from "@/hooks/useRequestViewSections"
-import { CaretIcon } from "../../../components/Icons/CaretIcon"
-import { ShareButton } from "../../../components/ShareButton"
+} from '@/hooks/useRequestViewSections'
+import { CaretIcon } from '../../../components/Icons/CaretIcon'
+import { ShareButton } from '../../../components/ShareButton'
 
 const isVariablesPopulated = (variables: Record<string, unknown>) => {
   return Object.keys(variables || {}).length > 0
@@ -28,8 +28,8 @@ const getVariables = ({ variables, extensions }: IGraphqlRequestBody) => {
 
   if (
     extensions &&
-    "variables" in extensions &&
-    typeof extensions.variables == "string"
+    'variables' in extensions &&
+    typeof extensions.variables == 'string'
   ) {
     try {
       return JSON.parse(atob(extensions.variables))
@@ -58,7 +58,7 @@ export const RequestView = (props: IRequestViewProps) => {
       {requests.map((request, index) => {
         return (
           <SingleRequestView
-            key={request.id}
+            key={index}
             request={request}
             autoFormat={autoFormat}
             index={shouldDisplayRequestIndex && index + 1}
@@ -72,21 +72,20 @@ export const RequestView = (props: IRequestViewProps) => {
 }
 
 interface IRequestContainerProps {
-  requestId: string
   index: number
   totalRequests: number
   children: React.ReactNode
 }
 
 const RequestContainer = (props: IRequestContainerProps) => {
-  const { requestId, totalRequests, index, children } = props
+  const { totalRequests, index, children } = props
 
   if (totalRequests > 1) {
     return (
       <RequestViewSection
         type="request"
-        requestId={requestId}
-        title={`Request${index ? ` (${index}/${totalRequests})` : ""}`}
+        index={index}
+        title={`Request${index ? ` (${index}/${totalRequests})` : ''}`}
       >
         <div className="-mt-2">{children}</div>
       </RequestViewSection>
@@ -107,8 +106,8 @@ interface ISingleRequestViewProps {
 const SingleRequestView = (props: ISingleRequestViewProps) => {
   const { request, autoFormat, index, numberOfRequests, onShare } = props
 
+  const requestIndex = index || 0
   const displayQuery = !!request.query
-  const requestId = request.id
   const variables = getVariables(request)
   const displayVariables = isVariablesPopulated(variables)
   const displayExtensions = isExtensionsPopulated(request)
@@ -118,7 +117,7 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
       <div className="flex items-center gap-2 absolute top-[8px] right-[8px] z-10 transition-opacity">
         {onShare && <ShareButton onClick={onShare} />}
         {displayQuery && (
-          <CopyButton label="Copy Query" textToCopy={request.query} />
+          <CopyButton label="Copy Query" textToCopy={request.query || ''} />
         )}
         {displayVariables && (
           <CopyButton
@@ -135,21 +134,17 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
       </div>
 
       <div className="flex flex-col">
-        <RequestContainer
-          requestId={requestId}
-          index={index || 0}
-          totalRequests={numberOfRequests}
-        >
+        <RequestContainer index={requestIndex} totalRequests={numberOfRequests}>
           {displayQuery && (
             <RequestViewSection
               type="query"
-              title={"Query"}
-              requestId={requestId}
+              title={'Query'}
+              index={requestIndex}
               level={1}
             >
               <CodeView
-                text={request.query}
-                language={"graphql"}
+                text={request.query || ''}
+                language={'graphql'}
                 autoFormat={autoFormat}
                 className="px-6"
               />
@@ -159,12 +154,12 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
             <RequestViewSection
               type="variables"
               title="Variables"
-              requestId={requestId}
+              index={requestIndex}
               level={1}
             >
               <CodeView
                 text={safeJson.stringify(variables, undefined, 2)}
-                language={"json"}
+                language={'json'}
                 className="px-6"
               />
             </RequestViewSection>
@@ -173,12 +168,12 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
             <RequestViewSection
               type="extensions"
               title="Extensions"
-              requestId={requestId}
+              index={requestIndex}
               level={1}
             >
               <CodeView
                 text={safeJson.stringify(request.extensions, undefined, 2)}
-                language={"json"}
+                language={'json'}
                 autoFormat={autoFormat}
                 className="px-6"
               />
@@ -193,14 +188,14 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
 interface IRequestViewSectionProps {
   type: RequestViewSectionType
   title: string
-  requestId: string
+  index: number
   level?: number
 }
 
 const RequestViewSection: FC<IRequestViewSectionProps> = (props) => {
-  const { type, title, requestId, children, level } = props
+  const { type, title, index, children, level } = props
   const { collapsedSections, setIsSectionCollapsed } = useRequestViewSections()
-  const keyForMap = `${type}-${requestId}`
+  const keyForMap = `${type}-${index}`
 
   const isCollapsed = !!collapsedSections[keyForMap]
 
@@ -216,7 +211,7 @@ const RequestViewSection: FC<IRequestViewSectionProps> = (props) => {
         onClick={handleToggleView}
       >
         <div className="flex justify-be align-center tween items-center gap-2 text-gray-400">
-          <CaretIcon className={"w-2.5 " + (isCollapsed ? "" : "rotate-90")} />
+          <CaretIcon className={'w-2.5 ' + (isCollapsed ? '' : 'rotate-90')} />
           <span>{title}</span>
         </div>
       </button>
