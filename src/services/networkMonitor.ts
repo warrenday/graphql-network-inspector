@@ -1,4 +1,4 @@
-import { chromeProvider } from "./chromeProvider"
+import { chromeProvider } from './chromeProvider'
 
 export const getHAR = async (): Promise<chrome.devtools.network.HARLog> => {
   const chrome = chromeProvider()
@@ -13,12 +13,21 @@ export const onBeforeRequest = (
   cb: (e: chrome.webRequest.WebRequestBodyDetails) => void
 ) => {
   const chrome = chromeProvider()
+  const currentTabId = chrome.devtools.inspectedWindow.tabId
 
-  chrome.webRequest.onBeforeRequest.addListener(cb, { urls: ["<all_urls>"] }, [
-    "requestBody",
-  ])
+  const captureTraffic = (details: chrome.webRequest.WebRequestBodyDetails) => {
+    if (details.tabId === currentTabId) {
+      cb(details)
+    }
+  }
+
+  chrome.webRequest.onBeforeRequest.addListener(
+    captureTraffic,
+    { urls: ['<all_urls>'] },
+    ['requestBody']
+  )
   return () => {
-    chrome.webRequest.onBeforeRequest.removeListener(cb)
+    chrome.webRequest.onBeforeRequest.removeListener(captureTraffic)
   }
 }
 
@@ -26,14 +35,23 @@ export const onBeforeSendHeaders = (
   cb: (e: chrome.webRequest.WebRequestHeadersDetails) => void
 ) => {
   const chrome = chromeProvider()
+  const currentTabId = chrome.devtools.inspectedWindow.tabId
+
+  const captureTraffic = (
+    details: chrome.webRequest.WebRequestHeadersDetails
+  ) => {
+    if (details.tabId === currentTabId) {
+      cb(details)
+    }
+  }
 
   chrome.webRequest.onBeforeSendHeaders.addListener(
-    cb,
-    { urls: ["<all_urls>"] },
-    ["requestHeaders"]
+    captureTraffic,
+    { urls: ['<all_urls>'] },
+    ['requestHeaders']
   )
   return () => {
-    chrome.webRequest.onBeforeSendHeaders.removeListener(cb)
+    chrome.webRequest.onBeforeSendHeaders.removeListener(captureTraffic)
   }
 }
 

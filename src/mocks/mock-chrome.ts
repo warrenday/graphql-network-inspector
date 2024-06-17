@@ -29,6 +29,9 @@ window.addEventListener('keydown', handleKeydown)
 
 const mockedChrome: DeepPartial<typeof chrome> = {
   devtools: {
+    inspectedWindow: {
+      tabId: 1,
+    },
     panels: {
       themeName: 'dark',
     },
