@@ -15,19 +15,13 @@ export const onBeforeRequest = (
   const chrome = chromeProvider()
   const currentTabId = chrome.devtools.inspectedWindow.tabId
 
-  const captureTraffic = (details: chrome.webRequest.WebRequestBodyDetails) => {
-    if (details.tabId === currentTabId) {
-      cb(details)
-    }
-  }
-
   chrome.webRequest.onBeforeRequest.addListener(
-    captureTraffic,
-    { urls: ['<all_urls>'] },
+    cb,
+    { urls: ['<all_urls>'], tabId: currentTabId },
     ['requestBody']
   )
   return () => {
-    chrome.webRequest.onBeforeRequest.removeListener(captureTraffic)
+    chrome.webRequest.onBeforeRequest.removeListener(cb)
   }
 }
 
@@ -37,21 +31,13 @@ export const onBeforeSendHeaders = (
   const chrome = chromeProvider()
   const currentTabId = chrome.devtools.inspectedWindow.tabId
 
-  const captureTraffic = (
-    details: chrome.webRequest.WebRequestHeadersDetails
-  ) => {
-    if (details.tabId === currentTabId) {
-      cb(details)
-    }
-  }
-
   chrome.webRequest.onBeforeSendHeaders.addListener(
-    captureTraffic,
-    { urls: ['<all_urls>'] },
+    cb,
+    { urls: ['<all_urls>'], tabId: currentTabId },
     ['requestHeaders']
   )
   return () => {
-    chrome.webRequest.onBeforeSendHeaders.removeListener(captureTraffic)
+    chrome.webRequest.onBeforeSendHeaders.removeListener(cb)
   }
 }
 
