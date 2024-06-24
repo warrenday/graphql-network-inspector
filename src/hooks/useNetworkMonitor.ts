@@ -24,18 +24,23 @@ import {
  *
  */
 const validateNetworkRequest = (details: chrome.devtools.network.Request) => {
-  const body = getRequestBody(details)
-  if (!body) {
-    return false
-  }
+  try {
+    const body = getRequestBody(details)
+    if (!body) {
+      return false
+    }
 
-  const graphqlRequestBody = parseGraphqlBody(body)
-  if (!graphqlRequestBody) {
-    return false
-  }
+    const graphqlRequestBody = parseGraphqlBody(body)
+    if (!graphqlRequestBody) {
+      return false
+    }
 
-  const primaryOperation = getFirstGraphqlOperation(graphqlRequestBody)
-  if (!primaryOperation) {
+    const primaryOperation = getFirstGraphqlOperation(graphqlRequestBody)
+    if (!primaryOperation) {
+      return false
+    }
+  } catch (error) {
+    console.error('Error validating network request', error)
     return false
   }
 

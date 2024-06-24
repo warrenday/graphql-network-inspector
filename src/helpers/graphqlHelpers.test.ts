@@ -85,4 +85,13 @@ describe('graphqlHelpers.getFirstGraphqlOperation', () => {
       operation: 'persisted',
     })
   })
+
+  it('returns undefined if the query is invalid', () => {
+    const operation = getFirstGraphqlOperation([
+      {
+        query: 'invalid query',
+      },
+    ])
+    expect(operation).toEqual(undefined)
+  })
 })

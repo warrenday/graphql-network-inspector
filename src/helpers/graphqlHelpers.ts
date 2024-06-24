@@ -27,7 +27,9 @@ const isParsedGraphqlRequestValid = (
 ): requestPayloads is IGraphqlRequestBody[] => {
   const isValid = requestPayloads.every((payload) => {
     const isQueryValid =
-      ('query' in payload && typeof payload.query === 'string') ||
+      ('query' in payload &&
+        typeof payload.query === 'string' &&
+        isGraphqlQuery(payload.query)) ||
       payload.extensions?.persistedQuery
     const isVariablesValid =
       'variables' in payload ? typeof payload.variables === 'object' : true
@@ -104,40 +106,45 @@ export const parseGraphqlBody = (
 export const getFirstGraphqlOperation = (
   graphqlBody: IGraphqlRequestBody[]
 ): IOperationDetails | undefined => {
-  if (!graphqlBody.length) {
+  try {
+    if (!graphqlBody.length) {
+      return
+    }
+
+    if (graphqlBody[0].query) {
+      const documentNode = parseGraphqlQuery(graphqlBody[0].query)
+      const firstOperationDefinition = documentNode.definitions.find(
+        (def) => def.kind === 'OperationDefinition'
+      ) as OperationDefinitionNode
+      const field = firstOperationDefinition.selectionSet.selections.find(
+        (selection) => selection.kind === 'Field'
+      ) as FieldNode
+
+      const operationName =
+        graphqlBody[0].operationName ||
+        firstOperationDefinition.name?.value ||
+        field?.name.value
+      const operation = firstOperationDefinition?.operation
+
+      if (!operationName) {
+        throw new Error('Operation name could not be determined')
+      }
+
+      return {
+        operationName,
+        operation,
+      }
+    }
+
+    if (graphqlBody[0].extensions?.persistedQuery) {
+      return {
+        operationName: graphqlBody[0].operationName || 'Persisted Query',
+        operation: 'persisted',
+      }
+    }
+  } catch (error) {
+    console.error('Error getting first operation', error)
     return
-  }
-
-  if (graphqlBody[0].query) {
-    const documentNode = parseGraphqlQuery(graphqlBody[0].query)
-    const firstOperationDefinition = documentNode.definitions.find(
-      (def) => def.kind === 'OperationDefinition'
-    ) as OperationDefinitionNode
-    const field = firstOperationDefinition.selectionSet.selections.find(
-      (selection) => selection.kind === 'Field'
-    ) as FieldNode
-
-    const operationName =
-      graphqlBody[0].operationName ||
-      firstOperationDefinition.name?.value ||
-      field?.name.value
-    const operation = firstOperationDefinition?.operation
-
-    if (!operationName) {
-      throw new Error('Operation name could not be determined')
-    }
-
-    return {
-      operationName,
-      operation,
-    }
-  }
-
-  if (graphqlBody[0].extensions?.persistedQuery) {
-    return {
-      operationName: graphqlBody[0].operationName || 'Persisted Query',
-      operation: 'persisted',
-    }
   }
 }
 
