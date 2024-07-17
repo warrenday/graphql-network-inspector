@@ -1,17 +1,18 @@
-import { useState, useEffect, useMemo } from "react"
-import RegexParser from "regex-parser"
-import { SplitPaneLayout } from "@/components/Layout"
-import { onNavigate } from "@/services/networkMonitor"
-import { IWebSocketNetworkRequest } from "@/hooks/useWebSocketNetworkMonitor"
-import { INetworkRequest } from "@/helpers/networkHelpers"
-import { NetworkTable, INetworkTableDataRow } from "./NetworkTable"
-import { NetworkDetails } from "./NetworkDetails"
-import { Toolbar } from "../Toolbar"
-import WebSocketNetworkDetails from "./WebSocketNetworkDetails"
+import { useState, useEffect, useMemo } from 'react'
+import RegexParser from 'regex-parser'
+import { SplitPaneLayout } from '@/components/Layout'
+import { onNavigate } from '@/services/networkMonitor'
+import { IWebSocketNetworkRequest } from '@/hooks/useWebSocketNetworkMonitor'
+import { INetworkRequest } from '@/helpers/networkHelpers'
+import { NetworkTable, INetworkTableDataRow } from './NetworkTable'
+import { NetworkDetails } from './NetworkDetails'
+import { Toolbar } from '../Toolbar'
+import WebSocketNetworkDetails from './WebSocketNetworkDetails'
 import {
   IOperationFilters,
   useOperationFilters,
-} from "../../hooks/useOperationFilters"
+} from '../../hooks/useOperationFilters'
+import useUserSettings from '../../hooks/useUserSettings'
 
 interface NetworkPanelProps {
   selectedRowId: string | number | null
@@ -26,7 +27,7 @@ const getRegex = (str: string) => {
     const regex = RegexParser(str)
     return { regex, errorMessage: null }
   } catch (error) {
-    let message = "Invalid Regex"
+    let message = 'Invalid Regex'
     if (error instanceof Error) message = error.message
     return { regex: null, errorMessage: message }
   }
@@ -48,7 +49,7 @@ const filterNetworkRequests = (
   }
 
   const results = networkRequests.filter((networkRequest) => {
-    const { operationName = "", operation } =
+    const { operationName = '', operation } =
       networkRequest.request.primaryOperation
 
     if (!options.operationFilters[operation]) {
@@ -74,16 +75,14 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
     setSelectedRowId,
   } = props
 
-  const [filterValue, setFilterValue] = useState("")
-  const [isPreserveLogs, setIsPreserveLogs] = useState(false)
-  const [isInverted, setIsInverted] = useState(false)
-  const [isRegexActive, onIsRegexActiveChange] = useState(false)
+  const [filterValue, setFilterValue] = useState('')
+  const [userSettings, setUserSettings] = useUserSettings()
   const { operationFilters } = useOperationFilters()
 
   const { results: filteredNetworkRequests, errorMessage: filterError } =
     filterNetworkRequests(networkRequests, filterValue, {
-      isInverted,
-      isRegex: isRegexActive,
+      isInverted: userSettings.isInvertFilterActive,
+      isRegex: userSettings.isRegexActive,
       operationFilters,
     })
 
@@ -107,15 +106,15 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
 
   useEffect(() => {
     return onNavigate(() => {
-      if (!isPreserveLogs) {
+      if (!userSettings.isPreserveLogsActive) {
         clearWebRequests()
       }
     })
-  }, [isPreserveLogs, clearWebRequests])
+  }, [userSettings.isPreserveLogsActive, clearWebRequests])
 
   const networkTableData = useMemo((): INetworkTableDataRow[] => {
     return filteredNetworkRequests.map((networkRequest) => {
-      const { operationName = "", operation } =
+      const { operationName = '', operation } =
         networkRequest.request.primaryOperation
       return {
         id: networkRequest.id,
@@ -126,7 +125,7 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
         size: networkRequest.response?.bodySize || 0,
         time: networkRequest.time,
         url: networkRequest.url,
-        responseBody: networkRequest.response?.body || "",
+        responseBody: networkRequest.response?.body || '',
       }
     })
   }, [filteredNetworkRequests])
@@ -135,14 +134,14 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
     return filteredWebsocketNetworkRequests.map((websocketRequest) => {
       return {
         id: websocketRequest.id,
-        type: "subscription",
-        name: "subscription",
+        type: 'subscription',
+        name: 'subscription',
         total: 1,
         status: websocketRequest.status,
         size: 0,
         time: 0,
         url: websocketRequest.url,
-        responseBody: "",
+        responseBody: '',
       }
     })
   }, [filteredWebsocketNetworkRequests])
@@ -157,12 +156,18 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
         <Toolbar
           filterValue={filterValue}
           onFilterValueChange={setFilterValue}
-          preserveLogs={isPreserveLogs}
-          onPreserveLogsChange={setIsPreserveLogs}
-          inverted={isInverted}
-          onInvertedChange={setIsInverted}
-          regexActive={isRegexActive}
-          onRegexActiveChange={onIsRegexActiveChange}
+          preserveLogs={userSettings.isPreserveLogsActive}
+          onPreserveLogsChange={(isPreserveLogsActive) => {
+            setUserSettings({ isPreserveLogsActive })
+          }}
+          inverted={userSettings.isInvertFilterActive}
+          onInvertedChange={(isInvertFilterActive) => {
+            setUserSettings({ isInvertFilterActive })
+          }}
+          regexActive={userSettings.isRegexActive}
+          onRegexActiveChange={(isRegexActive) => {
+            setUserSettings({ isRegexActive })
+          }}
           onClear={() => {
             setSelectedRowId(null)
             clearWebRequests()

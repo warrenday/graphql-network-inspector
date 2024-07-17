@@ -2,6 +2,8 @@ import { DeepPartial } from 'utility-types'
 import EventEmitter from 'eventemitter3'
 import { IMockRequest, mockRequests } from '../mocks/mock-requests'
 
+let mockStorage = {}
+
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 // Configure an event to add more mock requests
@@ -93,6 +95,16 @@ const mockedChrome: DeepPartial<typeof chrome> = {
     onMessage: {
       addListener: () => {},
       removeListener: () => {},
+    },
+  },
+  storage: {
+    local: {
+      get: ((keys, cb) => {
+        return cb({ ...mockStorage })
+      }) as typeof chrome.storage.local.get,
+      set: async (items: Record<string, any>) => {
+        mockStorage = { ...mockStorage, ...items }
+      },
     },
   },
 }

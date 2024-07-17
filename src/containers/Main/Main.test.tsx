@@ -14,6 +14,11 @@ jest.mock('@/hooks/useHighlight', () => ({
   }),
 }))
 
+jest.mock('@/services/userSettingsService', () => ({
+  getUserSettings: jest.fn(),
+  setUserSettings: jest.fn(),
+}))
+
 const mockChromeProvider = chromeProvider as jest.Mock
 
 const mockOnNavigated = () => {
