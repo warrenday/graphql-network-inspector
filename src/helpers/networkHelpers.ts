@@ -64,6 +64,12 @@ const isNetworkRequest = (
 /**
  * Determine if a request payload is complete
  * by checking all required fields are present.
+ *
+ * The request is built up from two events, so we need
+ * to confirm when all data is ready.
+ *
+ * This only checks the request part, it does not check
+ * if the response is complete.
  */
 export const isRequestComplete = (
   networkRequest: IIncompleteNetworkRequest

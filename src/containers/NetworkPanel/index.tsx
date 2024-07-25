@@ -13,13 +13,14 @@ import {
   useOperationFilters,
 } from '../../hooks/useOperationFilters'
 import useUserSettings from '../../hooks/useUserSettings'
+import { IClearWebRequestsOptions } from '../../hooks/useNetworkMonitor'
 
 interface NetworkPanelProps {
   selectedRowId: string | number | null
   setSelectedRowId: (selectedRowId: string | number | null) => void
   networkRequests: INetworkRequest[]
   webSocketNetworkRequests: IWebSocketNetworkRequest[]
-  clearWebRequests: () => void
+  clearWebRequests: (opts?: IClearWebRequestsOptions) => void
 }
 
 const getRegex = (str: string) => {
@@ -106,9 +107,16 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
 
   useEffect(() => {
     return onNavigate(() => {
-      if (!userSettings.isPreserveLogsActive) {
-        clearWebRequests()
-      }
+      // When navigating to a new page, we always want to clear
+      // pending requests as they could never complete once
+      // the page has changed.
+      //
+      // We only want to clear all requests if the user has
+      // disabled the preserve logs feature.
+      clearWebRequests({
+        clearPending: true,
+        clearAll: !userSettings.isPreserveLogsActive,
+      })
     })
   }, [userSettings.isPreserveLogsActive, clearWebRequests])
 

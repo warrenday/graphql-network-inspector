@@ -99,7 +99,10 @@ const Status = ({ status }: { status?: number }) => {
   }, [status])
 
   return (
-    <div className="flex items-center w-20" data-testid="column-status">
+    <div
+      className="flex items-center w-20 min-w-[80px]"
+      data-testid="column-status"
+    >
       <div
         className="w-3 h-3 rounded-full mr-2"
         style={{

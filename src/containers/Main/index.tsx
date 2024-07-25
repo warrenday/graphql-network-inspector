@@ -1,12 +1,15 @@
-import { useCallback, useState } from "react"
-import { SplitPaneLayout } from "@/components/Layout"
-import { useNetworkMonitor } from "@/hooks/useNetworkMonitor"
-import { useSearch } from "@/hooks/useSearch"
-import { useNetworkTabs } from "@/hooks/useNetworkTabs"
-import { NetworkPanel } from "../NetworkPanel"
-import { SearchPanel } from "../SearchPanel"
-import { useWebSocketNetworkMonitor } from "../../hooks/useWebSocketNetworkMonitor"
-import { useOperationFilters } from "../../hooks/useOperationFilters"
+import { useCallback, useState } from 'react'
+import { SplitPaneLayout } from '@/components/Layout'
+import {
+  IClearWebRequestsOptions,
+  useNetworkMonitor,
+} from '@/hooks/useNetworkMonitor'
+import { useSearch } from '@/hooks/useSearch'
+import { useNetworkTabs } from '@/hooks/useNetworkTabs'
+import { NetworkPanel } from '../NetworkPanel'
+import { SearchPanel } from '../SearchPanel'
+import { useWebSocketNetworkMonitor } from '../../hooks/useWebSocketNetworkMonitor'
+import { useOperationFilters } from '../../hooks/useOperationFilters'
 
 export const Main = () => {
   const [selectedRowId, setSelectedRowId] = useState<string | number | null>(
@@ -21,10 +24,13 @@ export const Main = () => {
   const { isSearchOpen } = useSearch()
   const { setActiveTab } = useNetworkTabs()
 
-  const clearRequests = useCallback(() => {
-    clearWebRequests()
-    clearWebSocketNetworkRequests()
-  }, [clearWebRequests, clearWebSocketNetworkRequests])
+  const clearRequests = useCallback(
+    (opts?: IClearWebRequestsOptions) => {
+      clearWebRequests(opts)
+      clearWebSocketNetworkRequests()
+    },
+    [clearWebRequests, clearWebSocketNetworkRequests]
+  )
 
   return (
     <>

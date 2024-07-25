@@ -18,6 +18,11 @@ import {
   matchWebAndNetworkRequest,
 } from '../helpers/networkHelpers'
 
+export interface IClearWebRequestsOptions {
+  clearPending?: boolean
+  clearAll?: boolean
+}
+
 /**
  * Validate that a network request is a valid graphql request
  * by checking the request body for a valid graphql operation
@@ -75,7 +80,10 @@ const processNetworkRequest = (
   }
 }
 
-export const useNetworkMonitor = (): [INetworkRequest[], () => void] => {
+export const useNetworkMonitor = (): [
+  INetworkRequest[],
+  (opts?: IClearWebRequestsOptions) => void
+] => {
   const [webRequests, setWebRequests] = useState<IIncompleteNetworkRequest[]>(
     []
   )
@@ -247,9 +255,25 @@ export const useNetworkMonitor = (): [INetworkRequest[], () => void] => {
     [setWebRequests]
   )
 
-  const clearWebRequests = useCallback(() => {
-    setWebRequests([])
-  }, [setWebRequests])
+  const clearWebRequests = useCallback(
+    (opts?: IClearWebRequestsOptions) => {
+      const { clearPending = true, clearAll = true } = opts || {}
+
+      if (clearAll) {
+        setWebRequests([])
+        return
+      }
+
+      if (clearPending) {
+        setWebRequests((webRequests) => {
+          return webRequests.filter(
+            (webRequest) => typeof webRequest.response !== 'undefined'
+          )
+        })
+      }
+    },
+    [setWebRequests]
+  )
 
   // Collect historic network data in case any events fired before we started listening
   useEffect(() => {
