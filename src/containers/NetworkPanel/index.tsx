@@ -76,12 +76,11 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
     setSelectedRowId,
   } = props
 
-  const [filterValue, setFilterValue] = useState('')
   const [userSettings, setUserSettings] = useUserSettings()
   const { operationFilters } = useOperationFilters()
 
   const { results: filteredNetworkRequests, errorMessage: filterError } =
-    filterNetworkRequests(networkRequests, filterValue, {
+    filterNetworkRequests(networkRequests, userSettings.filter, {
       isInverted: userSettings.isInvertFilterActive,
       isRegex: userSettings.isRegexActive,
       operationFilters,
@@ -162,8 +161,10 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
     <SplitPaneLayout
       header={
         <Toolbar
-          filterValue={filterValue}
-          onFilterValueChange={setFilterValue}
+          filterValue={userSettings.filter}
+          onFilterValueChange={(newFilter) => {
+            setUserSettings({ filter: newFilter })
+          }}
           preserveLogs={userSettings.isPreserveLogsActive}
           onPreserveLogsChange={(isPreserveLogsActive) => {
             setUserSettings({ isPreserveLogsActive })

@@ -22,6 +22,7 @@ describe('useUserSettings', () => {
       isPreserveLogsActive: true,
       isInvertFilterActive: false,
       isRegexActive: false,
+      filter: '',
     })
 
     // Update the state
@@ -37,6 +38,7 @@ describe('useUserSettings', () => {
       isPreserveLogsActive: false,
       isInvertFilterActive: true,
       isRegexActive: false,
+      filter: '',
     })
 
     // Expect setUserSettings was called with the new settings
@@ -44,6 +46,7 @@ describe('useUserSettings', () => {
       isPreserveLogsActive: false,
       isInvertFilterActive: true,
       isRegexActive: false,
+      filter: '',
     })
   })
 })

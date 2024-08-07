@@ -10,6 +10,7 @@ const useUserSettings = () => {
     isPreserveLogsActive: false,
     isInvertFilterActive: false,
     isRegexActive: false,
+    filter: '',
   })
 
   // Load initial settings on component mount

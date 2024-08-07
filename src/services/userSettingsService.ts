@@ -4,6 +4,7 @@ export interface IUserSettings {
   isPreserveLogsActive: boolean
   isInvertFilterActive: boolean
   isRegexActive: boolean
+  filter: string
 }
 
 export const getUserSettings = (
