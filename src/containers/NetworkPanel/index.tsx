@@ -52,14 +52,15 @@ const filterNetworkRequests = (
   const results = networkRequests.filter((networkRequest) => {
     const { operationName = '', operation } =
       networkRequest.request.primaryOperation
+    const variables = JSON.stringify(networkRequest.request.body[0]?.variables || '')
 
     if (!options.operationFilters[operation]) {
       return false
     }
 
     const isMatch = options.isRegex
-      ? operationName.match(regexResult?.regex as RegExp)
-      : operationName.toLowerCase().includes(filterValue.toLowerCase())
+      ? operationName.match(regexResult?.regex as RegExp) || variables.match(regexResult?.regex as RegExp)
+      : operationName.toLowerCase().includes(filterValue.toLowerCase()) || variables.toLowerCase().includes(filterValue.toLowerCase())
 
     return options.isInverted ? !isMatch : isMatch
   })
@@ -133,6 +134,7 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
         time: networkRequest.time,
         url: networkRequest.url,
         responseBody: networkRequest.response?.body || '',
+        variables: JSON.stringify(networkRequest.request.body[0]?.variables || '')
       }
     })
   }, [filteredNetworkRequests])
@@ -149,6 +151,7 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
         time: 0,
         url: websocketRequest.url,
         responseBody: '',
+        variables: ''
       }
     })
   }, [filteredWebsocketNetworkRequests])

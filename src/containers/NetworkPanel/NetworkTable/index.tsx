@@ -29,7 +29,8 @@ export interface INetworkTableDataRow {
   size: number
   time: number
   url: string
-  responseBody: string
+  responseBody: string,
+  variables: string
 }
 
 export interface INetworkTableProps {
@@ -187,6 +188,10 @@ export const NetworkTable = (props: INetworkTableProps) => {
           />
         ),
       },
+        {
+          Header: 'Variables',
+          accessor: (row) => <div>{row.variables}</div>,
+        },
       {
         Header: 'Status',
         accessor: (row) => <Status status={row.status} />,
