@@ -106,9 +106,8 @@ const findMatchingWebRequest = async (
         )
         return isMatch ? webRequest : null
       })
-      .filter((r) => r)
   )
-  return match[0]
+  return match.filter((r) => r)[0]
 }
 
 export const useNetworkMonitor = (): [

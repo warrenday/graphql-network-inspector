@@ -13,7 +13,7 @@ const useLatestState = <T>(initialState: T) => {
   const latestStateRef = useRef(state)
 
   // This getter can be used to always access the latest state
-  const getState = () => latestStateRef.current
+  const getState = useCallback(() => latestStateRef.current, [])
 
   const setStateWrapper = useCallback(
     (newState: T | ((state: T) => T)) => {
