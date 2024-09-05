@@ -1,6 +1,7 @@
 import { IGraphqlRequestBody, IOperationDetails } from './graphqlHelpers'
 import decodeQueryParam from './decodeQueryParam'
 import { parse } from './safeJson'
+import { decompress, CompressionType } from './gzip'
 
 export interface IHeader {
   name: string
@@ -82,11 +83,55 @@ export const isRequestComplete = (
 }
 
 /**
+ * Detect the compression type based on the content-encoding header.
+ *
+ * @param headers all request headers
+ * @returns the compression type if detected
+ */
+const detectCompressionType = (
+  headers: IHeader[]
+): CompressionType | undefined => {
+  const contentEncodingHeader = headers.find(
+    (header) => header.name.toLowerCase() === 'content-encoding'
+  )
+
+  if (!contentEncodingHeader) {
+    return
+  }
+
+  if (contentEncodingHeader.value === 'gzip') {
+    return 'gzip'
+  }
+
+  if (contentEncodingHeader.value === 'deflate') {
+    return 'deflate'
+  }
+}
+
+/**
  * Decode the raw request body into a string
  */
-const decodeRawBody = (raw: chrome.webRequest.UploadData[]) => {
-  const decoder = new TextDecoder('utf-8')
-  return raw.map((data) => decoder.decode(data.bytes)).join('')
+const decodeRawBody = async (
+  raw: chrome.webRequest.UploadData[] | string,
+  compressionType?: CompressionType
+): Promise<string> => {
+  // If the body is compressed, decompress it
+  if (compressionType) {
+    return decompress(raw, compressionType).then((res) => {
+      const decoder = new TextDecoder('utf-8')
+      return decoder.decode(res)
+    })
+  }
+
+  if (typeof raw === 'string') {
+    // If we have a plain string, just return it, it is already
+    // decoded
+    return raw
+  } else {
+    // Decode the raw bytes into a string
+    const decoder = new TextDecoder('utf-8')
+    return raw.map((data) => decoder.decode(data.bytes)).join('')
+  }
 }
 
 /**
@@ -234,16 +279,20 @@ export const getRequestBodyFromUrl = (url: string): IGraphqlRequestBody => {
   throw new Error('Could not parse request body from URL')
 }
 
-const getRequestBodyFromWebRequestBodyDetails = (
+const getRequestBodyFromWebRequestBodyDetails = async (
   details: chrome.webRequest.WebRequestBodyDetails,
   headers: IHeader[]
-): string | undefined => {
+): Promise<string | undefined> => {
   if (details.method === 'GET') {
     const body = getRequestBodyFromUrl(details.url)
     return JSON.stringify(body)
   }
 
-  const body = decodeRawBody(details.requestBody?.raw || [])
+  const compressionType = detectCompressionType(headers)
+  const body = await decodeRawBody(
+    details.requestBody?.raw || [],
+    compressionType
+  )
   const boundary = getMultipartFormDataBoundary(headers)
 
   if (boundary && body) {
@@ -254,15 +303,19 @@ const getRequestBodyFromWebRequestBodyDetails = (
   return body
 }
 
-const getRequestBodyFromNetworkRequest = (
+const getRequestBodyFromNetworkRequest = async (
   details: chrome.devtools.network.Request
-): string | undefined => {
+): Promise<string | undefined> => {
   if (details.request.method === 'GET') {
     const body = getRequestBodyFromUrl(details.request.url)
     return JSON.stringify(body)
   }
 
-  const body = details.request.postData?.text
+  const compressionType = detectCompressionType(details.request.headers)
+  const body = await decodeRawBody(
+    details.request.postData?.text || '',
+    compressionType
+  )
 
   const boundary = getMultipartFormDataBoundary(details.request.headers)
   if (boundary && body) {
@@ -273,7 +326,7 @@ const getRequestBodyFromNetworkRequest = (
   return body
 }
 
-export const getRequestBody = <
+export const getRequestBody = async <
   T extends
     | chrome.devtools.network.Request
     | chrome.webRequest.WebRequestBodyDetails
@@ -282,7 +335,7 @@ export const getRequestBody = <
   ...headers: T extends chrome.webRequest.WebRequestBodyDetails
     ? [IHeader[]]
     : []
-): string | undefined => {
+): Promise<string | undefined> => {
   try {
     if (isNetworkRequest(details)) {
       return getRequestBodyFromNetworkRequest(details)
@@ -304,17 +357,19 @@ export const getRequestBody = <
  * no stable id is available to us.
  *
  */
-export const matchWebAndNetworkRequest = (
+export const matchWebAndNetworkRequest = async (
   networkRequest: chrome.devtools.network.Request,
   webRequest: chrome.webRequest.WebRequestBodyDetails,
   webRequestHeaders: IHeader[]
-): boolean => {
+): Promise<boolean> => {
   try {
-    const webRequestBody = getRequestBodyFromWebRequestBodyDetails(
+    const webRequestBody = await getRequestBodyFromWebRequestBodyDetails(
       webRequest,
       webRequestHeaders
     )
-    const networkRequestBody = getRequestBodyFromNetworkRequest(networkRequest)
+    const networkRequestBody = await getRequestBodyFromNetworkRequest(
+      networkRequest
+    )
 
     const isMethodMatch = webRequest.method === networkRequest.request.method
     const isBodyMatch = webRequestBody === networkRequestBody

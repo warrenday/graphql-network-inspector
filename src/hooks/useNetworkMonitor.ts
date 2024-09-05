@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { v4 as uuid } from 'uuid'
 import {
   parseGraphqlBody,
@@ -17,6 +17,7 @@ import {
   isRequestComplete,
   matchWebAndNetworkRequest,
 } from '../helpers/networkHelpers'
+import useLatestState from './useLatestState'
 
 export interface IClearWebRequestsOptions {
   clearPending?: boolean
@@ -28,9 +29,11 @@ export interface IClearWebRequestsOptions {
  * by checking the request body for a valid graphql operation
  *
  */
-const validateNetworkRequest = (details: chrome.devtools.network.Request) => {
+const validateNetworkRequest = async (
+  details: chrome.devtools.network.Request
+) => {
   try {
-    const body = getRequestBody(details)
+    const body = await getRequestBody(details)
     if (!body) {
       return false
     }
@@ -80,13 +83,37 @@ const processNetworkRequest = (
   }
 }
 
+/**
+ * Match a network request to a webRequest
+ *
+ * @param webRequests
+ * @param details
+ * @returns
+ */
+const findMatchingWebRequest = async (
+  webRequests: IIncompleteNetworkRequest[],
+  details: chrome.devtools.network.Request
+) => {
+  const res = await Promise.all(
+    webRequests.map(async (webRequest) => {
+      const isMatch = await matchWebAndNetworkRequest(
+        details,
+        webRequest.native?.webRequest,
+        webRequest.request?.headers || []
+      )
+      return isMatch ? webRequest : null
+    })
+  )
+  return res.filter((r) => r)[0]
+}
+
 export const useNetworkMonitor = (): [
   INetworkRequest[],
   (opts?: IClearWebRequestsOptions) => void
 ] => {
-  const [webRequests, setWebRequests] = useState<IIncompleteNetworkRequest[]>(
-    []
-  )
+  const [webRequests, setWebRequests, getLatestWebRequests] = useLatestState<
+    IIncompleteNetworkRequest[]
+  >([])
 
   const handleBeforeRequest = useCallback(
     (details: chrome.webRequest.WebRequestBodyDetails) => {
@@ -109,62 +136,73 @@ export const useNetworkMonitor = (): [
   )
 
   const handleBeforeSendHeaders = useCallback(
-    (details: chrome.webRequest.WebRequestHeadersDetails) => {
-      setWebRequests((webRequests) => {
-        return webRequests.flatMap((webRequest) => {
-          // Don't overwrite the request if it's already complete
-          if (webRequest.response) {
-            return webRequest
-          }
+    async (details: chrome.webRequest.WebRequestHeadersDetails) => {
+      const webRequests = getLatestWebRequests()
 
-          // We only want to update the request which matches on id.
-          if (webRequest.id !== details.requestId) {
-            return webRequest
-          }
+      const webRequest = webRequests.find(
+        (webRequest) => webRequest.id === details.requestId
+      )
+      if (!webRequest) {
+        return
+      }
 
-          // Now we have both the headers and the body from the webRequest api
-          // we can determine if this is a graphql request.
-          //
-          // If it is not, we return an empty array so flatMap will remove it.
-          const body = getRequestBody(
-            webRequest.native.webRequest,
-            details.requestHeaders || []
-          )
-          if (!body) {
-            return []
-          }
+      // Don't overwrite the request if it's already complete
+      if (webRequest.response) {
+        return webRequest
+      }
 
-          const graphqlRequestBody = parseGraphqlBody(body)
-          if (!graphqlRequestBody) {
-            return []
-          }
+      // Now we have both the headers and the body from the webRequest api
+      // we can determine if this is a graphql request.
+      //
+      // If it is not, we return an empty array so flatMap will remove it.
+      const body = await getRequestBody(
+        webRequest.native.webRequest,
+        details.requestHeaders || []
+      )
 
-          const primaryOperation = getFirstGraphqlOperation(graphqlRequestBody)
-          if (!primaryOperation) {
-            return []
-          }
+      if (!body) {
+        return
+      }
 
-          return {
-            ...webRequest,
-            request: {
-              primaryOperation,
-              body: graphqlRequestBody.map((requestBody) => ({
-                ...requestBody,
-                id: uuid(),
-              })),
-              bodySize: body ? body.length : 0,
-              headers: details.requestHeaders,
-              headersSize: (details.requestHeaders || []).reduce(
-                (acc, header) =>
-                  acc + header.name.length + (header.value?.length || 0),
-                0
-              ),
-            },
+      const graphqlRequestBody = parseGraphqlBody(body)
+      if (!graphqlRequestBody) {
+        return
+      }
+
+      const primaryOperation = getFirstGraphqlOperation(graphqlRequestBody)
+      if (!primaryOperation) {
+        return
+      }
+
+      const request = {
+        primaryOperation,
+        body: graphqlRequestBody.map((requestBody) => ({
+          ...requestBody,
+          id: uuid(),
+        })),
+        bodySize: body ? body.length : 0,
+        headers: details.requestHeaders,
+        headersSize: (details.requestHeaders || []).reduce(
+          (acc, header) =>
+            acc + header.name.length + (header.value?.length || 0),
+          0
+        ),
+      }
+
+      setWebRequests((prevWebRequests) => {
+        return prevWebRequests.map((prevWebRequest) => {
+          if (prevWebRequest.id === webRequest.id) {
+            return {
+              ...prevWebRequest,
+              request,
+            }
+          } else {
+            return prevWebRequest
           }
         })
       })
     },
-    [setWebRequests]
+    [setWebRequests, getLatestWebRequests]
   )
 
   const handleRequestFinished = useCallback(
@@ -173,33 +211,32 @@ export const useNetworkMonitor = (): [
         return
       }
 
-      details.getContent((responseBody) => {
-        setWebRequests((webRequests) => {
-          return webRequests.map((webRequest) => {
-            // Don't overwrite the request if it's already complete
-            if (webRequest.response) {
-              return webRequest
-            }
+      details.getContent(async (responseBody) => {
+        const webRequests = getLatestWebRequests()
+        const matchingWebRequest = await findMatchingWebRequest(
+          webRequests,
+          details
+        )
+        if (!matchingWebRequest) {
+          return
+        }
 
-            const isMatch = matchWebAndNetworkRequest(
-              details,
-              webRequest.native?.webRequest,
-              webRequest.request?.headers || []
-            )
-            if (!isMatch) {
-              return webRequest
-            }
-
-            return {
-              ...webRequest,
-              id: webRequest.id,
-              ...processNetworkRequest(details, responseBody),
+        setWebRequests((prevWebRequests) => {
+          return prevWebRequests.map((prevWebRequest) => {
+            if (prevWebRequest.id === matchingWebRequest.id) {
+              return {
+                ...prevWebRequest,
+                id: prevWebRequest.id,
+                ...processNetworkRequest(details, responseBody),
+              }
+            } else {
+              return prevWebRequest
             }
           })
         })
       })
     },
-    [setWebRequests]
+    [setWebRequests, getLatestWebRequests]
   )
 
   const handleHAREntries = useCallback(
@@ -211,8 +248,8 @@ export const useNetworkMonitor = (): [
       const entriesWithContent = await Promise.all(
         validEntries.map((details) => {
           return new Promise<INetworkRequest>((resolve) => {
-            details.getContent((responseBody) => {
-              const body = getRequestBody(details)
+            details.getContent(async (responseBody) => {
+              const body = await getRequestBody(details)
               if (!body) {
                 return
               }
