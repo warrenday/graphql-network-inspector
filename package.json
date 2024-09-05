@@ -1,6 +1,6 @@
 {
   "name": "graphql-network-inspector",
-  "version": "2.21.2",
+  "version": "2.21.3",
   "private": true,
   "scripts": {
     "start": "craco start",
