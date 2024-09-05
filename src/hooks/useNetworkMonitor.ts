@@ -94,17 +94,21 @@ const findMatchingWebRequest = async (
   webRequests: IIncompleteNetworkRequest[],
   details: chrome.devtools.network.Request
 ) => {
-  const res = await Promise.all(
-    webRequests.map(async (webRequest) => {
-      const isMatch = await matchWebAndNetworkRequest(
-        details,
-        webRequest.native?.webRequest,
-        webRequest.request?.headers || []
-      )
-      return isMatch ? webRequest : null
-    })
+  const match = await Promise.all(
+    webRequests
+      // Don't target requests that already have a response
+      .filter((webRequest) => !webRequest.response)
+      .map(async (webRequest) => {
+        const isMatch = await matchWebAndNetworkRequest(
+          details,
+          webRequest.native?.webRequest,
+          webRequest.request?.headers || []
+        )
+        return isMatch ? webRequest : null
+      })
+      .filter((r) => r)
   )
-  return res.filter((r) => r)[0]
+  return match[0]
 }
 
 export const useNetworkMonitor = (): [
@@ -336,9 +340,13 @@ export const useNetworkMonitor = (): [
     return onRequestFinished(handleRequestFinished)
   }, [handleRequestFinished])
 
-  // Only return complete networkRequests.
+  // Only return webRequests where the request portion is complete.
+  // Since we build up the data from multiple events. We only want
+  // to display results that have enough data to be useful.
   const completeWebRequests = webRequests.filter(isRequestComplete)
 
   // @ts-ignore
+  // Ignored as completeWebRequests is readonly. Need to update type
+  // across app.
   return [completeWebRequests, clearWebRequests] as const
 }

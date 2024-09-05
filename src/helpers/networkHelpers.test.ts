@@ -1,5 +1,4 @@
 import { DeepPartial } from 'utility-types'
-import { TextEncoder } from 'util'
 import {
   IHeader,
   getRequestBody,
@@ -8,6 +7,17 @@ import {
   matchWebAndNetworkRequest,
 } from './networkHelpers'
 import dedent from 'dedent'
+
+// Unable to test actual gzip decompression as the DecompressionStream is not available in JSDOM
+// and the Response object from fetch is missing parts of the steam API
+jest.mock('../helpers/gzip', () => ({
+  __esModule: true,
+  decompress: (val: chrome.webRequest.UploadData[]) => {
+    return new Promise((resolve) => {
+      resolve(val[0].bytes)
+    })
+  },
+}))
 
 describe('networkHelpers.getRequestBodyFromUrl', () => {
   it('throws an error when no query is found in the URL', () => {
@@ -116,7 +126,7 @@ describe('networkHelpers.getRequestBodyFromUrl', () => {
 })
 
 describe('networkHelpers.matchWebAndNetworkRequest', () => {
-  it('matches a web request with a network request', () => {
+  it('matches a web request with a network request', async () => {
     const body = JSON.stringify({
       query: 'query { user }',
     })
@@ -140,7 +150,7 @@ describe('networkHelpers.matchWebAndNetworkRequest', () => {
       },
     }
 
-    const match = matchWebAndNetworkRequest(
+    const match = await matchWebAndNetworkRequest(
       networkRequest as any,
       webRequest as any,
       webRequestHeaders
@@ -148,7 +158,7 @@ describe('networkHelpers.matchWebAndNetworkRequest', () => {
     expect(match).toBe(true)
   })
 
-  it('does not match request with different URLs', () => {
+  it('does not match request with different URLs', async () => {
     const body = JSON.stringify({
       query: 'query { user }',
     })
@@ -172,7 +182,7 @@ describe('networkHelpers.matchWebAndNetworkRequest', () => {
       },
     }
 
-    const match = matchWebAndNetworkRequest(
+    const match = await matchWebAndNetworkRequest(
       networkRequest as any,
       webRequest as any,
       webRequestHeaders
@@ -180,7 +190,7 @@ describe('networkHelpers.matchWebAndNetworkRequest', () => {
     expect(match).toBe(false)
   })
 
-  it('does not match requests with different methods', () => {
+  it('does not match requests with different methods', async () => {
     const body = JSON.stringify({
       query: 'query { user }',
     })
@@ -204,7 +214,7 @@ describe('networkHelpers.matchWebAndNetworkRequest', () => {
       },
     }
 
-    const match = matchWebAndNetworkRequest(
+    const match = await matchWebAndNetworkRequest(
       networkRequest as any,
       webRequest as any,
       webRequestHeaders
@@ -212,7 +222,7 @@ describe('networkHelpers.matchWebAndNetworkRequest', () => {
     expect(match).toBe(false)
   })
 
-  it('does not match requests with different bodies', () => {
+  it('does not match requests with different bodies', async () => {
     const webRequest: DeepPartial<chrome.webRequest.WebRequestBodyDetails> = {
       url: 'http://example1.com',
       method: 'POST',
@@ -242,7 +252,7 @@ describe('networkHelpers.matchWebAndNetworkRequest', () => {
       },
     }
 
-    const match = matchWebAndNetworkRequest(
+    const match = await matchWebAndNetworkRequest(
       networkRequest as any,
       webRequest as any,
       webRequestHeaders
@@ -275,7 +285,7 @@ describe('networkHelpers.getRequestBodyFromMultipartFormData', () => {
 })
 
 describe('networkHelpers.getRequestBody', () => {
-  it('returns request body from a multipart form data request', () => {
+  it('returns request body from a multipart form data request', async () => {
     const details: Partial<chrome.webRequest.WebRequestBodyDetails> = {
       requestBody: {
         raw: [
@@ -296,7 +306,7 @@ describe('networkHelpers.getRequestBody', () => {
       },
     ]
 
-    const result = getRequestBody(details as any, headers)
+    const result = await getRequestBody(details as any, headers)
 
     expect(result).toEqual(
       JSON.stringify({
@@ -310,6 +320,41 @@ describe('networkHelpers.getRequestBody', () => {
         variables: {
           file: null,
         },
+      })
+    )
+  })
+
+  it('returns request body from a compressed request', async () => {
+    const details: Partial<chrome.webRequest.WebRequestBodyDetails> = {
+      requestBody: {
+        raw: [
+          {
+            bytes: new TextEncoder().encode(
+              JSON.stringify({
+                query: 'query { user }',
+              })
+            ),
+          },
+        ],
+      },
+    }
+
+    const headers: IHeader[] = [
+      {
+        name: 'content-type',
+        value: 'application/json',
+      },
+      {
+        name: 'content-encoding',
+        value: 'deflate',
+      },
+    ]
+
+    const result = await getRequestBody(details as any, headers)
+
+    expect(result).toEqual(
+      JSON.stringify({
+        query: 'query { user }',
       })
     )
   })

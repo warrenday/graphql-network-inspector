@@ -42,8 +42,6 @@ export const decompress = async (
     new (window as any).DecompressionStream(compressionType)
   )
 
-  console.log({ raw, uint8Array })
-
   // Convert the decompressed stream back to a Uint8Array
   const decompressedArrayBuffer = await new Response(
     decompressedStream
