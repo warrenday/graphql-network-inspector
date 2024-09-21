@@ -1,5 +1,5 @@
-import React from "react"
-import { Button } from "../Button"
+import React from 'react'
+import { Button } from '../Button'
 
 interface ErrorInfoProps {
   error: Error
@@ -17,18 +17,27 @@ const GitHubIssueLink: React.FC<ErrorInfoProps> = (props) => {
     <div className="w-screen h-screen flex flex-col flex-1 items-center justify-center">
       <div className="p-6 flex flex-col text-center">
         <div>Something went wrong:</div>
-        <div className="mt-2">{error.message}</div>
-        <a href={githubUrl} target="_blank" rel="noopener noreferrer">
-          <Button className="mt-4" variant="primary">
-            Report issue on GitHub
-          </Button>
-        </a>
-        <button
-          className="underline pt-10 block text-center"
-          onClick={onReload}
-        >
-          Reload app
-        </button>
+        <div className="mt-2 mx-auto text-red-400 rounded-md w-fit">
+          {error.message}
+          {error.stack && <pre className="text-left mt-2">{error.stack}</pre>}
+        </div>
+        <div className="mt-12 mx-auto">
+          <div className="max-w-[400px]">
+            To help us debug the issue, please report on github and include any
+            relevant stack traces or print screens.
+          </div>
+          <a href={githubUrl} target="_blank" rel="noopener noreferrer">
+            <Button className="mt-4" variant="primary">
+              Report issue on GitHub
+            </Button>
+          </a>
+          <button
+            className="underline pt-10 block text-center m-auto"
+            onClick={onReload}
+          >
+            Reload app
+          </button>
+        </div>
       </div>
     </div>
   )
@@ -41,6 +50,11 @@ interface IErrorBoundaryState {
 
 export class ErrorBoundary extends React.Component {
   state: IErrorBoundaryState = { hasError: false, error: null }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Error caught by ErrorBoundary:', error)
+    console.error('Error details:', errorInfo)
+  }
 
   static getDerivedStateFromError(error: Error) {
     return { hasError: true, error }
