@@ -271,6 +271,7 @@ export const getRequestBodyFromUrl = (url: string): IGraphqlRequestBody => {
   if (persistedQuery) {
     return {
       query: '',
+      operationName: operationName ?? '',
       extensions: decodedExtensions ? JSON.parse(decodedExtensions) : undefined,
       variables: decodedVariables ? JSON.parse(decodedVariables) : undefined,
     }

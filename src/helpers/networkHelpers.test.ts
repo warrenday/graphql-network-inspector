@@ -123,6 +123,42 @@ describe('networkHelpers.getRequestBodyFromUrl', () => {
       },
     })
   })
+
+  it('returns the request body for a persisted query with operationName in query parameters', () => {
+    const operationName = 'someGqlOperation'
+
+    const extensions = {
+      persistedQuery: {
+        sha256Hash: '12345',
+      },
+    }
+    const variables = {
+      id: '1',
+    }
+
+    const baseUrl = 'https://your-graphql-endpoint.com/graphql'
+    // Encode the query parameters
+    const params = new URLSearchParams({
+      operationName,
+      variables: encodeURIComponent(JSON.stringify(variables)),
+      extensions: encodeURIComponent(JSON.stringify(extensions)),
+    })
+    const url = `${baseUrl}?${params.toString()}`
+
+    const body = getRequestBodyFromUrl(url)
+    expect(body).toMatchObject({
+      query: '',
+      operationName: 'someGqlOperation',
+      variables: {
+        id: '1',
+      },
+      extensions: {
+        persistedQuery: {
+          sha256Hash: '12345',
+        },
+      },
+    })
+  })
 })
 
 describe('networkHelpers.matchWebAndNetworkRequest', () => {
