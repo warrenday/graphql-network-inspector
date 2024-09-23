@@ -3,7 +3,7 @@ import RegexParser from 'regex-parser'
 import { SplitPaneLayout } from '@/components/Layout'
 import { onNavigate } from '@/services/networkMonitor'
 import { IWebSocketNetworkRequest } from '@/hooks/useWebSocketNetworkMonitor'
-import { INetworkRequest } from '@/helpers/networkHelpers'
+import { ICompleteNetworkRequest } from '@/helpers/networkHelpers'
 import { NetworkTable, INetworkTableDataRow } from './NetworkTable'
 import { NetworkDetails } from './NetworkDetails'
 import { Toolbar } from '../Toolbar'
@@ -18,7 +18,7 @@ import { IClearWebRequestsOptions } from '../../hooks/useNetworkMonitor'
 interface NetworkPanelProps {
   selectedRowId: string | number | null
   setSelectedRowId: (selectedRowId: string | number | null) => void
-  networkRequests: INetworkRequest[]
+  networkRequests: ICompleteNetworkRequest[]
   webSocketNetworkRequests: IWebSocketNetworkRequest[]
   clearWebRequests: (opts?: IClearWebRequestsOptions) => void
 }
@@ -35,14 +35,14 @@ const getRegex = (str: string) => {
 }
 
 const filterNetworkRequests = (
-  networkRequests: INetworkRequest[],
+  networkRequests: ICompleteNetworkRequest[],
   filterValue: string,
   options: {
     isInverted: boolean
     isRegex: boolean
     operationFilters: IOperationFilters
   }
-): { results: INetworkRequest[]; errorMessage?: string } => {
+): { results: ICompleteNetworkRequest[]; errorMessage?: string } => {
   const regexResult =
     options.isRegex && filterValue ? getRegex(filterValue) : null
   if (regexResult?.errorMessage) {

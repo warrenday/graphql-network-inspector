@@ -8,7 +8,7 @@ export interface IHeader {
   value?: string
 }
 
-export interface INetworkRequest {
+export interface ICompleteNetworkRequest {
   id: string
   status: number
   url: string
@@ -39,8 +39,8 @@ export interface INetworkRequest {
  * and populated before we output from the useNetworkMonitor hook.
  * */
 export interface IIncompleteNetworkRequest
-  extends Omit<INetworkRequest, 'request'> {
-  request?: Partial<INetworkRequest['request']>
+  extends Omit<ICompleteNetworkRequest, 'request'> {
+  request?: Partial<ICompleteNetworkRequest['request']>
 }
 
 /**
@@ -74,7 +74,7 @@ const isNetworkRequest = (
  */
 export const isRequestComplete = (
   networkRequest: IIncompleteNetworkRequest
-): networkRequest is INetworkRequest => {
+): networkRequest is ICompleteNetworkRequest => {
   return (
     networkRequest.request !== undefined &&
     networkRequest.request.headers !== undefined &&

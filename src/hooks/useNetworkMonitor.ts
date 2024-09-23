@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 import { v4 as uuid } from 'uuid'
 import {
   parseGraphqlBody,
@@ -12,7 +12,7 @@ import {
 } from '../services/networkMonitor'
 import {
   IIncompleteNetworkRequest,
-  INetworkRequest,
+  ICompleteNetworkRequest,
   getRequestBody,
   isRequestComplete,
   matchWebAndNetworkRequest,
@@ -56,7 +56,7 @@ const validateNetworkRequest = async (
 }
 
 /**
- * Produce a section of the full INetworkRequest object
+ * Produce a section of the full ICompleteNetworkRequest object
  * from the details and responseBody of a chrome.devtools.network.Request
  *
  * @param details
@@ -111,17 +111,17 @@ const findMatchingWebRequest = async (
 }
 
 export const useNetworkMonitor = (): [
-  INetworkRequest[],
+  ICompleteNetworkRequest[],
   (opts?: IClearWebRequestsOptions) => void
 ] => {
-  const [webRequests, setWebRequests, getLatestWebRequests] = useLatestState<
+  const [requests, setRequests, getLatestRequests] = useLatestState<
     IIncompleteNetworkRequest[]
   >([])
 
   const handleBeforeRequest = useCallback(
     (details: chrome.webRequest.WebRequestBodyDetails) => {
-      setWebRequests((webRequests) => {
-        const newWebRequest: IIncompleteNetworkRequest = {
+      setRequests((request) => {
+        const newIncompleteRequest: IIncompleteNetworkRequest = {
           id: details.requestId,
           status: -1,
           url: details.url,
@@ -132,26 +132,26 @@ export const useNetworkMonitor = (): [
           },
         }
 
-        return webRequests.concat(newWebRequest)
+        return request.concat(newIncompleteRequest)
       })
     },
-    [setWebRequests]
+    [setRequests]
   )
 
   const handleBeforeSendHeaders = useCallback(
     async (details: chrome.webRequest.WebRequestHeadersDetails) => {
-      const webRequests = getLatestWebRequests()
+      const requests = getLatestRequests()
 
-      const webRequest = webRequests.find(
-        (webRequest) => webRequest.id === details.requestId
+      const matchedRequest = requests.find(
+        (request) => request.id === details.requestId
       )
-      if (!webRequest) {
+      if (!matchedRequest) {
         return
       }
 
       // Don't overwrite the request if it's already complete
-      if (webRequest.response) {
-        return webRequest
+      if (matchedRequest.response) {
+        return matchedRequest
       }
 
       // Now we have both the headers and the body from the webRequest api
@@ -159,7 +159,7 @@ export const useNetworkMonitor = (): [
       //
       // If it is not, we return an empty array so flatMap will remove it.
       const body = await getRequestBody(
-        webRequest.native.webRequest,
+        matchedRequest.native.webRequest,
         details.requestHeaders || []
       )
 
@@ -192,20 +192,20 @@ export const useNetworkMonitor = (): [
         ),
       }
 
-      setWebRequests((prevWebRequests) => {
-        return prevWebRequests.map((prevWebRequest) => {
-          if (prevWebRequest.id === webRequest.id) {
+      setRequests((prevRequests) => {
+        return prevRequests.map((prevRequest) => {
+          if (prevRequest.id === matchedRequest.id) {
             return {
-              ...prevWebRequest,
+              ...prevRequest,
               request,
             }
           } else {
-            return prevWebRequest
+            return prevRequest
           }
         })
       })
     },
-    [setWebRequests, getLatestWebRequests]
+    [setRequests, getLatestRequests]
   )
 
   const handleRequestFinished = useCallback(
@@ -215,31 +215,28 @@ export const useNetworkMonitor = (): [
       }
 
       details.getContent(async (responseBody) => {
-        const webRequests = getLatestWebRequests()
-        const matchingWebRequest = await findMatchingWebRequest(
-          webRequests,
-          details
-        )
-        if (!matchingWebRequest) {
+        const requests = getLatestRequests()
+        const matchedRequest = await findMatchingWebRequest(requests, details)
+        if (!matchedRequest) {
           return
         }
 
-        setWebRequests((prevWebRequests) => {
-          return prevWebRequests.map((prevWebRequest) => {
-            if (prevWebRequest.id === matchingWebRequest.id) {
+        setRequests((prevRequests) => {
+          return prevRequests.map((prevRequest) => {
+            if (prevRequest.id === matchedRequest.id) {
               return {
-                ...prevWebRequest,
-                id: prevWebRequest.id,
+                ...prevRequest,
+                id: prevRequest.id,
                 ...processNetworkRequest(details, responseBody),
               }
             } else {
-              return prevWebRequest
+              return prevRequest
             }
           })
         })
       })
     },
-    [setWebRequests, getLatestWebRequests]
+    [setRequests, getLatestRequests]
   )
 
   const handleHAREntries = useCallback(
@@ -250,7 +247,7 @@ export const useNetworkMonitor = (): [
 
       const entriesWithContent = await Promise.all(
         validEntries.map((details) => {
-          return new Promise<INetworkRequest>((resolve) => {
+          return new Promise<ICompleteNetworkRequest>((resolve) => {
             details.getContent(async (responseBody) => {
               const body = await getRequestBody(details)
               if (!body) {
@@ -290,29 +287,29 @@ export const useNetworkMonitor = (): [
         })
       )
 
-      setWebRequests(entriesWithContent)
+      setRequests(entriesWithContent)
     },
-    [setWebRequests]
+    [setRequests]
   )
 
-  const clearWebRequests = useCallback(
+  const clearRequests = useCallback(
     (opts?: IClearWebRequestsOptions) => {
       const { clearPending = true, clearAll = true } = opts || {}
 
       if (clearAll) {
-        setWebRequests([])
+        setRequests([])
         return
       }
 
       if (clearPending) {
-        setWebRequests((webRequests) => {
+        setRequests((webRequests) => {
           return webRequests.filter(
             (webRequest) => typeof webRequest.response !== 'undefined'
           )
         })
       }
     },
-    [setWebRequests]
+    [setRequests]
   )
 
   // Collect historic network data in case any events fired before we started listening
@@ -322,9 +319,9 @@ export const useNetworkMonitor = (): [
       handleHAREntries(HARLog.entries as chrome.devtools.network.Request[])
     }
 
-    clearWebRequests()
+    clearRequests()
     fetchHistoricWebRequests()
-  }, [handleHAREntries, clearWebRequests])
+  }, [handleHAREntries, clearRequests])
 
   // Setup listeners for network data
   useEffect(() => {
@@ -342,10 +339,7 @@ export const useNetworkMonitor = (): [
   // Only return webRequests where the request portion is complete.
   // Since we build up the data from multiple events. We only want
   // to display results that have enough data to be useful.
-  const completeWebRequests = webRequests.filter(isRequestComplete)
+  const completeRequests = requests.filter(isRequestComplete)
 
-  // @ts-ignore
-  // Ignored as completeWebRequests is readonly. Need to update type
-  // across app.
-  return [completeWebRequests, clearWebRequests] as const
+  return [completeRequests, clearRequests]
 }

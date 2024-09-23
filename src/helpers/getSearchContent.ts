@@ -1,34 +1,34 @@
-import { stringify } from "./safeJson"
-import { IHeader, INetworkRequest } from "@/helpers/networkHelpers"
+import { stringify } from './safeJson'
+import { IHeader, ICompleteNetworkRequest } from '@/helpers/networkHelpers'
 
 const stringifyHeaders = (headers: IHeader[] = []) => {
   return headers
     .map((header) => {
       return `${header.name}: ${header.value}`
     })
-    .join(", ")
+    .join(', ')
 }
 
 export const getHeaderSearchContent = (
-  networkRequest: INetworkRequest
+  networkRequest: ICompleteNetworkRequest
 ): string => {
   const requestHeaderText = stringifyHeaders(networkRequest.request.headers)
   const responseHeaderText = stringifyHeaders(networkRequest.response?.headers)
-  return [requestHeaderText, responseHeaderText].join(", ")
+  return [requestHeaderText, responseHeaderText].join(', ')
 }
 
 export const getRequestSearchContent = (
-  networkRequest: INetworkRequest
+  networkRequest: ICompleteNetworkRequest
 ): string => {
   return networkRequest.request.body
     .map((body) => {
-      return body.query + " " + stringify(body.variables)
+      return body.query + ' ' + stringify(body.variables)
     })
-    .join(", ")
+    .join(', ')
 }
 
 export const getResponseSearchContent = (
-  networkRequest: INetworkRequest
+  networkRequest: ICompleteNetworkRequest
 ): string => {
-  return networkRequest.response?.body || ""
+  return networkRequest.response?.body || ''
 }

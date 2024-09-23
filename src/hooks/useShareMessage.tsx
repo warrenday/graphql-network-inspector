@@ -1,10 +1,10 @@
-import { createContext, useContext, useEffect, useState } from "react"
-import uniqid from "uniqid"
-import { chromeProvider } from "../services/chromeProvider"
-import { INetworkRequest } from "@/helpers/networkHelpers"
+import { createContext, useContext, useEffect, useState } from 'react'
+import uniqid from 'uniqid'
+import { chromeProvider } from '../services/chromeProvider'
+import { ICompleteNetworkRequest } from '@/helpers/networkHelpers'
 
 interface IShareMessageContext {
-  shareNetworkRequest: (networkRequest: INetworkRequest) => void
+  shareNetworkRequest: (networkRequest: ICompleteNetworkRequest) => void
 }
 
 const ShareMessageContext = createContext<IShareMessageContext>(null!)
@@ -13,7 +13,7 @@ interface IShareMessageProviderProps {
   children: React.ReactNode
 }
 
-const prepareSharePayload = (networkRequest: INetworkRequest) => {
+const prepareSharePayload = (networkRequest: ICompleteNetworkRequest) => {
   const responseBody = networkRequest.response?.body
     ? JSON.parse(networkRequest.response?.body)
     : {}
@@ -54,12 +54,12 @@ export const ShareMessageProvider = (props: IShareMessageProviderProps) => {
       sender: chrome.runtime.MessageSender,
       sendResponse: (response: any) => void
     ) => {
-      if (request.message === "ready" && request.sessionId === sessionId) {
+      if (request.message === 'ready' && request.sessionId === sessionId) {
         // Once the receiver is ready we can send the draft payload.
         //
         // Note: sendResponse will become invalid after first use.
         // Unless we return "true"
-        sendResponse({ message: "draft", payload })
+        sendResponse({ message: 'draft', payload })
       }
     }
 
@@ -69,14 +69,14 @@ export const ShareMessageProvider = (props: IShareMessageProviderProps) => {
     }
   }, [payload, sessionId])
 
-  const shareNetworkRequest = (networkRequest: INetworkRequest) => {
+  const shareNetworkRequest = (networkRequest: ICompleteNetworkRequest) => {
     setPayload(prepareSharePayload(networkRequest))
 
     // We start by creating a new tab. The new tab will send us
     // a ready message, which we are listening for above.
     window.open(
       `${process.env.REACT_APP_SHARE_TARGET_URL}/draft?sessionId=${sessionId}`,
-      "_blank"
+      '_blank'
     )
   }
 
@@ -92,7 +92,7 @@ export const useShareMessage = () => {
 
   if (!context) {
     throw new Error(
-      "useShareMessage must be used within a ShareMessageProvider"
+      'useShareMessage must be used within a ShareMessageProvider'
     )
   }
 

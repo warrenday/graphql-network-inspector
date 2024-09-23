@@ -1,9 +1,9 @@
-import { INetworkRequest } from "@/helpers/networkHelpers"
+import { ICompleteNetworkRequest } from '@/helpers/networkHelpers'
 import {
   getHeaderSearchContent,
   getRequestSearchContent,
   getResponseSearchContent,
-} from "@/helpers/getSearchContent"
+} from '@/helpers/getSearchContent'
 
 export interface ISearchResult {
   matches: {
@@ -11,12 +11,12 @@ export interface ISearchResult {
     response: boolean
     headers: boolean
   }
-  networkRequest: INetworkRequest
+  networkRequest: ICompleteNetworkRequest
 }
 
 const getMatchedHeaders = (
   searchQuery: string,
-  networkRequests: INetworkRequest
+  networkRequests: ICompleteNetworkRequest
 ): boolean => {
   return getHeaderSearchContent(networkRequests)
     .toLowerCase()
@@ -25,7 +25,7 @@ const getMatchedHeaders = (
 
 const getMatchedRequest = (
   searchQuery: string,
-  networkRequests: INetworkRequest
+  networkRequests: ICompleteNetworkRequest
 ): boolean => {
   return getRequestSearchContent(networkRequests)
     .toLowerCase()
@@ -34,7 +34,7 @@ const getMatchedRequest = (
 
 const getMatchedResponse = (
   searchQuery: string,
-  networkRequests: INetworkRequest
+  networkRequests: ICompleteNetworkRequest
 ): boolean => {
   return getResponseSearchContent(networkRequests)
     .toLowerCase()
@@ -43,7 +43,7 @@ const getMatchedResponse = (
 
 export const getSearchResults = (
   searchQuery: string,
-  networkRequests: INetworkRequest[]
+  networkRequests: ICompleteNetworkRequest[]
 ): ISearchResult[] => {
   if (!searchQuery) {
     return []
@@ -52,7 +52,7 @@ export const getSearchResults = (
   const lowercaseSearchQuery = searchQuery.toLocaleLowerCase()
   return networkRequests
     .map((networkRequest) => {
-      const matches: ISearchResult["matches"] = {
+      const matches: ISearchResult['matches'] = {
         request: getMatchedRequest(lowercaseSearchQuery, networkRequest),
         response: getMatchedResponse(lowercaseSearchQuery, networkRequest),
         headers: getMatchedHeaders(lowercaseSearchQuery, networkRequest),

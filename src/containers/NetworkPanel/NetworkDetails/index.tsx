@@ -1,19 +1,19 @@
-import { useMemo } from "react"
-import { Tabs } from "@/components/Tabs"
-import { INetworkRequest } from "@/helpers/networkHelpers"
-import { HeaderView } from "../HeaderView"
-import { RequestView, RequestViewFooter } from "./RequestView"
-import { ResponseView } from "./ResponseView"
-import { TracingView } from "./TracingView"
-import { ResponseRawView } from "./ResponseRawView"
-import { useNetworkTabs } from "@/hooks/useNetworkTabs"
-import { CloseButton } from "@/components/CloseButton"
-import { useApolloTracing } from "@/hooks/useApolloTracing"
-import { useToggle } from "@/hooks/useToggle"
-import { useShareMessage } from "../../../hooks/useShareMessage"
+import { useMemo } from 'react'
+import { Tabs } from '@/components/Tabs'
+import { ICompleteNetworkRequest } from '@/helpers/networkHelpers'
+import { HeaderView } from '../HeaderView'
+import { RequestView, RequestViewFooter } from './RequestView'
+import { ResponseView } from './ResponseView'
+import { TracingView } from './TracingView'
+import { ResponseRawView } from './ResponseRawView'
+import { useNetworkTabs } from '@/hooks/useNetworkTabs'
+import { CloseButton } from '@/components/CloseButton'
+import { useApolloTracing } from '@/hooks/useApolloTracing'
+import { useToggle } from '@/hooks/useToggle'
+import { useShareMessage } from '../../../hooks/useShareMessage'
 
 export interface INetworkDetailsProps {
-  data: INetworkRequest
+  data: ICompleteNetworkRequest
   onClose: () => void
 }
 
@@ -30,7 +30,7 @@ export const NetworkDetails = (props: INetworkDetailsProps) => {
   const { shareNetworkRequest } = useShareMessage()
   const operation = data.request.primaryOperation.operation
   const isShareable = useMemo(
-    () => ["query", "mutation"].includes(operation),
+    () => ['query', 'mutation'].includes(operation),
     [operation]
   )
 
@@ -50,8 +50,8 @@ export const NetworkDetails = (props: INetworkDetailsProps) => {
       }
       tabs={[
         {
-          id: "headers",
-          title: "Headers",
+          id: 'headers',
+          title: 'Headers',
           component: (
             <HeaderView
               requestHeaders={requestHeaders}
@@ -60,8 +60,8 @@ export const NetworkDetails = (props: INetworkDetailsProps) => {
           ),
         },
         {
-          id: "request",
-          title: "Request",
+          id: 'request',
+          title: 'Request',
           component: (
             <RequestView
               onShare={isShareable ? handleShare : undefined}
@@ -77,8 +77,8 @@ export const NetworkDetails = (props: INetworkDetailsProps) => {
           ),
         },
         {
-          id: "response",
-          title: "Response",
+          id: 'response',
+          title: 'Response',
           component: (
             <ResponseView
               onShare={isShareable ? handleShare : undefined}
@@ -88,8 +88,8 @@ export const NetworkDetails = (props: INetworkDetailsProps) => {
           ),
         },
         {
-          id: "response-raw",
-          title: "Response (Raw)",
+          id: 'response-raw',
+          title: 'Response (Raw)',
           component: (
             <ResponseRawView
               onShare={isShareable ? handleShare : undefined}
@@ -100,8 +100,8 @@ export const NetworkDetails = (props: INetworkDetailsProps) => {
         ...(tracing
           ? [
               {
-                id: "tracing",
-                title: "Tracing",
+                id: 'tracing',
+                title: 'Tracing',
                 component: <TracingView response={responseBody} />,
               },
             ]

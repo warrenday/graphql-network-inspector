@@ -1,16 +1,16 @@
-import { useMemo } from "react"
-import { INetworkRequest } from "@/helpers/networkHelpers"
-import { useSearch } from "@/hooks/useSearch"
-import { NetworkTabs } from "@/hooks/useNetworkTabs"
-import { getSearchResults, ISearchResult } from "@/services/searchService"
-import { SearchResults } from "./SearchResults"
-import { Header } from "@/components/Header"
-import { CloseButton } from "@/components/CloseButton"
-import { SearchInput } from "@/components/SearchInput"
-import { IWebSocketNetworkRequest } from "@/hooks/useWebSocketNetworkMonitor"
+import { useMemo } from 'react'
+import { ICompleteNetworkRequest } from '@/helpers/networkHelpers'
+import { useSearch } from '@/hooks/useSearch'
+import { NetworkTabs } from '@/hooks/useNetworkTabs'
+import { getSearchResults, ISearchResult } from '@/services/searchService'
+import { SearchResults } from './SearchResults'
+import { Header } from '@/components/Header'
+import { CloseButton } from '@/components/CloseButton'
+import { SearchInput } from '@/components/SearchInput'
+import { IWebSocketNetworkRequest } from '@/hooks/useWebSocketNetworkMonitor'
 
 interface ISearchPanelProps {
-  networkRequests: INetworkRequest[]
+  networkRequests: ICompleteNetworkRequest[]
   webSocketNetworkRequests: IWebSocketNetworkRequest[]
   onResultClick: (
     searchResult: ISearchResult,
@@ -39,7 +39,7 @@ export const SearchPanel = (props: ISearchPanelProps) => {
           />
         }
       >
-        <div className="flex items-center pl-2" style={{ height: "3.5rem" }}>
+        <div className="flex items-center pl-2" style={{ height: '3.5rem' }}>
           <h2 className="font-bold">Search</h2>
         </div>
       </Header>
