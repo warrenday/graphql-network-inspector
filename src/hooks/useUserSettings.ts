@@ -11,6 +11,8 @@ const useUserSettings = () => {
     isInvertFilterActive: false,
     isRegexActive: false,
     filter: '',
+    websocketUrlFilter: '',
+    shouldShowFullWebsocketMessage: true,
   })
 
   // Load initial settings on component mount

@@ -88,24 +88,28 @@ describe("useWebSocketNetworkMonitor", () => {
         messages: [
           {
             data: {
-              data: {
-                reviewAdded: {
-                  episode: "NEWHOPE",
-                  stars: 4,
+              payload: {
+                data: {
+                  reviewAdded: {
+                    episode: "NEWHOPE",
+                    stars: 4,
+                  },
                 },
-              },
+              }
             },
             time: 1234,
             type: "receive",
           },
           {
             data: {
-              data: {
-                reviewAdded: {
-                  episode: "NEWHOPE",
-                  stars: 4,
+              payload: {
+                data: {
+                  reviewAdded: {
+                    episode: "NEWHOPE",
+                    stars: 4,
+                  },
                 },
-              },
+              }
             },
             time: 1234,
             type: "receive",
@@ -188,7 +192,9 @@ describe("useWebSocketNetworkMonitor", () => {
         messages: [
           {
             data: {
-              query: "query users { id }",
+              payload: {
+                query: "query users { id }",
+              },
             },
             time: 1234,
             type: "send",
@@ -198,7 +204,7 @@ describe("useWebSocketNetworkMonitor", () => {
     ])
   })
 
-  it('only returns messages from entries to a url containing "graphql" term', async () => {
+  it('only returns messages from entries which filters by url term', async () => {
     mockGetHAR.mockResolvedValue({
       entries: [
         {
@@ -232,16 +238,16 @@ describe("useWebSocketNetworkMonitor", () => {
     } as DeepPartial<chrome.devtools.network.HARLog>)
 
     const { result, waitForNextUpdate } = renderHook(() =>
-      useWebSocketNetworkMonitor()
+      useWebSocketNetworkMonitor({ isEnabled: true, urlFilter: "some-other-url" })
     )
 
     await waitForNextUpdate()
 
     expect(result.current[0]).toEqual([
       {
-        id: "subscription-0",
+        id: "subscription-1",
         status: 101,
-        url: "ws://localhost:4000/graphql",
+        url: "ws://localhost:4000/some-other-url",
         method: "GET",
         request: {
           headers: [],
@@ -261,12 +267,12 @@ describe("useWebSocketNetworkMonitor", () => {
 
     const { rerender, waitForNextUpdate } = renderHook(
       (props) => useWebSocketNetworkMonitor(props),
-      { initialProps: { isEnabled: false } }
+      { initialProps: { isEnabled: false, urlFilter: "graphql" } }
     )
 
     expect(mockGetHAR).not.toHaveBeenCalled()
 
-    rerender({ isEnabled: true })
+    rerender({ isEnabled: true, urlFilter: "graphql" })
     await waitForNextUpdate()
 
     expect(mockGetHAR).toHaveBeenCalledTimes(1)

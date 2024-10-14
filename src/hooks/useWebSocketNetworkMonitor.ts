@@ -53,8 +53,8 @@ const isWebSocketEntry = (entry: any): entry is WebSocketHAREntry => {
   return entry._resourceType === "websocket"
 }
 
-const isGraphQLWebsocketEntry = (entry: WebSocketHAREntry) => {
-  return entry.request.url.includes("graphql")
+const isGraphQLWebsocketEntry = (entry: WebSocketHAREntry, urlFilter: string) => {
+  return urlFilter ? entry.request.url.includes(urlFilter) : true
 }
 
 const isGraphQLPayload = (
@@ -78,30 +78,29 @@ const isGraphQLPayload = (
 }
 
 const prepareWebSocketRequests = (
-  har: chrome.devtools.network.HARLog
+  har: chrome.devtools.network.HARLog,
+  options: { urlFilter: string }
 ): IWebSocketNetworkRequest[] => {
   return har.entries.flatMap((entry, i) => {
-    if (isWebSocketEntry(entry) && isGraphQLWebsocketEntry(entry)) {
+    if (isWebSocketEntry(entry) && isGraphQLWebsocketEntry(entry, options.urlFilter)) {
       const websocketEntry: IWebSocketNetworkRequest = {
         id: `subscription-${i}`,
         status: entry.response.status,
         url: entry.request.url,
         method: entry.request.method,
-        messages: entry._webSocketMessages.flatMap((message) => {
+        messages: entry._webSocketMessages.flatMap(message => {
           const messageData =
-            safeJson.parse<{
-              payload: {}
-            }>(message.data) || undefined
+            safeJson.parse<Record<string, any>>(message.data) || undefined
 
           const payload = messageData?.payload
-          if (!isGraphQLPayload(message.type, payload)) {
+          if (!messageData || !isGraphQLPayload(message.type, payload)) {
             return []
           }
 
           return {
             type: message.type,
             time: message.time,
-            data: payload,
+            data: messageData,
           }
         }),
         request: {
@@ -120,10 +119,11 @@ const prepareWebSocketRequests = (
 
 interface IUseWebSocketNetworkOptions {
   isEnabled: boolean
+  urlFilter: string
 }
 
 export const useWebSocketNetworkMonitor = (
-  options: IUseWebSocketNetworkOptions = { isEnabled: true }
+  options: IUseWebSocketNetworkOptions = { isEnabled: true, urlFilter: '' }
 ) => {
   const [webSocketRequests, setWebSocketRequests] = useState<
     IWebSocketNetworkRequest[]
@@ -135,9 +135,9 @@ export const useWebSocketNetworkMonitor = (
 
   const fetchWebSocketRequests = useCallback(async () => {
     const har = await getHAR()
-    const websocketRequests = prepareWebSocketRequests(har)
+    const websocketRequests = prepareWebSocketRequests(har, { urlFilter: options.urlFilter })
     setWebSocketRequests(websocketRequests)
-  }, [setWebSocketRequests])
+  }, [setWebSocketRequests, options.urlFilter])
 
   useInterval(fetchWebSocketRequests, 2000, { isRunning: options.isEnabled })
 

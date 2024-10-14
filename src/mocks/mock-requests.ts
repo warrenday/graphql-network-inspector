@@ -10,12 +10,128 @@ interface IMockRequestInput {
   response: Record<string, unknown>
 }
 
+interface IMockWebsocketRequestInput {
+  url: string
+}
+
 export interface IMockRequest {
   webRequestBodyDetails: chrome.webRequest.WebRequestBodyDetails
   webRequestHeaderDetails: chrome.webRequest.WebRequestHeadersDetails
-  networkRequest: chrome.devtools.network.Request
+  networkRequest: chrome.devtools.network.Request | chrome.devtools.network.HAREntry
 }
 
+const createWebsocketRequest = (args: IMockWebsocketRequestInput): IMockRequest => {
+  const requestHeaders = [
+    {
+      name: 'Authorization',
+      value: 'Bearer fe0e8768-3b2f-4f63-983d-1a74c26dde1e',
+    },
+  ]
+
+  const webRequestBodyDetails: chrome.webRequest.WebRequestBodyDetails = {
+    frameId: 0,
+    parentFrameId: -1,
+    tabId: 1,
+    type: 'xmlhttprequest',
+    timeStamp: 1699975911.862162,
+    requestId: '1',
+    url: args.url,
+    method: 'GET',
+    requestBody: null
+  }
+
+  const webRequestHeaderDetails: chrome.webRequest.WebRequestHeadersDetails = {
+    documentId: '1',
+    documentLifecycle: 'active',
+    frameId: 0,
+    frameType: 'sub_frame',
+    method: 'GET',
+    parentFrameId: -1,
+    requestId: '1',
+    tabId: 1,
+    timeStamp: 1699975911.862162,
+    type: 'xmlhttprequest',
+    url: args.url,
+    requestHeaders,
+  }
+
+  const networkRequest: chrome.devtools.network.HAREntry = {
+    cache: {},
+    startedDateTime: '2021-01-01T00:00:00.000Z',
+    time: 1099.4580000406131,
+    timings: {
+      receive: 0.1,
+      wait: 0.1,
+    },
+    request: {
+      url: args.url,
+      httpVersion: 'HTTP/1.1',
+      queryString: [],
+      cookies: [],
+      bodySize: 0,
+      method: 'GET',
+      headersSize: 100,
+      headers: requestHeaders,
+    },
+    response: {
+      status: 101,
+      statusText: 'Switching Protocols',
+      httpVersion: 'HTTP/1.1',
+      cookies: [],
+      content: {
+        size: 100,
+        mimeType: 'application/json',
+      },
+      redirectURL: '',
+      headersSize: 100,
+      bodySize: 3360,
+      headers: [],
+    },
+    _resourceType: 'websocket',
+    _webSocketMessages: [
+      {
+        data: JSON.stringify({
+          payload: {
+            query: 'subscription { reviewAdded { stars episode } }',
+            variables: {},
+          },
+          metadata: {},
+        }),
+        opcode: 1,
+        time: 1699975911.862162,
+        type: 'send',
+      },
+      {
+        data: JSON.stringify({
+          payload: {
+            data: { reviewAdded: { stars: 4, episode: 'CLONE_WARS' } },
+          },
+          metadata: {},
+        }),
+        opcode: 1,
+        time: 1699975911.862162,
+        type: 'receive',
+      },
+      {
+        data: JSON.stringify({
+          payload: {
+            data: { reviewAdded: { stars: 4, episode: 'NEWHOPE' } },
+          },
+          metadata: {},
+        }),
+        opcode: 1,
+        time: 1699975982.2748342,
+        type: 'receive',
+      },
+    ]
+  }
+
+  return {
+    webRequestBodyDetails,
+    webRequestHeaderDetails,
+    networkRequest,
+  }
+}
 const createRequest = (args: IMockRequestInput): IMockRequest => {
   const { request, response } = args
 
@@ -537,62 +653,28 @@ export const mockRequests: IMockRequest[] = [
       ],
     },
   }),
-  // WebSocket (GraphQL subscription)
-  // {
-  //   startedDateTime: '2021-01-01T00:00:00.000Z',
-  //   time: 1099.4580000406131,
-  //   request: {
-  //     url: 'ws://graphql-network-monitor.com/graphql',
-  //     method: 'GET',
-  //     headers: [
-  //       {
-  //         name: 'Authorization',
-  //         value: 'Bearer fe0e8768-3b2f-4f63-983d-1a74c26dde1e',
-  //       },
-  //     ],
-  //   },
-  //   response: {
-  //     status: 101,
-  //     headers: [
-  //       {
-  //         name: 'Authorization',
-  //         value: 'Bearer fe0e8768-3b2f-4f63-983d-1a74c26dde1e',
-  //       },
-  //     ],
-  //   },
-  //   _resourceType: 'websocket',
-  //   _webSocketMessages: [
-  //     {
-  //       data: JSON.stringify({
-  //         payload: {
-  //           query: 'subscription { reviewAdded { stars episode } }',
-  //           variables: {},
-  //         },
-  //       }),
-  //       opcode: 1,
-  //       time: 1699975911.862162,
-  //       type: 'send',
-  //     },
-  //     {
-  //       data: JSON.stringify({
-  //         payload: {
-  //           data: { reviewAdded: { stars: 4, episode: 'CLONE_WARS' } },
-  //         },
-  //       }),
-  //       opcode: 1,
-  //       time: 1699975911.862162,
-  //       type: 'receive',
-  //     },
-  //     {
-  //       data: JSON.stringify({
-  //         payload: {
-  //           data: { reviewAdded: { stars: 4, episode: 'NEWHOPE' } },
-  //         },
-  //       }),
-  //       opcode: 1,
-  //       time: 1699975982.2748342,
-  //       type: 'receive',
-  //     },
-  //   ],
-  // },
+  createRequest({
+    request: [
+      {
+        query: `
+          subscription reviewAddedForPostSubscription($id: String) {
+            reviewAddedForPost(postId: $id) { 
+              stars
+              episode 
+            }
+          }
+        `,
+        variables: {
+          id: '3',
+        },
+      },
+    ],
+    response: {
+      data: {
+        subscriptionId: "123"
+      }
+    },
+  }),
+  createWebsocketRequest({ url: 'ws://graphql-network-monitor.com/graphql' }),
+  createWebsocketRequest({ url: 'ws://some-network-monitor.com/alternative' })
 ]

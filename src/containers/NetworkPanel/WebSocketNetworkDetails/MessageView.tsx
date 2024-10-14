@@ -7,6 +7,7 @@ import * as safeJson from "@/helpers/safeJson"
 
 interface IMessageViewProps {
   messages: IWebSocketMessage[]
+  showFullMessage: boolean
 }
 
 /**
@@ -21,12 +22,12 @@ const getReadableTime = (time: number): string => {
 }
 
 const MessageView = React.memo((props: IMessageViewProps) => {
-  const { messages } = props
+  const { messages, showFullMessage } = props
 
   return (
     <Panels>
       {messages.map((message, i) => {
-        const payload = JSON.stringify(message.data, null, 2)
+        const payload = JSON.stringify(showFullMessage ? message.data : message.data.payload, null, 2)
         const isGraphQLQuery = message.type === "send" && message.data?.query
 
         return (

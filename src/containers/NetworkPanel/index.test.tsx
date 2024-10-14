@@ -1,6 +1,7 @@
 import { fireEvent } from '@testing-library/react'
 import { NetworkPanel } from './index'
 import { render } from '../../test-utils'
+import useUserSettings from '@/hooks/useUserSettings'
 
 jest.mock('@/hooks/useHighlight', () => ({
   useHighlight: () => ({
@@ -14,16 +15,24 @@ jest.mock('@/services/userSettingsService', () => ({
   setUserSettings: jest.fn(),
 }))
 
+const NetworkPanelContainer = () => {
+  const [userSettings, setUserSettings] = useUserSettings();
+
+  return <NetworkPanel
+    userSettings={userSettings}
+    setUserSettings={setUserSettings}
+    selectedRowId={null}
+    setSelectedRowId={() => { }}
+    networkRequests={[]}
+    webSocketNetworkRequests={[]}
+    clearWebRequests={() => { }}
+  />
+}
+
 describe('NetworkPanel', () => {
   it('invalid regex is provided, regex mode is on - error message is rendered', () => {
     const { getByTestId, getByText } = render(
-      <NetworkPanel
-        selectedRowId={null}
-        setSelectedRowId={() => {}}
-        networkRequests={[]}
-        webSocketNetworkRequests={[]}
-        clearWebRequests={() => {}}
-      />
+      <NetworkPanelContainer />
     )
     const filterInput = getByTestId('filter-input')
     const regexCheckbox = getByTestId('regex-checkbox')
@@ -42,13 +51,7 @@ describe('NetworkPanel', () => {
 
   it('invalid regex is provided, regex mode is off - error message is not rendered', () => {
     const { getByTestId, queryByText } = render(
-      <NetworkPanel
-        selectedRowId={null}
-        setSelectedRowId={() => {}}
-        networkRequests={[]}
-        webSocketNetworkRequests={[]}
-        clearWebRequests={() => {}}
-      />
+      <NetworkPanelContainer />
     )
     const filterInput = getByTestId('filter-input')
 

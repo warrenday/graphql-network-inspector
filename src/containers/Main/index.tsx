@@ -10,16 +10,19 @@ import { NetworkPanel } from '../NetworkPanel'
 import { SearchPanel } from '../SearchPanel'
 import { useWebSocketNetworkMonitor } from '../../hooks/useWebSocketNetworkMonitor'
 import { useOperationFilters } from '../../hooks/useOperationFilters'
+import useUserSettings from '../../hooks/useUserSettings'
 
 export const Main = () => {
   const [selectedRowId, setSelectedRowId] = useState<string | number | null>(
     null
   )
   const { operationFilters } = useOperationFilters()
+  const [userSettings, setUserSettings] = useUserSettings()
   const [networkRequests, clearWebRequests] = useNetworkMonitor()
   const [webSocketNetworkRequests, clearWebSocketNetworkRequests] =
     useWebSocketNetworkMonitor({
       isEnabled: operationFilters.subscription,
+      urlFilter: userSettings.websocketUrlFilter
     })
   const { isSearchOpen } = useSearch()
   const { setActiveTab } = useNetworkTabs()
@@ -54,6 +57,8 @@ export const Main = () => {
             clearWebRequests={clearRequests}
             selectedRowId={selectedRowId}
             setSelectedRowId={setSelectedRowId}
+            userSettings={userSettings}
+            setUserSettings={setUserSettings}
           />
         }
       />
