@@ -5,6 +5,8 @@ export interface IUserSettings {
   isInvertFilterActive: boolean
   isRegexActive: boolean
   filter: string
+  websocketUrlFilter: string
+  shouldShowFullWebsocketMessage: boolean
 }
 
 export const getUserSettings = (

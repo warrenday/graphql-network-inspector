@@ -23,6 +23,8 @@ describe('useUserSettings', () => {
       isInvertFilterActive: false,
       isRegexActive: false,
       filter: '',
+      websocketUrlFilter: '',
+      shouldShowFullWebsocketMessage: true,
     })
 
     // Update the state
@@ -39,6 +41,8 @@ describe('useUserSettings', () => {
       isInvertFilterActive: true,
       isRegexActive: false,
       filter: '',
+      websocketUrlFilter: '',
+      shouldShowFullWebsocketMessage: true,
     })
 
     // Expect setUserSettings was called with the new settings
@@ -47,6 +51,8 @@ describe('useUserSettings', () => {
       isInvertFilterActive: true,
       isRegexActive: false,
       filter: '',
+      websocketUrlFilter: '',
+      shouldShowFullWebsocketMessage: true,
     })
   })
 })

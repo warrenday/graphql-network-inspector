@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, SetStateAction, Dispatch } from 'react'
 import RegexParser from 'regex-parser'
 import { SplitPaneLayout } from '@/components/Layout'
 import { onNavigate } from '@/services/networkMonitor'
@@ -12,8 +12,8 @@ import {
   IOperationFilters,
   useOperationFilters,
 } from '../../hooks/useOperationFilters'
-import useUserSettings from '../../hooks/useUserSettings'
 import { IClearWebRequestsOptions } from '../../hooks/useNetworkMonitor'
+import { IUserSettings } from '@/services/userSettingsService'
 
 interface NetworkPanelProps {
   selectedRowId: string | number | null
@@ -21,6 +21,8 @@ interface NetworkPanelProps {
   networkRequests: ICompleteNetworkRequest[]
   webSocketNetworkRequests: IWebSocketNetworkRequest[]
   clearWebRequests: (opts?: IClearWebRequestsOptions) => void
+  userSettings: IUserSettings
+  setUserSettings: (userSettings: Partial<IUserSettings>) => void
 }
 
 const getRegex = (str: string) => {
@@ -74,9 +76,10 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
     clearWebRequests,
     selectedRowId,
     setSelectedRowId,
+    userSettings,
+    setUserSettings,
   } = props
 
-  const [userSettings, setUserSettings] = useUserSettings()
   const { operationFilters } = useOperationFilters()
 
   const { results: filteredNetworkRequests, errorMessage: filterError } =
@@ -177,6 +180,14 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
           onRegexActiveChange={(isRegexActive) => {
             setUserSettings({ isRegexActive })
           }}
+          websocketUrlFilter={userSettings.websocketUrlFilter}
+          onWebsocketUrlFilterChange={(websocketUrlFilter) => {
+            setUserSettings({ websocketUrlFilter })
+          }}
+          showFullWebsocketMessage={userSettings.shouldShowFullWebsocketMessage}
+          onShowFullWebsocketMessageChange={(shouldShowFullWebsocketMessage) => {
+            setUserSettings({ shouldShowFullWebsocketMessage })
+          }}
           onClear={() => {
             setSelectedRowId(null)
             clearWebRequests()
@@ -208,6 +219,7 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
             )}
             {selectedWebSocketRequest && (
               <WebSocketNetworkDetails
+                showFullMessage={userSettings.shouldShowFullWebsocketMessage}
                 data={selectedWebSocketRequest}
                 onClose={() => {
                   setSelectedRowId(null)

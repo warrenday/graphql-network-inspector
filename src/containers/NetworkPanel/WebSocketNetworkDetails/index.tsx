@@ -9,10 +9,11 @@ import MessageView from "./MessageView"
 interface WebSocketNetworkDetailsProps {
   data: IWebSocketNetworkRequest
   onClose: () => void
+  showFullMessage: boolean
 }
 
 const WebSocketNetworkDetails = (props: WebSocketNetworkDetailsProps) => {
-  const { data, onClose } = props
+  const { data, onClose, showFullMessage } = props
   const { activeTab, setActiveTab } = useNetworkTabs()
   const requestHeaders = data.request.headers
   const responseHeaders = data.response?.headers || []
@@ -49,7 +50,7 @@ const WebSocketNetworkDetails = (props: WebSocketNetworkDetailsProps) => {
         {
           id: "messages",
           title: "Messages",
-          component: <MessageView messages={data.messages} />,
+          component: <MessageView showFullMessage={showFullMessage} messages={data.messages} />,
         },
       ]}
     />
