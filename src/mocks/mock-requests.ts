@@ -12,15 +12,79 @@ interface IMockRequestInput {
 
 interface IMockWebsocketRequestInput {
   url: string
+  webSocketMessages: ISubscriptionPayload[]
 }
 
 export interface IMockRequest {
   webRequestBodyDetails: chrome.webRequest.WebRequestBodyDetails
   webRequestHeaderDetails: chrome.webRequest.WebRequestHeadersDetails
-  networkRequest: chrome.devtools.network.Request | chrome.devtools.network.HAREntry
+  networkRequest:
+    | chrome.devtools.network.Request
+    | chrome.devtools.network.HAREntry
 }
 
-const createWebsocketRequest = (args: IMockWebsocketRequestInput): IMockRequest => {
+interface ISubscriptionPayload {
+  data: string
+  opcode: number
+  time: number
+  type: 'send' | 'receive'
+}
+
+interface IDefaultSubscriptionInput {
+  data: Record<string, unknown>
+  opcode: number
+  time: number
+  type: 'send' | 'receive'
+}
+
+interface IRailsChannelSubscriptionInput {
+  query: string
+  variables: Record<string, unknown>
+  operationName: string
+  opcode: number
+  time: number
+  type: 'send' | 'receive'
+}
+
+const defaultSubscriptionPayload = ({
+  data,
+  opcode,
+  time,
+  type,
+}: IDefaultSubscriptionInput): ISubscriptionPayload => {
+  return {
+    data: JSON.stringify(data),
+    opcode,
+    time,
+    type,
+  }
+}
+
+const railsChannelSubscriptionPayload = ({
+  query,
+  variables,
+  operationName,
+  opcode,
+  time,
+  type,
+}: IRailsChannelSubscriptionInput): ISubscriptionPayload => {
+  const payload = {
+    command: 'message',
+    identifier: '{"channel":"GraphqlChannel","channelId":"1932245fcc6"}',
+    data: JSON.stringify({
+      query,
+      variables,
+      operationName,
+      action: 'execute',
+    }),
+  }
+
+  return defaultSubscriptionPayload({ data: payload, opcode, time, type })
+}
+
+const createWebsocketRequest = (
+  args: IMockWebsocketRequestInput
+): IMockRequest => {
   const requestHeaders = [
     {
       name: 'Authorization',
@@ -37,7 +101,7 @@ const createWebsocketRequest = (args: IMockWebsocketRequestInput): IMockRequest 
     requestId: '1',
     url: args.url,
     method: 'GET',
-    requestBody: null
+    requestBody: null,
   }
 
   const webRequestHeaderDetails: chrome.webRequest.WebRequestHeadersDetails = {
@@ -88,42 +152,7 @@ const createWebsocketRequest = (args: IMockWebsocketRequestInput): IMockRequest 
       headers: [],
     },
     _resourceType: 'websocket',
-    _webSocketMessages: [
-      {
-        data: JSON.stringify({
-          payload: {
-            query: 'subscription { reviewAdded { stars episode } }',
-            variables: {},
-          },
-          metadata: {},
-        }),
-        opcode: 1,
-        time: 1699975911.862162,
-        type: 'send',
-      },
-      {
-        data: JSON.stringify({
-          payload: {
-            data: { reviewAdded: { stars: 4, episode: 'CLONE_WARS' } },
-          },
-          metadata: {},
-        }),
-        opcode: 1,
-        time: 1699975911.862162,
-        type: 'receive',
-      },
-      {
-        data: JSON.stringify({
-          payload: {
-            data: { reviewAdded: { stars: 4, episode: 'NEWHOPE' } },
-          },
-          metadata: {},
-        }),
-        opcode: 1,
-        time: 1699975982.2748342,
-        type: 'receive',
-      },
-    ]
+    _webSocketMessages: args.webSocketMessages,
   }
 
   return {
@@ -132,6 +161,7 @@ const createWebsocketRequest = (args: IMockWebsocketRequestInput): IMockRequest 
     networkRequest,
   }
 }
+
 const createRequest = (args: IMockRequestInput): IMockRequest => {
   const { request, response } = args
 
@@ -658,9 +688,9 @@ export const mockRequests: IMockRequest[] = [
       {
         query: `
           subscription reviewAddedForPostSubscription($id: String) {
-            reviewAddedForPost(postId: $id) { 
+            reviewAddedForPost(postId: $id) {
               stars
-              episode 
+              episode
             }
           }
         `,
@@ -671,10 +701,110 @@ export const mockRequests: IMockRequest[] = [
     ],
     response: {
       data: {
-        subscriptionId: "123"
-      }
+        subscriptionId: '123',
+      },
     },
   }),
-  createWebsocketRequest({ url: 'ws://graphql-network-monitor.com/graphql' }),
-  createWebsocketRequest({ url: 'ws://some-network-monitor.com/alternative' })
+  createWebsocketRequest({
+    url: 'ws://graphql-network-monitor.com/graphql',
+    webSocketMessages: [
+      defaultSubscriptionPayload({
+        data: {
+          payload: {
+            query: 'subscription { reviewAdded { stars episode } }',
+            variables: {},
+          },
+          metadata: {},
+        },
+        opcode: 1,
+        time: 1699975911.862162,
+        type: 'send',
+      }),
+      defaultSubscriptionPayload({
+        data: {
+          payload: {
+            data: { reviewAdded: { stars: 4, episode: 'CLONE_WARS' } },
+          },
+          metadata: {},
+        },
+        opcode: 1,
+        time: 1699975911.862162,
+        type: 'receive',
+      }),
+      defaultSubscriptionPayload({
+        data: {
+          payload: {
+            data: { reviewAdded: { stars: 4, episode: 'NEWHOPE' } },
+          },
+          metadata: {},
+        },
+        opcode: 1,
+        time: 1699975982.2748342,
+        type: 'receive',
+      }),
+    ],
+  }),
+  createWebsocketRequest({
+    url: 'ws://some-network-monitor.com/alternative',
+    webSocketMessages: [
+      defaultSubscriptionPayload({
+        data: {
+          payload: {
+            query: 'subscription { reviewAdded { stars episode } }',
+            variables: {},
+          },
+          metadata: {},
+        },
+        opcode: 1,
+        time: 1699975911.862162,
+        type: 'send',
+      }),
+      defaultSubscriptionPayload({
+        data: {
+          payload: {
+            data: { reviewAdded: { stars: 4, episode: 'CLONE_WARS' } },
+          },
+          metadata: {},
+        },
+        opcode: 1,
+        time: 1699975911.862162,
+        type: 'receive',
+      }),
+      defaultSubscriptionPayload({
+        data: {
+          payload: {
+            data: { reviewAdded: { stars: 4, episode: 'NEWHOPE' } },
+          },
+          metadata: {},
+        },
+        opcode: 1,
+        time: 1699975982.2748342,
+        type: 'receive',
+      }),
+    ],
+  }),
+  createWebsocketRequest({
+    url: 'ws://some-network-monitor.com/rails-cable',
+    webSocketMessages: [
+      railsChannelSubscriptionPayload({
+        query: 'subscription { reviewAdded { stars episode } }',
+        variables: {},
+        operationName: 'ReviewAdded',
+        opcode: 1,
+        time: 1699975911.862162,
+        type: 'send',
+      }),
+      defaultSubscriptionPayload({
+        data: {
+          identifier: '{"channel":"GraphqlChannel","channelId":"1932245fcc6"}',
+          message: {
+            data: { reviewAdded: { stars: 4, episode: 'CLONE_WARS' } },
+          },
+        },
+        opcode: 1,
+        time: 1699975911.862162,
+        type: 'receive',
+      }),
+    ],
+  }),
 ]
