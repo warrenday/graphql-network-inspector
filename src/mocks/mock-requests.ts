@@ -798,7 +798,7 @@ export const mockRequests: IMockRequest[] = [
         data: {
           identifier: '{"channel":"GraphqlChannel","channelId":"1932245fcc6"}',
           message: {
-            data: { reviewAdded: { stars: 4, episode: 'CLONE_WARS' } },
+            reviewAdded: { stars: 4, episode: 'CLONE_WARS' },
           },
         },
         opcode: 1,

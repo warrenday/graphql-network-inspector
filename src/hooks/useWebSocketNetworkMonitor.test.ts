@@ -319,7 +319,7 @@ describe('useWebSocketNetworkMonitor', () => {
                 identifier:
                   '{"channel":"GraphqlChannel","channelId":"1932245fcc6"}',
                 message: {
-                  data: { reviewAdded: { stars: 4, episode: 'CLONE_WARS' } },
+                  reviewAdded: { stars: 4, episode: 'CLONE_WARS' },
                 },
               }),
               time: 1234,

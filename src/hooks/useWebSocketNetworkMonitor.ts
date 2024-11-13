@@ -110,7 +110,7 @@ const isGraphQLPayload = (
   }
 
   if (isIRailsChannelReceiveMessageData(messageData)) {
-    return !!messageData.message.data
+    return !!messageData.message
   }
 
   return false
@@ -175,7 +175,7 @@ const formatMessageData = (messageData: MessageData, type: string) => {
   if (isIRailsChannelReceiveMessageData(messageData)) {
     return {
       identifier: JSON.parse(messageData.identifier),
-      data: messageData.message.data,
+      data: messageData.message,
     }
   }
 
