@@ -1,8 +1,8 @@
-import { Button } from "@/components/Button"
-import { OperationType } from "@/helpers/graphqlHelpers"
-import { Bar } from "../../../components/Bar"
-import theme from "../../../theme"
-import { useOperationFilters } from "../../../hooks/useOperationFilters"
+import { Button } from '@/components/Button'
+import { OperationType } from '@/helpers/graphqlHelpers'
+import { Bar } from '../../../components/Bar'
+import theme from '../../../theme'
+import { useOperationFilters } from '../../../hooks/useOperationFilters'
 
 interface IPillProps {
   className: string
@@ -14,7 +14,7 @@ const Pill = (props: IPillProps) => {
 }
 
 interface IQuickFilterButtonProps {
-  variant: "primary" | "ghost"
+  variant: 'primary' | 'ghost'
   onClick: () => void
   active: boolean
   activeColor: string
@@ -28,7 +28,7 @@ const QuickFilterButton = (props: IQuickFilterButtonProps) => {
     <Button
       variant={variant}
       onClick={onClick}
-      icon={<Pill className={active ? activeColor : "bg-gray-400"} />}
+      icon={<Pill className={active ? activeColor : 'bg-gray-400'} />}
       className="whitespace-nowrap"
     >
       {children}
@@ -52,36 +52,36 @@ export const QuickFiltersContainer = () => {
     <Bar className="border-t pb-3">
       <div className="flex gap-2">
         <QuickFilterButton
-          variant={operationFilters.query ? "primary" : "ghost"}
-          onClick={() => handleQuickFilterToggle("query")}
+          variant={operationFilters.query ? 'primary' : 'ghost'}
+          onClick={() => handleQuickFilterToggle('query')}
           active={operationFilters.query}
           activeColor={theme.operationColors.query.bg}
         >
           Queries
         </QuickFilterButton>
         <QuickFilterButton
-          variant={operationFilters.mutation ? "primary" : "ghost"}
-          onClick={() => handleQuickFilterToggle("mutation")}
+          variant={operationFilters.mutation ? 'primary' : 'ghost'}
+          onClick={() => handleQuickFilterToggle('mutation')}
           active={operationFilters.mutation}
           activeColor={theme.operationColors.mutation.bg}
         >
           Mutations
         </QuickFilterButton>
         <QuickFilterButton
-          variant={operationFilters.persisted ? "primary" : "ghost"}
-          onClick={() => handleQuickFilterToggle("persisted")}
+          variant={operationFilters.persisted ? 'primary' : 'ghost'}
+          onClick={() => handleQuickFilterToggle('persisted')}
           active={operationFilters.persisted}
           activeColor={theme.operationColors.persisted.bg}
         >
           Persisted
         </QuickFilterButton>
         <QuickFilterButton
-          variant={operationFilters.subscription ? "primary" : "ghost"}
-          onClick={() => handleQuickFilterToggle("subscription")}
+          variant={operationFilters.subscription ? 'primary' : 'ghost'}
+          onClick={() => handleQuickFilterToggle('subscription')}
           active={operationFilters.subscription}
           activeColor={theme.operationColors.subscription.bg}
         >
-          Subscriptions (Beta)
+          Subscriptions
         </QuickFilterButton>
       </div>
     </Bar>
