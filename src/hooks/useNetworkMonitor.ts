@@ -16,6 +16,7 @@ import {
   getRequestBody,
   isRequestComplete,
   matchWebAndNetworkRequest,
+  urlHasFileExtension,
 } from '../helpers/networkHelpers'
 import useLatestState from './useLatestState'
 
@@ -120,6 +121,10 @@ export const useNetworkMonitor = (): [
 
   const handleBeforeRequest = useCallback(
     (details: chrome.webRequest.WebRequestBodyDetails) => {
+      if (urlHasFileExtension(details.url)) {
+        return
+      }
+
       setRequests((request) => {
         const newIncompleteRequest: IIncompleteNetworkRequest = {
           id: details.requestId,
@@ -140,6 +145,10 @@ export const useNetworkMonitor = (): [
 
   const handleBeforeSendHeaders = useCallback(
     async (details: chrome.webRequest.WebRequestHeadersDetails) => {
+      if (urlHasFileExtension(details.url)) {
+        return
+      }
+
       const requests = getLatestRequests()
 
       const matchedRequest = requests.find(
@@ -210,6 +219,10 @@ export const useNetworkMonitor = (): [
 
   const handleRequestFinished = useCallback(
     (details: chrome.devtools.network.Request) => {
+      if (urlHasFileExtension(details.request.url)) {
+        return
+      }
+
       if (!validateNetworkRequest(details)) {
         return
       }

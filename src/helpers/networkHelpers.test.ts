@@ -5,6 +5,7 @@ import {
   getRequestBodyFromMultipartFormData,
   getRequestBodyFromUrl,
   matchWebAndNetworkRequest,
+  urlHasFileExtension,
 } from './networkHelpers'
 import dedent from 'dedent'
 
@@ -393,5 +394,15 @@ describe('networkHelpers.getRequestBody', () => {
         query: 'query { user }',
       })
     )
+  })
+})
+
+describe('networkHelpers.urlHasFileExtension', () => {
+  it('returns true if the url ends with a file extension', () => {
+    expect(urlHasFileExtension('http://example.com/test.js')).toBe(true)
+  })
+
+  it('returns false if the url does not end with a file extension', () => {
+    expect(urlHasFileExtension('http://example.com/test')).toBe(false)
   })
 })
