@@ -8,6 +8,7 @@ import { OverflowPopover } from '../../components/OverflowPopover'
 import { Bar } from '../../components/Bar'
 import { DocsIcon } from '../../components/Icons/DocsIcon'
 import { useOperationFilters } from '@/hooks/useOperationFilters'
+import { LearnIcon } from '../../components/Icons/LearnIcon'
 
 interface IToolbarProps {
   filterValue: string
@@ -107,10 +108,23 @@ export const Toolbar = (props: IToolbarProps) => {
                 View Docs
               </Button>
             </a>,
+            <a
+              href="https://www.overstacked.io/courses/graphql"
+              target="_blank"
+            >
+              <Button
+                icon={<LearnIcon />}
+                testId="learn-button"
+                variant="ghost"
+                className="text-gray-500 dark:text-gray-400 -ml-2 whitespace-nowrap"
+              >
+                Lean GraphQL
+              </Button>
+            </a>,
           ]}
         />
       </Bar>
-      {operationFilters.subscription &&
+      {operationFilters.subscription && (
         <Bar testId="toolbar-websocket" className="border-b">
           <span className="pl-3 font-bold">Websocket</span>
           <Textfield
@@ -130,7 +144,7 @@ export const Toolbar = (props: IToolbarProps) => {
             testId="show-full-websocket-message-checkbox"
           />
         </Bar>
-      }
+      )}
     </div>
   )
 }
