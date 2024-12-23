@@ -118,7 +118,7 @@ export const Toolbar = (props: IToolbarProps) => {
                 variant="ghost"
                 className="text-gray-500 dark:text-gray-400 -ml-2 whitespace-nowrap"
               >
-                Lean GraphQL
+                Learn GraphQL
               </Button>
             </a>,
           ]}
