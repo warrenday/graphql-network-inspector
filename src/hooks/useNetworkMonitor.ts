@@ -121,7 +121,7 @@ export const useNetworkMonitor = (): [
 
   const handleBeforeRequest = useCallback(
     (details: chrome.webRequest.WebRequestBodyDetails) => {
-      if (urlHasFileExtension(details.url)) {
+      if (details.method === 'GET' && urlHasFileExtension(details.url)) {
         return
       }
 
@@ -145,7 +145,7 @@ export const useNetworkMonitor = (): [
 
   const handleBeforeSendHeaders = useCallback(
     async (details: chrome.webRequest.WebRequestHeadersDetails) => {
-      if (urlHasFileExtension(details.url)) {
+      if (details.method === 'GET' && urlHasFileExtension(details.url)) {
         return
       }
 
@@ -219,7 +219,10 @@ export const useNetworkMonitor = (): [
 
   const handleRequestFinished = useCallback(
     (details: chrome.devtools.network.Request) => {
-      if (urlHasFileExtension(details.request.url)) {
+      if (
+        details._method === 'GET' &&
+        urlHasFileExtension(details.request.url)
+      ) {
         return
       }
 
