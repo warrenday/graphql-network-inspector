@@ -11,6 +11,7 @@ import { SearchPanel } from '../SearchPanel'
 import { useWebSocketNetworkMonitor } from '../../hooks/useWebSocketNetworkMonitor'
 import { useOperationFilters } from '../../hooks/useOperationFilters'
 import useUserSettings from '../../hooks/useUserSettings'
+import VersionNumber from '../../components/VersionNumber'
 
 export const Main = () => {
   const [selectedRowId, setSelectedRowId] = useState<string | number | null>(
@@ -22,7 +23,7 @@ export const Main = () => {
   const [webSocketNetworkRequests, clearWebSocketNetworkRequests] =
     useWebSocketNetworkMonitor({
       isEnabled: operationFilters.subscription,
-      urlFilter: userSettings.websocketUrlFilter
+      urlFilter: userSettings.websocketUrlFilter,
     })
   const { isSearchOpen } = useSearch()
   const { setActiveTab } = useNetworkTabs()
@@ -37,6 +38,7 @@ export const Main = () => {
 
   return (
     <>
+      <VersionNumber />
       <SplitPaneLayout
         leftPane={
           isSearchOpen ? (
