@@ -1,10 +1,10 @@
 {
   "name": "graphql-network-inspector",
-  "version": "2.22.5",
+  "version": "2.22.6",
   "private": true,
   "scripts": {
     "start": "craco start",
-    "build": "INLINE_RUNTIME_CHUNK=false craco build",
+    "build": "REACT_APP_VERSION=$npm_package_version INLINE_RUNTIME_CHUNK=false craco build",
     "bundle": "yarn bundle:chrome && yarn bundle:firefox",
     "bundle:chrome": "yarn build && node ./scripts/set-chrome-settings.js && bestzip build-chrome.zip build/*",
     "bundle:firefox": "yarn build && node ./scripts/set-firefox-settings.js && cd build && bestzip ../build-firefox.zip *",
