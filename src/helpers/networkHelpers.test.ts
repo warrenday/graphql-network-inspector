@@ -400,9 +400,21 @@ describe('networkHelpers.getRequestBody', () => {
 describe('networkHelpers.urlHasFileExtension', () => {
   it('returns true if the url ends with a file extension', () => {
     expect(urlHasFileExtension('http://example.com/test.js')).toBe(true)
+    expect(urlHasFileExtension('http://example.com/style.css')).toBe(true)
+    expect(urlHasFileExtension('http://example.com/file.png?query=test')).toBe(
+      true
+    )
   })
 
   it('returns false if the url does not end with a file extension', () => {
     expect(urlHasFileExtension('http://example.com/test')).toBe(false)
+    expect(urlHasFileExtension('http://test.example.com')).toBe(false)
+    expect(urlHasFileExtension('http://test.example.com/test')).toBe(false)
+  })
+
+  it('returns false for query params containing dots', () => {
+    expect(urlHasFileExtension('http://example.com/test?query=query.ts')).toBe(
+      false
+    )
   })
 })

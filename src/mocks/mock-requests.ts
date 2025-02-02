@@ -279,16 +279,15 @@ export const mockRequests: IMockRequest[] = [
     request: [
       {
         query: `
-          fragment NameParts on Person {
-            firstName
-            lastName
+          fragment MovieDetails on Movie {
+            id
+            title
+            genre
           }
 
           query getMovieQuery($title: String) {
             getMovie(title: $title) {
-              id
-              title
-              genre
+              ...MovieDetails
             }
           }
         `,

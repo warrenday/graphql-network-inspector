@@ -50,7 +50,19 @@ export interface IIncompleteNetworkRequest
  * @returns true if the url ends with a file extension (e.g. .js, .css, .png)
  */
 export const urlHasFileExtension = (url: string): boolean => {
-  // Check if URL ends with a file extension (e.g. .js, .css, .png)
+  // Try to parse the url as a URL object
+  try {
+    const urlObject = new URL(url)
+    if (urlObject.pathname.includes('.')) {
+      return true
+    } else {
+      return false
+    }
+  } catch (e) {
+    // noop
+  }
+
+  // If parsing fails, just check the last part of the url
   const urlParts = url.split('/')
   const lastPart = urlParts[urlParts.length - 1]
   return lastPart.includes('.')
