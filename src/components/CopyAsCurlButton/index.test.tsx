@@ -1,6 +1,7 @@
 import { render, fireEvent } from "@testing-library/react"
 import { CopyAsCurlButton } from "./"
 import { useCopyCurl } from "@/hooks/useCopyCurl/useCopyCurl"
+import { ICompleteNetworkRequest } from "@/helpers/networkHelpers"
 
 jest.mock("@/hooks/useCopyCurl/useCopyCurl")
 
@@ -50,7 +51,7 @@ describe("CopyAsCurlButton", () => {
           requestBody: null
         }
       }
-    }
+    } as ICompleteNetworkRequest
     const { getByTestId } = render(<CopyAsCurlButton networkRequest={mockRequest} />)
     
     fireEvent.click(getByTestId("copy-button"))
