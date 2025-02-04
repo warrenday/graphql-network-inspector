@@ -2,7 +2,7 @@ import { FC } from 'react'
 import { AutoFormatToggleButton } from '@/components/AutoFormatToggleButton'
 import { CodeView } from '@/components/CodeView'
 import { CopyButton } from '@/components/CopyButton'
-import { IGraphqlRequestBody } from '@/helpers/graphqlHelpers'
+import { IGraphqlRequestBody, OperationType } from '@/helpers/graphqlHelpers'
 import * as safeJson from '@/helpers/safeJson'
 import { Bar } from '@/components/Bar'
 import { Panels, PanelSection } from '../PanelSection'
@@ -12,6 +12,8 @@ import {
 } from '@/hooks/useRequestViewSections'
 import { CaretIcon } from '../../../components/Icons/CaretIcon'
 import { ShareButton } from '../../../components/ShareButton'
+import { ICompleteNetworkRequest } from '@/helpers/networkHelpers'
+import { generateCurlCommand } from '@/helpers/curlHelpers'
 
 const isVariablesPopulated = (variables: Record<string, unknown>) => {
   return Object.keys(variables || {}).length > 0
@@ -39,6 +41,13 @@ const getVariables = ({ variables, extensions }: IGraphqlRequestBody) => {
   }
 
   return null
+}
+
+const getOperationType = (query?: string): OperationType => {
+  if (!query) return 'query' as OperationType
+  if (query.trim().startsWith('mutation')) return 'mutation' as OperationType
+  if (query.trim().startsWith('subscription')) return 'subscription' as OperationType
+  return 'query' as OperationType
 }
 
 interface IRequestViewProps {
@@ -112,12 +121,55 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
   const displayVariables = isVariablesPopulated(variables)
   const displayExtensions = isExtensionsPopulated(request)
 
+  // Convert IGraphqlRequestBody to ICompleteNetworkRequest for cURL generation
+  const networkRequest: ICompleteNetworkRequest = {
+    id: requestIndex.toString(),
+    url: window.location.origin + '/graphql',
+    status: 200,
+    time: 0,
+    method: 'POST',
+    request: {
+      headers: [
+        { name: 'Content-Type', value: 'application/json' },
+        { name: 'Accept', value: 'application/json' }
+      ],
+      body: [{
+        query: request.query,
+        variables: variables || undefined,
+        operationName: request.operationName,
+        extensions: request.extensions
+      }],
+      primaryOperation: {
+        operationName: request.operationName ?? '',
+        operation: getOperationType(request.query),
+      },
+      headersSize: 0,
+      bodySize: 0
+    },
+    response: {
+      headers: [],
+      body: '',
+      bodySize: 0,
+      headersSize: 0
+    },
+    native: {
+      webRequest: {} as chrome.webRequest.WebRequestBodyDetails,
+      networkRequest: undefined
+    },
+  }
+
   return (
     <PanelSection className="relative mb-3">
       <div className="flex items-center gap-2 absolute top-[8px] right-[8px] z-10 transition-opacity">
         {onShare && <ShareButton onClick={onShare} />}
         {displayQuery && (
-          <CopyButton label="Copy Query" textToCopy={request.query || ''} />
+          <>
+            <CopyButton label="Copy Query" textToCopy={request.query || ''} />
+            <CopyButton 
+              label="Copy as cURL"
+              textToCopy={generateCurlCommand(networkRequest)}
+            />
+          </>
         )}
         {displayVariables && (
           <CopyButton

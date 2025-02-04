@@ -3,25 +3,35 @@ import useCopy from "../../hooks/useCopy"
 
 interface ICopyButtonProps {
   label?: string
-  textToCopy: string
+  textToCopy?: string
   className?: string
+  onClick?: () => void
+  isCopied?: boolean
 }
 
 export const CopyButton = (props: ICopyButtonProps) => {
-  const { textToCopy, className } = props
-  const { isCopied, copy } = useCopy()
-  const buttonLabel = props.label || "Copy"
+  const { textToCopy, className, onClick, label, isCopied: externalIsCopied } = props
+  const { isCopied: internalIsCopied, copy } = useCopy()
+  const buttonLabel = label ?? "Copy"
+
+  const showCopied = externalIsCopied ?? internalIsCopied
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick()
+    } else if (textToCopy) {
+      copy(textToCopy)
+    }
+  }
 
   return (
     <div className={className}>
       <Button
         testId="copy-button"
         variant="primary"
-        onClick={() => {
-          copy(textToCopy)
-        }}
+        onClick={handleClick}
       >
-        {isCopied ? "Copied!" : buttonLabel}
+        {showCopied ? "Copied!" : buttonLabel}
       </Button>
     </div>
   )
