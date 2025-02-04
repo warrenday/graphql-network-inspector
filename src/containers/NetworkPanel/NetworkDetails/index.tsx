@@ -67,6 +67,7 @@ export const NetworkDetails = (props: INetworkDetailsProps) => {
               onShare={isShareable ? handleShare : undefined}
               requests={requestBody}
               autoFormat={autoFormat}
+              networkRequest={data}
             />
           ),
           bottomComponent: (

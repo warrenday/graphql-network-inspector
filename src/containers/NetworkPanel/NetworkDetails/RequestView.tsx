@@ -1,8 +1,8 @@
-import { FC } from 'react'
+import { FC, useState, useEffect } from 'react'
 import { AutoFormatToggleButton } from '@/components/AutoFormatToggleButton'
 import { CodeView } from '@/components/CodeView'
 import { CopyButton } from '@/components/CopyButton'
-import { IGraphqlRequestBody, OperationType } from '@/helpers/graphqlHelpers'
+import { IGraphqlRequestBody } from '@/helpers/graphqlHelpers'
 import * as safeJson from '@/helpers/safeJson'
 import { Bar } from '@/components/Bar'
 import { Panels, PanelSection } from '../PanelSection'
@@ -13,7 +13,7 @@ import {
 import { CaretIcon } from '../../../components/Icons/CaretIcon'
 import { ShareButton } from '../../../components/ShareButton'
 import { ICompleteNetworkRequest } from '@/helpers/networkHelpers'
-import { generateCurlCommand } from '@/helpers/curlHelpers'
+import { useCopyCurl } from '@/hooks/useCopyCurl/useCopyCurl'
 
 const isVariablesPopulated = (variables: Record<string, unknown>) => {
   return Object.keys(variables || {}).length > 0
@@ -43,21 +43,15 @@ const getVariables = ({ variables, extensions }: IGraphqlRequestBody) => {
   return null
 }
 
-const getOperationType = (query?: string): OperationType => {
-  if (!query) return 'query' as OperationType
-  if (query.trim().startsWith('mutation')) return 'mutation' as OperationType
-  if (query.trim().startsWith('subscription')) return 'subscription' as OperationType
-  return 'query' as OperationType
-}
-
 interface IRequestViewProps {
   autoFormat: boolean
   requests: IGraphqlRequestBody[]
   onShare?: () => void
+  networkRequest?: ICompleteNetworkRequest
 }
 
 export const RequestView = (props: IRequestViewProps) => {
-  const { requests, autoFormat, onShare } = props
+  const { requests, autoFormat, networkRequest, onShare } = props
 
   const numberOfRequests = requests.length
   const shouldDisplayRequestIndex = numberOfRequests > 1
@@ -73,6 +67,7 @@ export const RequestView = (props: IRequestViewProps) => {
             index={shouldDisplayRequestIndex && index + 1}
             numberOfRequests={numberOfRequests}
             onShare={onShare}
+            networkRequest={networkRequest}
           />
         )
       })}
@@ -110,53 +105,18 @@ interface ISingleRequestViewProps {
   index: number | false
   numberOfRequests: number
   onShare?: () => void
+  networkRequest?: ICompleteNetworkRequest
 }
 
 const SingleRequestView = (props: ISingleRequestViewProps) => {
-  const { request, autoFormat, index, numberOfRequests, onShare } = props
+  const { request, autoFormat, index, numberOfRequests, onShare, networkRequest } = props
+  const { copyAsCurl, isCopied } = useCopyCurl()
 
   const requestIndex = index || 0
   const displayQuery = !!request.query
   const variables = getVariables(request)
   const displayVariables = isVariablesPopulated(variables)
   const displayExtensions = isExtensionsPopulated(request)
-
-  // Convert IGraphqlRequestBody to ICompleteNetworkRequest for cURL generation
-  const networkRequest: ICompleteNetworkRequest = {
-    id: requestIndex.toString(),
-    url: window.location.origin + '/graphql',
-    status: 200,
-    time: 0,
-    method: 'POST',
-    request: {
-      headers: [
-        { name: 'Content-Type', value: 'application/json' },
-        { name: 'Accept', value: 'application/json' }
-      ],
-      body: [{
-        query: request.query,
-        variables: variables || undefined,
-        operationName: request.operationName,
-        extensions: request.extensions
-      }],
-      primaryOperation: {
-        operationName: request.operationName ?? '',
-        operation: getOperationType(request.query),
-      },
-      headersSize: 0,
-      bodySize: 0
-    },
-    response: {
-      headers: [],
-      body: '',
-      bodySize: 0,
-      headersSize: 0
-    },
-    native: {
-      webRequest: {} as chrome.webRequest.WebRequestBodyDetails,
-      networkRequest: undefined
-    },
-  }
 
   return (
     <PanelSection className="relative mb-3">
@@ -167,7 +127,8 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
             <CopyButton label="Copy Query" textToCopy={request.query || ''} />
             <CopyButton 
               label="Copy as cURL"
-              textToCopy={generateCurlCommand(networkRequest)}
+              isCopied={isCopied}
+              onClick={() => networkRequest && copyAsCurl(networkRequest)}
             />
           </>
         )}
