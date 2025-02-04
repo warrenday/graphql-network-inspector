@@ -13,7 +13,7 @@ import {
 import { CaretIcon } from '../../../components/Icons/CaretIcon'
 import { ShareButton } from '../../../components/ShareButton'
 import { ICompleteNetworkRequest } from '@/helpers/networkHelpers'
-import { useCopyCurl } from '@/hooks/useCopyCurl/useCopyCurl'
+import { CopyAsCurlButton } from '@/components/CopyAsCurlButton'
 
 const isVariablesPopulated = (variables: Record<string, unknown>) => {
   return Object.keys(variables || {}).length > 0
@@ -110,7 +110,6 @@ interface ISingleRequestViewProps {
 
 const SingleRequestView = (props: ISingleRequestViewProps) => {
   const { request, autoFormat, index, numberOfRequests, onShare, networkRequest } = props
-  const { copyAsCurl, isCopied } = useCopyCurl()
 
   const requestIndex = index || 0
   const displayQuery = !!request.query
@@ -125,11 +124,7 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
         {displayQuery && (
           <>
             <CopyButton label="Copy Query" textToCopy={request.query || ''} />
-            <CopyButton 
-              label="Copy as cURL"
-              isCopied={isCopied}
-              onClick={() => networkRequest && copyAsCurl(networkRequest)}
-            />
+            <CopyAsCurlButton networkRequest={networkRequest} />
           </>
         )}
         {displayVariables && (
