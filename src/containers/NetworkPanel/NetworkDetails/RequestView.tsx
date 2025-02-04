@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from 'react'
+import { FC } from 'react'
 import { AutoFormatToggleButton } from '@/components/AutoFormatToggleButton'
 import { CodeView } from '@/components/CodeView'
 import { CopyButton } from '@/components/CopyButton'

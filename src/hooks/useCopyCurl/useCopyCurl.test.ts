@@ -1,8 +1,8 @@
 import { renderHook, act } from '@testing-library/react-hooks'
-import { useCopyCurl } from '../useCopyCurl'
 import { getChromeNetworkCurl } from '@/helpers/curlHelpers'
 import useCopy from '../useCopy'
 import { ICompleteNetworkRequest } from '@/helpers/networkHelpers'
+import { useCopyCurl } from './useCopyCurl'
 
 // Mock dependencies
 jest.mock('@/helpers/curlHelpers')
