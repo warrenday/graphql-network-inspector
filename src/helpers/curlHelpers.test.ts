@@ -1,4 +1,4 @@
-import { getChromeNetworkCurl } from './curlHelpers'
+import { getNetworkCurl } from './curlHelpers'
 import { ICompleteNetworkRequest } from './networkHelpers'
 
 const mockWebRequest: chrome.webRequest.WebRequestBodyDetails = {
@@ -13,7 +13,7 @@ const mockWebRequest: chrome.webRequest.WebRequestBodyDetails = {
   requestBody: null,
 }
 
-describe('getChromeNetworkCurl', () => {
+describe('getNetworkCurl', () => {
   it('should generate correct cURL command for GET request', async () => {
     const mockRequest: ICompleteNetworkRequest = {
       id: '123',
@@ -39,7 +39,7 @@ describe('getChromeNetworkCurl', () => {
       },
     }
 
-    const result = await getChromeNetworkCurl('123', mockRequest)
+    const result = await getNetworkCurl(mockRequest)
 
     expect(result).toBe(
       'curl \\\n' +
@@ -77,7 +77,7 @@ describe('getChromeNetworkCurl', () => {
       },
     }
 
-    const result = await getChromeNetworkCurl('123', mockRequest)
+    const result = await getNetworkCurl(mockRequest)
 
     expect(result).toBe(
       'curl \\\n' +
@@ -110,7 +110,7 @@ describe('getChromeNetworkCurl', () => {
       },
     }
 
-    const result = await getChromeNetworkCurl('123', mockRequest)
+    const result = await getNetworkCurl(mockRequest)
 
     expect(result).toBe(
       'curl \\\n' + "  'https://api.example.com/graphql' \\\n" + '  -X GET'

@@ -218,8 +218,11 @@ export const useNetworkMonitor = (): [
   )
 
   const handleRequestFinished = useCallback(
-    (details: chrome.devtools.network.Request) => {
-      if (details.request.method === 'GET' && urlHasFileExtension(details.request.url)) {
+    async (details: chrome.devtools.network.Request) => {
+      if (
+        details.request.method === 'GET' &&
+        urlHasFileExtension(details.request.url)
+      ) {
         return
       }
 
@@ -227,7 +230,8 @@ export const useNetworkMonitor = (): [
         return
       }
 
-      details.getContent(async (responseBody) => {
+      details.getContent(async (content, encoding) => {
+        const responseBody = encoding === 'base64' ? atob(content) : content
         const requests = getLatestRequests()
         const matchedRequest = await findMatchingWebRequest(requests, details)
         if (!matchedRequest) {
@@ -239,8 +243,11 @@ export const useNetworkMonitor = (): [
             if (prevRequest.id === matchedRequest.id) {
               return {
                 ...prevRequest,
-                id: prevRequest.id,
                 ...processNetworkRequest(details, responseBody),
+                native: {
+                  ...prevRequest.native,
+                  networkRequest: details,
+                },
               }
             } else {
               return prevRequest

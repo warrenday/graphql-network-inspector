@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
-import { getChromeNetworkCurl } from '@/helpers/curlHelpers'
-import { ICompleteNetworkRequest } from '@/helpers/networkHelpers'
+import { getNetworkCurl } from '@/helpers/curlHelpers'
 import useCopy from '../useCopy'
+import { ICompleteNetworkRequest } from '@/helpers/networkHelpers'
 
 export const useCopyCurl = () => {
   const { copy, isCopied } = useCopy()
@@ -14,10 +14,7 @@ export const useCopyCurl = () => {
       }
 
       try {
-        const curl = await getChromeNetworkCurl(
-          networkRequest.id,
-          networkRequest
-        )
+        const curl = await getNetworkCurl(networkRequest)
         copy(curl)
       } catch (error) {
         console.error('Failed to generate cURL command:', error)

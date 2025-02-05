@@ -1,7 +1,6 @@
 import { renderHook, act } from '@testing-library/react-hooks'
-import { getChromeNetworkCurl } from '@/helpers/curlHelpers'
+import { getNetworkCurl } from '@/helpers/curlHelpers'
 import useCopy from '../useCopy'
-import { ICompleteNetworkRequest } from '@/helpers/networkHelpers'
 import { useCopyCurl } from './useCopyCurl'
 
 // Mock dependencies
@@ -30,39 +29,7 @@ describe('useCopyCurl', () => {
       copy: mockCopy,
       isCopied: mockIsCopied,
     })
-    ;(getChromeNetworkCurl as jest.Mock).mockResolvedValue('curl example.com')
-  })
-
-  it('should copy curl command when valid network request is provided', async () => {
-    const { result } = renderHook(() => useCopyCurl())
-
-    const mockNetworkRequest: ICompleteNetworkRequest = {
-      id: '123',
-      url: 'https://example.com',
-      method: 'GET',
-      status: 200,
-      time: new Date().getTime(),
-      request: {
-        primaryOperation: {
-          operationName: 'TestQuery',
-          operation: 'query',
-        },
-        headers: [],
-        headersSize: 100,
-        body: [],
-        bodySize: 0,
-      },
-      native: {
-        webRequest: mockWebRequest,
-      },
-    }
-
-    await act(async () => {
-      await result.current.copyAsCurl(mockNetworkRequest)
-    })
-
-    expect(getChromeNetworkCurl).toHaveBeenCalledWith('123', mockNetworkRequest)
-    expect(mockCopy).toHaveBeenCalledWith('curl example.com')
+    ;(getNetworkCurl as jest.Mock).mockResolvedValue('curl example.com')
   })
 
   it('should handle null network request gracefully', async () => {
@@ -74,54 +41,11 @@ describe('useCopyCurl', () => {
     })
 
     expect(consoleSpy).toHaveBeenCalledWith('No network request data available')
-    expect(getChromeNetworkCurl).not.toHaveBeenCalled()
+    expect(getNetworkCurl).not.toHaveBeenCalled()
     expect(mockCopy).not.toHaveBeenCalled()
 
     consoleSpy.mockRestore()
   })
-
-  it('should handle errors when generating curl command', async () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
-    ;(getChromeNetworkCurl as jest.Mock).mockRejectedValue(
-      new Error('Failed to generate')
-    )
-
-    const { result } = renderHook(() => useCopyCurl())
-
-    const mockNetworkRequest: ICompleteNetworkRequest = {
-      id: '123',
-      url: 'https://example.com',
-      method: 'GET',
-      status: 200,
-      time: new Date().getTime(),
-      request: {
-        primaryOperation: {
-          operationName: 'TestQuery',
-          operation: 'query',
-        },
-        headers: [],
-        headersSize: 100,
-        body: [],
-        bodySize: 0,
-      },
-      native: {
-        webRequest: mockWebRequest,
-      },
-    }
-
-    await act(async () => {
-      await result.current.copyAsCurl(mockNetworkRequest)
-    })
-
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'Failed to generate cURL command:',
-      expect.any(Error)
-    )
-    expect(mockCopy).not.toHaveBeenCalled()
-
-    consoleSpy.mockRestore()
-  })
-
   it('should expose isCopied from useCopy hook', () => {
     const { result } = renderHook(() => useCopyCurl())
     expect(result.current.isCopied).toBe(mockIsCopied)

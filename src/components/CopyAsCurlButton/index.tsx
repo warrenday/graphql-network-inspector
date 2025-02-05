@@ -1,6 +1,6 @@
+import { ICompleteNetworkRequest } from "@/helpers/networkHelpers"
 import { Button } from "../Button"
 import { useCopyCurl } from "@/hooks/useCopyCurl/useCopyCurl"
-import { ICompleteNetworkRequest } from "@/helpers/networkHelpers"
 
 interface ICopyAsCurlButtonProps {
   networkRequest?: ICompleteNetworkRequest
