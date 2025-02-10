@@ -102,7 +102,7 @@ const findMatchingWebRequest = async (
       .map(async (webRequest) => {
         const isMatch = await matchWebAndNetworkRequest(
           details,
-          webRequest.native?.webRequest,
+          webRequest.native?.webRequest || null,
           webRequest.request?.headers || []
         )
         return isMatch ? webRequest : null

@@ -1,14 +1,70 @@
 /**
- * Gets cURL command for a network request
- * @param request - The complete network request data
- * @returns Promise that resolves to the cURL command string
+ * Formats request body with proper escaping and unicode handling
+ * @param text - Raw request body text
+ * @returns Formatted body string with proper escaping
  */
+const formatBody = (text: string): string => {
+  // Handle multipart form data
+  if (text.includes('Content-Type: multipart/form-data')) {
+    return text
+      .split('\r\n')
+      .map((line) => line.replace(/'/g, "'\\''"))
+      .join('\\r\\n')
+  }
 
+  // Handle binary data using character codes
+  const hasBinaryData = Array.from(text).some((char) => {
+    const code = char.charCodeAt(0)
+    return code <= 8 || (code >= 14 && code <= 31)
+  })
+
+  if (hasBinaryData) {
+    return Buffer.from(text).toString('base64')
+  }
+
+  // Normal JSON handling
+  try {
+    const body = JSON.parse(text)
+    return JSON.stringify(body).replace(
+      /[^\x20-\x7E]/g,
+      (char) => `\\u${char.charCodeAt(0).toString(16).padStart(4, '0')}`
+    )
+  } catch {
+    return text
+  }
+}
+
+/**
+ * Generates a cURL command from a network request
+ * Matches Chrome DevTools cURL format including:
+ * - Header filtering (excludes pseudo headers)
+ * - Unicode escaping
+ * - Proper quoting and line continuation
+ *
+ * @example
+ * ```typescript
+ * const curl = await getNetworkCurl(request)
+ * // curl 'https://api.example.com/graphql' \
+ * //   -H 'content-type: application/json' \
+ * //   --data-raw $'{"query":"query { test }"}'
+ * ```
+ */
 import { ICompleteNetworkRequest } from './networkHelpers'
+
+// Headers that Chrome DevTools excludes
+const EXCLUDED_HEADERS = [
+  ':authority',
+  ':method',
+  ':path',
+  ':scheme',
+  'content-length',
+  'accept-encoding',
+]
 
 export const getNetworkCurl = async (
   request: ICompleteNetworkRequest
 ): Promise<string> => {
+  // Use Chrome's network request data for cURL generation
   const chromeRequest = request.native.networkRequest
   if (!chromeRequest) {
     console.warn('No Chrome request data available')
@@ -20,34 +76,23 @@ export const getNetworkCurl = async (
   // Start with curl and URL
   parts.push(`curl '${chromeRequest.request.url}'`)
 
-  // Add headers exactly as Chrome provides them
-  chromeRequest.request.headers.forEach((header) => {
-    parts.push(`-H '${header.name}: ${header.value}'`)
-  })
+  // Add headers, filtering out excluded ones
+  chromeRequest.request.headers
+    .filter((header) => !EXCLUDED_HEADERS.includes(header.name.toLowerCase()))
+    .forEach((header) => {
+      parts.push(`-H '${header.name}: ${header.value}'`)
+    })
 
   // Add method if not GET
   if (chromeRequest.request.method !== 'GET') {
     parts.push(`-X ${chromeRequest.request.method}`)
   }
 
-  // Add body with proper escaping like Chrome
+  // Add body with proper escaping
   if (chromeRequest.request.postData?.text) {
-    try {
-      // Parse and re-stringify to normalize the JSON
-      const body = JSON.parse(chromeRequest.request.postData.text)
-      const formattedBody = JSON.stringify(body)
-        .replace(/'/g, "\\'")
-        .replace(/\n/g, '') // Remove all newlines
-      parts.push(`--data-raw $'${formattedBody}'`)
-    } catch {
-      // If not valid JSON, use raw text
-      const formattedBody = chromeRequest.request.postData.text
-        .replace(/'/g, "\\'")
-        .replace(/\n/g, '') // Remove all newlines
-      parts.push(`--data-raw $'${formattedBody}'`)
-    }
+    const formattedBody = formatBody(chromeRequest.request.postData.text)
+    parts.push(`--data-raw $'${formattedBody}'`)
   }
 
-  // Join with proper spacing and line continuation
-  return parts.join(' \\\n  ') // 2 spaces like Chrome
+  return parts.join(' \\\n  ')
 }
