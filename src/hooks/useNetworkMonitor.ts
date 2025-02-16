@@ -299,7 +299,8 @@ export const useNetworkMonitor = (): [
                   headersSize: details.request.headersSize,
                 },
                 native: {
-                  webRequest: {} as any,
+                  networkRequest: details,
+                  webRequest: {} as chrome.webRequest.WebRequestBodyDetails,
                 },
               })
             })
