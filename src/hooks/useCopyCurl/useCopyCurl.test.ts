@@ -2,21 +2,44 @@ import { renderHook, act } from '@testing-library/react-hooks'
 import { getNetworkCurl } from '@/helpers/curlHelpers'
 import useCopy from '../useCopy'
 import { useCopyCurl } from './useCopyCurl'
+import { ICompleteNetworkRequest } from '@/helpers/networkHelpers'
 
 // Mock dependencies
 jest.mock('@/helpers/curlHelpers')
 jest.mock('../useCopy')
 
-const mockWebRequest: chrome.webRequest.WebRequestBodyDetails = {
-  requestId: '123',
+const mockNetworkRequest: ICompleteNetworkRequest = {
+  id: '123',
   url: 'https://example.com',
   method: 'GET',
-  frameId: 0,
-  parentFrameId: -1,
-  tabId: -1,
-  type: 'xmlhttprequest',
-  timeStamp: new Date().getTime(),
-  requestBody: null,
+  status: 200,
+  time: new Date().getTime(),
+  request: {
+    primaryOperation: {
+      operationName: 'TestQuery',
+      operation: 'query',
+    },
+    headers: [],
+    headersSize: 0,
+    body: [],
+    bodySize: 0,
+  },
+  native: {
+    networkRequest: {
+      request: {
+        url: 'https://example.com',
+        method: 'GET',
+        headers: [],
+      },
+      getContent: () => {},
+      startedDateTime: new Date(),
+      time: 0,
+      response: {},
+      _resourceType: 'fetch',
+      cache: {},
+      timings: {},
+    } as unknown as chrome.devtools.network.Request,
+  },
 }
 
 describe('useCopyCurl', () => {
@@ -46,8 +69,20 @@ describe('useCopyCurl', () => {
 
     consoleSpy.mockRestore()
   })
+
   it('should expose isCopied from useCopy hook', () => {
     const { result } = renderHook(() => useCopyCurl())
     expect(result.current.isCopied).toBe(mockIsCopied)
+  })
+
+  it('should copy curl command when network request is provided', async () => {
+    const { result } = renderHook(() => useCopyCurl())
+
+    await act(async () => {
+      await result.current.copyAsCurl(mockNetworkRequest)
+    })
+
+    expect(getNetworkCurl).toHaveBeenCalledWith(mockNetworkRequest)
+    expect(mockCopy).toHaveBeenCalledWith('curl example.com')
   })
 })

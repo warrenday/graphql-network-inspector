@@ -83,22 +83,37 @@ describe('getNetworkCurl', () => {
       native: {
         networkRequest: {
           request: {
+            url: 'https://api.example.com/graphql',
+            method: 'POST',
+            headers: [{ name: 'content-type', value: 'application/json' }],
             postData: {
               text: JSON.stringify({ query: 'query { test! }' }),
             },
           },
-        },
+          getContent: () => {},
+          startedDateTime: new Date(),
+          time: 0,
+          response: {},
+          _resourceType: 'fetch',
+          cache: {},
+          timings: {},
+        } as unknown as chrome.devtools.network.Request,
       },
     })
     const curl = await getNetworkCurl(req)
-    expect(curl).toContain('\\u0021') // ! character
+    expect(curl).toBe(
+      "curl 'https://api.example.com/graphql' \\\n" +
+        "  -H 'content-type: application/json' \\\n" +
+        '  -X POST \\\n' +
+        '  --data-raw $\'{"query":"query { test! }"}\''
+    )
   })
 
-  it('should generate correct cURL command for GET request', async () => {
+  it('should generate correct cURL command for GraphQL request', async () => {
     const mockRequest: ICompleteNetworkRequest = {
       id: '123',
       url: 'https://api.example.com/graphql',
-      method: 'GET',
+      method: 'POST',
       status: 200,
       time: new Date().getTime(),
       request: {
@@ -115,18 +130,39 @@ describe('getNetworkCurl', () => {
         bodySize: 0,
       },
       native: {
-        webRequest: mockWebRequest,
+        networkRequest: {
+          request: {
+            url: 'https://api.example.com/graphql',
+            method: 'POST',
+            headers: [
+              { name: 'Content-Type', value: 'application/json' },
+              { name: 'Authorization', value: 'Bearer token123' },
+            ],
+            postData: {
+              text: JSON.stringify({
+                query: 'query TestQuery { test }',
+                variables: {},
+              }),
+            },
+          },
+          getContent: () => {},
+          startedDateTime: new Date(),
+          time: 0,
+          response: {},
+          _resourceType: 'fetch',
+          cache: {},
+          timings: {},
+        } as unknown as chrome.devtools.network.Request,
       },
     }
 
     const result = await getNetworkCurl(mockRequest)
-
     expect(result).toBe(
-      'curl \\\n' +
-        "  'https://api.example.com/graphql' \\\n" +
-        '  -X GET \\\n' +
+      "curl 'https://api.example.com/graphql' \\\n" +
         "  -H 'Content-Type: application/json' \\\n" +
-        "  -H 'Authorization: Bearer token123'"
+        "  -H 'Authorization: Bearer token123' \\\n" +
+        '  -X POST \\\n' +
+        '  --data-raw $\'{"query":"query TestQuery { test }","variables":{}}\''
     )
   })
 
@@ -153,18 +189,33 @@ describe('getNetworkCurl', () => {
         bodySize: 0,
       },
       native: {
-        webRequest: mockWebRequest,
+        networkRequest: {
+          request: {
+            url: 'https://api.example.com/graphql',
+            method: 'POST',
+            headers: [
+              { name: 'content-type', value: 'application/json' },
+              { name: ':authority', value: 'api.example.com' },
+              { name: 'authorization', value: 'Bearer token123' },
+            ],
+            postData: {
+              text: JSON.stringify({
+                query: 'query { user { id name } }',
+                variables: { userId: '123' },
+              }),
+            },
+          },
+        } as chrome.devtools.network.Request,
       },
     }
 
     const result = await getNetworkCurl(mockRequest)
-
     expect(result).toBe(
-      'curl \\\n' +
-        "  'https://api.example.com/graphql' \\\n" +
+      "curl 'https://api.example.com/graphql' \\\n" +
+        "  -H 'content-type: application/json' \\\n" +
+        "  -H 'authorization: Bearer token123' \\\n" +
         '  -X POST \\\n' +
-        "  -H 'Content-Type: application/json' \\\n" +
-        '  --data-raw \'{"query":"query { user { id name } }","variables":{"userId":"123"}}\''
+        '  --data-raw $\'{"query":"query { user { id name } }","variables":{"userId":"123"}}\''
     )
   })
 
@@ -186,15 +237,25 @@ describe('getNetworkCurl', () => {
         bodySize: 0,
       },
       native: {
-        webRequest: mockWebRequest,
+        networkRequest: {
+          request: {
+            url: 'https://api.example.com/graphql',
+            method: 'GET',
+            headers: [],
+          },
+          getContent: () => {},
+          startedDateTime: new Date(),
+          time: 0,
+          response: {},
+          _resourceType: 'fetch',
+          cache: {},
+          timings: {},
+        } as unknown as chrome.devtools.network.Request,
       },
     }
 
     const result = await getNetworkCurl(mockRequest)
-
-    expect(result).toBe(
-      'curl \\\n' + "  'https://api.example.com/graphql' \\\n" + '  -X GET'
-    )
+    expect(result).toBe("curl 'https://api.example.com/graphql'")
   })
 
   it('should generate correct cURL command for POST request', async () => {

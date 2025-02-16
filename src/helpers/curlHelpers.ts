@@ -65,8 +65,8 @@ export const getNetworkCurl = async (
   request: ICompleteNetworkRequest
 ): Promise<string> => {
   // Use Chrome's network request data for cURL generation
-  const chromeRequest = request.native.networkRequest
-  if (!chromeRequest) {
+  const chromeRequest = request?.native?.networkRequest
+  if (!chromeRequest?.request) {
     console.warn('No Chrome request data available')
     return ''
   }
@@ -77,7 +77,8 @@ export const getNetworkCurl = async (
   parts.push(`curl '${chromeRequest.request.url}'`)
 
   // Add headers, filtering out excluded ones
-  chromeRequest.request.headers
+  const headers = chromeRequest.request.headers || []
+  headers
     .filter((header) => !EXCLUDED_HEADERS.includes(header.name.toLowerCase()))
     .forEach((header) => {
       parts.push(`-H '${header.name}: ${header.value}'`)

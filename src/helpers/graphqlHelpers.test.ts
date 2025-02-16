@@ -87,11 +87,22 @@ describe('graphqlHelpers.getFirstGraphqlOperation', () => {
   })
 
   it('returns undefined if the query is invalid', () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
+
     const operation = getFirstGraphqlOperation([
       {
         query: 'invalid query',
       },
     ])
     expect(operation).toEqual(undefined)
+
+    consoleSpy.mockRestore()
+  })
+
+  it('should handle invalid query', () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
+    const result = getFirstGraphqlOperation([{ query: 'invalid query' }])
+    expect(result).toBeUndefined()
+    consoleSpy.mockRestore()
   })
 })
