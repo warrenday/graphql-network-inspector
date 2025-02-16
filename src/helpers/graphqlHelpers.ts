@@ -5,9 +5,13 @@ export type OperationType = 'query' | 'mutation' | 'subscription' | 'persisted'
 
 export interface IGraphqlRequestBody {
   query?: string
-  operationName?: string
   variables?: Record<string, unknown>
+  operationName?: string
   extensions?: Record<string, unknown>
+  id?: string
+  native?: {
+    webRequest: chrome.webRequest.WebRequestBodyDetails
+  }
 }
 
 export interface IOperationDetails {

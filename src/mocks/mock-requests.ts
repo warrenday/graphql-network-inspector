@@ -8,6 +8,7 @@ interface IMockRequestInput {
     extensions?: Record<string, unknown>
   }[]
   response: Record<string, unknown>
+  headers?: chrome.webRequest.HttpHeader[]
 }
 
 interface IMockWebsocketRequestInput {
@@ -18,9 +19,15 @@ interface IMockWebsocketRequestInput {
 export interface IMockRequest {
   webRequestBodyDetails: chrome.webRequest.WebRequestBodyDetails
   webRequestHeaderDetails: chrome.webRequest.WebRequestHeadersDetails
-  networkRequest:
+  networkRequest: (
     | chrome.devtools.network.Request
     | chrome.devtools.network.HAREntry
+  ) & {
+    native?: {
+      webRequest: chrome.webRequest.WebRequestBodyDetails
+      networkRequest: chrome.devtools.network.Request
+    }
+  }
 }
 
 interface ISubscriptionPayload {
@@ -135,7 +142,7 @@ const createWebsocketRequest = (
       bodySize: 0,
       method: 'GET',
       headersSize: 100,
-      headers: requestHeaders,
+      headers: requestHeaders as Array<{ name: string; value: string }>,
     },
     response: {
       status: 101,
@@ -163,7 +170,7 @@ const createWebsocketRequest = (
 }
 
 const createRequest = (args: IMockRequestInput): IMockRequest => {
-  const { request, response } = args
+  const { request, response, headers } = args
 
   const requestHeaders = [
     {
@@ -184,6 +191,11 @@ const createRequest = (args: IMockRequestInput): IMockRequest => {
       value:
         'SIDCC=fe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1e; expires=Thu, 14-Apr-2022 08:09:50 GMT; path=/; domain=.google.com; priority=high',
     },
+    { name: 'x-request-id', value: 'f94bd6d9-8d7a-4d53-a9b5-a3dc0d7e8a2b' },
+    { name: 'x-api-key', value: 'pk_test_123456' },
+    { name: 'x-correlation-id', value: '2023-11-15T12:34:56.789Z' },
+    { name: 'x-client-version', value: '1.2.3' },
+    ...(headers || []),
   ]
 
   const webRequestBodyDetails: chrome.webRequest.WebRequestBodyDetails = {
@@ -246,7 +258,7 @@ const createRequest = (args: IMockRequestInput): IMockRequest => {
       },
       method: 'POST',
       headersSize: 100,
-      headers: requestHeaders,
+      headers: requestHeaders as Array<{ name: string; value: string }>,
     },
     response: {
       status: 200,
@@ -270,7 +282,13 @@ const createRequest = (args: IMockRequestInput): IMockRequest => {
   return {
     webRequestBodyDetails,
     webRequestHeaderDetails,
-    networkRequest,
+    networkRequest: {
+      ...networkRequest,
+      native: {
+        webRequest: webRequestBodyDetails,
+        networkRequest: networkRequest,
+      },
+    },
   }
 }
 
@@ -804,6 +822,75 @@ export const mockRequests: IMockRequest[] = [
         time: 1699975911.862162,
         type: 'receive',
       }),
+    ],
+  }),
+  createRequest({
+    request: [
+      {
+        query: `
+        query ComplexMovieQuery($id: ID!, $includeReviews: Boolean!) {
+          movie(id: $id) {
+            id
+            title
+            releaseDate
+            rating
+            reviews @include(if: $includeReviews) {
+              id
+              text
+              score
+              author {
+                name
+                email
+              }
+            }
+          }
+        }
+      `,
+        variables: {
+          id: 'tt0468569',
+          includeReviews: true,
+        },
+        operationName: 'ComplexMovieQuery',
+      },
+    ],
+    response: {
+      data: {
+        movie: {
+          id: 'tt0468569',
+          title: 'The Dark Knight',
+          releaseDate: '2008-07-18',
+          rating: 9.0,
+          reviews: [
+            {
+              id: '1',
+              text: 'A masterpiece of modern cinema',
+              score: 10,
+              author: {
+                name: 'Film Critic',
+                email: 'critic@movies.com',
+              },
+            },
+          ],
+        },
+      },
+    },
+    headers: [
+      { name: 'content-type', value: 'application/json; charset=utf-8' },
+      {
+        name: 'authorization',
+        value: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+      },
+      { name: 'x-request-id', value: 'f94bd6d9-8d7a-4d53-a9b5-a3dc0d7e8a2b' },
+      { name: 'x-api-key', value: 'pk_test_123456' },
+      {
+        name: 'user-agent',
+        value: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)',
+      },
+      { name: 'accept', value: 'application/json' },
+      { name: 'origin', value: 'https://movies.example.com' },
+      { name: 'referer', value: 'https://movies.example.com/movie/tt0468569' },
+      { name: 'x-correlation-id', value: '2023-11-15T12:34:56.789Z' },
+      { name: 'x-client-version', value: '1.2.3' },
     ],
   }),
 ]
