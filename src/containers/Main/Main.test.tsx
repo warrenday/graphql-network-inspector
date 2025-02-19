@@ -97,7 +97,7 @@ describe('Main', () => {
       expect(getByText(/getMovie/i)).toBeInTheDocument()
     })
 
-    expect(queryAllByRole('row')).toHaveLength(8)
+    expect(queryAllByRole('row')).toHaveLength(9)
   })
 
   it('renders correct values for each column within the table', async () => {
@@ -130,8 +130,8 @@ describe('Main', () => {
     expect(queryByTestIdWithinRow('column-size')).toHaveTextContent('3.36 kB')
     expect(queryByTestIdWithinRow('column-status')).toHaveTextContent('200')
 
-    const lastRow = rows[rows.length - 1]
-    const operationColumn = within(lastRow).queryByTestId('column-operation')
+    const errorRow = rows[rows.length - 2]
+    const operationColumn = within(errorRow).queryByTestId('column-operation')
     expect(operationColumn).not.toBeNull()
 
     const errorDot = within(operationColumn!).queryByTestId('dot')
@@ -194,7 +194,7 @@ describe('Main', () => {
       triggerOnNavigated()
     })
 
-    expect(queryAllByRole('row')).toHaveLength(8)
+    expect(queryAllByRole('row')).toHaveLength(9)
   })
 
   it('filters network data with the given search query', async () => {
@@ -244,7 +244,7 @@ describe('Main', () => {
     })
 
     expect(filterInput.value).toBe('getmovie')
-    expect(queryAllByRole('row')).toHaveLength(7)
+    expect(queryAllByRole('row')).toHaveLength(8)
     queryAllByRole('row').forEach((row, i) => {
       // First row is header
       if (i !== 0) {
