@@ -12,6 +12,8 @@ import {
 } from '@/hooks/useRequestViewSections'
 import { CaretIcon } from '../../../components/Icons/CaretIcon'
 import { ShareButton } from '../../../components/ShareButton'
+import { ICompleteNetworkRequest } from '@/helpers/networkHelpers'
+import { CopyAsCurlButton } from '@/components/CopyAsCurlButton'
 
 const isVariablesPopulated = (variables: Record<string, unknown>) => {
   return Object.keys(variables || {}).length > 0
@@ -45,10 +47,11 @@ interface IRequestViewProps {
   autoFormat: boolean
   requests: IGraphqlRequestBody[]
   onShare?: () => void
+  networkRequest?: ICompleteNetworkRequest
 }
 
 export const RequestView = (props: IRequestViewProps) => {
-  const { requests, autoFormat, onShare } = props
+  const { requests, autoFormat, networkRequest, onShare } = props
 
   const numberOfRequests = requests.length
   const shouldDisplayRequestIndex = numberOfRequests > 1
@@ -64,6 +67,7 @@ export const RequestView = (props: IRequestViewProps) => {
             index={shouldDisplayRequestIndex && index + 1}
             numberOfRequests={numberOfRequests}
             onShare={onShare}
+            networkRequest={networkRequest}
           />
         )
       })}
@@ -101,10 +105,11 @@ interface ISingleRequestViewProps {
   index: number | false
   numberOfRequests: number
   onShare?: () => void
+  networkRequest?: ICompleteNetworkRequest
 }
 
 const SingleRequestView = (props: ISingleRequestViewProps) => {
-  const { request, autoFormat, index, numberOfRequests, onShare } = props
+  const { request, autoFormat, index, numberOfRequests, onShare, networkRequest } = props
 
   const requestIndex = index || 0
   const displayQuery = !!request.query
@@ -117,7 +122,10 @@ const SingleRequestView = (props: ISingleRequestViewProps) => {
       <div className="flex items-center gap-2 absolute top-[8px] right-[8px] z-10 transition-opacity">
         {onShare && <ShareButton onClick={onShare} />}
         {displayQuery && (
-          <CopyButton label="Copy Query" textToCopy={request.query || ''} />
+          <>
+            <CopyButton label="Copy Query" textToCopy={request.query || ''} />
+            <CopyAsCurlButton networkRequest={networkRequest} />
+          </>
         )}
         {displayVariables && (
           <CopyButton

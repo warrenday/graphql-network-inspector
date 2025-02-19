@@ -10,10 +10,10 @@ export interface IHeader {
 
 export interface ICompleteNetworkRequest {
   id: string
-  status: number
   url: string
-  time: number
   method: string
+  status: number
+  time: number
   request: {
     primaryOperation: IOperationDetails
     headers: IHeader[]
@@ -28,8 +28,8 @@ export interface ICompleteNetworkRequest {
     bodySize: number
   }
   native: {
-    webRequest: chrome.webRequest.WebRequestBodyDetails
     networkRequest?: chrome.devtools.network.Request
+    webRequest?: chrome.webRequest.WebRequestBodyDetails
   }
 }
 
@@ -306,9 +306,11 @@ export const getRequestBodyFromUrl = (url: string): IGraphqlRequestBody => {
 }
 
 const getRequestBodyFromWebRequestBodyDetails = async (
-  details: chrome.webRequest.WebRequestBodyDetails,
+  details: chrome.webRequest.WebRequestBodyDetails | null,
   headers: IHeader[]
 ): Promise<string | undefined> => {
+  if (!details) return undefined
+
   if (details.method === 'GET') {
     const body = getRequestBodyFromUrl(details.url)
     return JSON.stringify(body)
@@ -356,12 +358,15 @@ export const getRequestBody = async <
   T extends
     | chrome.devtools.network.Request
     | chrome.webRequest.WebRequestBodyDetails
+    | undefined
 >(
   details: T,
   ...headers: T extends chrome.webRequest.WebRequestBodyDetails
     ? [IHeader[]]
     : []
 ): Promise<string | undefined> => {
+  if (!details) return undefined
+
   try {
     if (isNetworkRequest(details)) {
       return getRequestBodyFromNetworkRequest(details)
@@ -384,22 +389,20 @@ export const getRequestBody = async <
  *
  */
 export const matchWebAndNetworkRequest = async (
-  networkRequest: chrome.devtools.network.Request,
-  webRequest: chrome.webRequest.WebRequestBodyDetails,
-  webRequestHeaders: IHeader[]
+  details: chrome.devtools.network.Request,
+  webRequest: chrome.webRequest.WebRequestBodyDetails | null,
+  headers: IHeader[]
 ): Promise<boolean> => {
   try {
     const webRequestBody = await getRequestBodyFromWebRequestBodyDetails(
       webRequest,
-      webRequestHeaders
+      headers
     )
-    const networkRequestBody = await getRequestBodyFromNetworkRequest(
-      networkRequest
-    )
+    const networkRequestBody = await getRequestBodyFromNetworkRequest(details)
 
-    const isMethodMatch = webRequest.method === networkRequest.request.method
+    const isMethodMatch = details.request.method === webRequest?.method
     const isBodyMatch = webRequestBody === networkRequestBody
-    const isUrlMatch = webRequest.url === networkRequest.request.url
+    const isUrlMatch = details.request.url === webRequest?.url
 
     return isMethodMatch && isBodyMatch && isUrlMatch
   } catch (e) {
