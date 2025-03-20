@@ -40,6 +40,7 @@ export const NetworkDetails = (props: INetworkDetailsProps) => {
 
   return (
     <Tabs
+      key={data.id}
       testId="network-tabs"
       activeTab={activeTab}
       onTabClick={setActiveTab}

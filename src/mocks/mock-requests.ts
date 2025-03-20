@@ -333,6 +333,7 @@ export const mockRequests: IMockRequest[] = [
               id
               title
               genre
+              score
             }
           }
         `,
@@ -348,16 +349,19 @@ export const mockRequests: IMockRequest[] = [
             id: '1',
             title: 'Batman',
             genre: 'Action',
+            score: 8.5,
           },
           {
             id: '2',
             title: 'American Psycho',
             genre: 'Thriller',
+            score: 7.5,
           },
           {
             id: '3',
             title: 'The Godfather',
             genre: 'Drama',
+            score: 0.0000007,
           },
         ],
       },
