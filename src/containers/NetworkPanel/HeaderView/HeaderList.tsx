@@ -1,8 +1,8 @@
-import { useMarkSearch } from "@/hooks/useMark"
-import useCopy from "@/hooks/useCopy"
-import parseAuthHeader from "./parseAuthHeader"
-import { useState } from "react"
-import { IHeader } from "../../../helpers/networkHelpers"
+import { useMarkSearch } from '@/hooks/useMark'
+import useCopy from '@/hooks/useCopy'
+import parseAuthHeader from './parseAuthHeader'
+import { useState } from 'react'
+import { IHeader } from '../../../helpers/networkHelpers'
 
 interface IHeadersProps {
   headers: IHeader[]
@@ -69,7 +69,7 @@ const HeaderListItem = (props: { header: IHeader }) => {
 
 export const HeaderList = (props: IHeadersProps) => {
   const { headers } = props
-  const ref = useMarkSearch()
+  const { ref } = useMarkSearch()
 
   return (
     <ul className="list-none m-0" ref={ref}>

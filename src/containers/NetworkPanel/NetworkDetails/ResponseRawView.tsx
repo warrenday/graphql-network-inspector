@@ -1,8 +1,8 @@
-import { useMemo } from "react"
-import * as safeJson from "@/helpers/safeJson"
-import { CopyButton } from "@/components/CopyButton"
-import { CodeView } from "@/components/CodeView"
-import { ShareButton } from "../../../components/ShareButton"
+import { useMemo } from 'react'
+import * as safeJson from '@/helpers/safeJson'
+import { CopyButton } from '@/components/CopyButton'
+import { CodeView } from '@/components/CodeView'
+import { ShareButton } from '../../../components/ShareButton'
 
 interface IResponseRawViewProps {
   response?: string
@@ -12,18 +12,18 @@ interface IResponseRawViewProps {
 const useFormatResponse = (response?: string): string => {
   return useMemo(() => {
     if (!response) {
-      return "{}"
+      return '{}'
     }
 
     // We remove the "extensions" prop as this is just meta data
     // for things like "tracing" and can be huge in size.
     const parsedResponse = safeJson.parse<{ extensions?: string }>(response)
     if (!parsedResponse) {
-      return ""
+      return ''
     }
 
-    if ("extensions" in parsedResponse) {
-      delete parsedResponse["extensions"]
+    if ('extensions' in parsedResponse) {
+      delete parsedResponse['extensions']
     }
 
     return safeJson.stringify(parsedResponse, undefined, 2)
@@ -40,7 +40,7 @@ export const ResponseRawView = (props: IResponseRawViewProps) => {
         {onShare && <ShareButton onClick={onShare} />}
         <CopyButton textToCopy={formattedJson} />
       </div>
-      <CodeView text={formattedJson} language={"json"} className="p-4" />
+      <CodeView text={formattedJson} language={'json'} className="p-4" />
     </div>
   )
 }

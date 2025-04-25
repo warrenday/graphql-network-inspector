@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useRef } from "react"
-import Mark from "mark.js"
-import { useSearch } from "./useSearch"
+import { useCallback, useEffect, useRef, useState } from 'react'
+import Mark from 'mark.js'
+import { useSearch } from './useSearch'
 
 /**
  * Mark given text.
@@ -44,14 +44,55 @@ export const useMark = (
  */
 export const useMarkSearch = (content?: string) => {
   const { searchQuery } = useSearch()
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [totalResults, setTotalResults] = useState(0)
 
   // Once mark is complete we can jump to the first result
   const onMarkDone = useCallback(() => {
-    const element = document.querySelector('mark[data-markjs="true"]')
-    element?.scrollIntoView()
+    const elements = document.querySelectorAll('mark[data-markjs="true"]')
+    if (!elements.length) {
+      return
+    }
+
+    const firstResult = elements[0]
+    if (!firstResult) {
+      return
+    }
+
+    setCurrentIndex(0)
+    firstResult.scrollIntoView()
+    setTotalResults(elements.length)
   }, [])
+
+  const jumpToSibling = useCallback(
+    (direction: 'next' | 'previous') => {
+      const elements = document.querySelectorAll('mark[data-markjs="true"]')
+      if (!elements.length) {
+        return
+      }
+
+      const nextIndex =
+        direction === 'next' ? currentIndex + 1 : currentIndex - 1
+      const nextElement = elements[nextIndex]
+      if (!nextElement) {
+        return
+      }
+
+      setCurrentIndex(nextIndex)
+      nextElement.scrollIntoView()
+    },
+    [currentIndex]
+  )
+
+  const jumpToNext = useCallback(() => {
+    jumpToSibling('next')
+  }, [jumpToSibling])
+
+  const jumpToPrevious = useCallback(() => {
+    jumpToSibling('previous')
+  }, [jumpToSibling])
 
   const ref = useMark(searchQuery, content, onMarkDone)
 
-  return ref
+  return { ref, currentIndex, totalResults, jumpToNext, jumpToPrevious }
 }

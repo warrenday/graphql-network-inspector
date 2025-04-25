@@ -1,15 +1,16 @@
-import { useHighlight } from "@/hooks/useHighlight"
-import { useByteSize } from "@/hooks/useBytes"
-import { useMarkSearch } from "@/hooks/useMark"
-import { useFormattedCode } from "../../hooks/useFormattedCode"
-import { DelayedLoader } from "../DelayedLoader"
-import { Spinner } from "../Spinner"
-import { config } from "../../config"
-import classes from "./CodeView.module.css"
+import { useHighlight } from '@/hooks/useHighlight'
+import { useByteSize } from '@/hooks/useBytes'
+import { useFormattedCode } from '../../hooks/useFormattedCode'
+import { DelayedLoader } from '../DelayedLoader'
+import { Spinner } from '../Spinner'
+import { config } from '../../config'
+import classes from './CodeView.module.css'
+import { Ref } from 'react'
+import { useMarkSearch } from '../../hooks/useMark'
 
 interface ICodeViewProps {
   text: string
-  language: "graphql" | "json"
+  language: 'graphql' | 'json'
   autoFormat?: boolean
   className?: string
 }
@@ -31,33 +32,65 @@ const CodeTooLargeMessage = () => {
   )
 }
 
-const CodeRenderer = (props: ICodeViewProps) => {
-  const { text, language, autoFormat } = props
-  const formattedText = useFormattedCode(text, language, autoFormat)
+interface ISearchControlsProps {
+  currentIndex: number
+  totalResults: number
+  jumpToNext: () => void
+  jumpToPrevious: () => void
+}
 
-  const { markup: jsonMarkup, loading } = useHighlight(language, formattedText)
-  const ref = useMarkSearch(jsonMarkup)
+const SearchControls = (props: ISearchControlsProps) => {
+  const { currentIndex, totalResults, jumpToNext, jumpToPrevious } = props
 
-  // TODO
-  // When mark returns results. Show a component to jump to the next/previous
-  // When the component renders also jump to the first result.
+  if (totalResults === 0) {
+    return null
+  }
 
   return (
-    <DelayedLoader loading={loading} loader={<LoadingIndicator />}>
-      <pre>
-        <code
-          dangerouslySetInnerHTML={{ __html: jsonMarkup }}
-          className={classes.container}
-          ref={ref}
+    <div className="flex items-center">
+      <button onClick={jumpToPrevious}>Previous</button>
+      <button onClick={jumpToNext}>Next</button>
+      <div className="dark:text-white ml-4 mt-0.5">
+        {currentIndex + 1} of {totalResults}
+      </div>
+    </div>
+  )
+}
+
+const CodeRenderer = (props: ICodeViewProps) => {
+  const { text, language, autoFormat } = props
+
+  const formattedText = useFormattedCode(text, language, autoFormat)
+  const { markup: jsonMarkup, loading } = useHighlight(language, formattedText)
+  const { ref, currentIndex, totalResults, jumpToNext, jumpToPrevious } =
+    useMarkSearch(jsonMarkup)
+
+  return (
+    <>
+      <div className="absolute left-3 bottom-3 z-10 flex gap-2">
+        <SearchControls
+          currentIndex={currentIndex}
+          totalResults={totalResults}
+          jumpToNext={jumpToNext}
+          jumpToPrevious={jumpToPrevious}
         />
-      </pre>
-    </DelayedLoader>
+      </div>
+      <DelayedLoader loading={loading} loader={<LoadingIndicator />}>
+        <pre>
+          <code
+            dangerouslySetInnerHTML={{ __html: jsonMarkup }}
+            className={classes.container}
+            ref={ref}
+          />
+        </pre>
+      </DelayedLoader>
+    </>
   )
 }
 
 export const CodeView = (props: ICodeViewProps) => {
   const { text, language, autoFormat, className } = props
-  const size = useByteSize(text.length, { unit: "mb" })
+  const size = useByteSize(text.length, { unit: 'mb' })
 
   return (
     <div className={className}>
