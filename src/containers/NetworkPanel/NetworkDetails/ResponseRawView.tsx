@@ -40,7 +40,12 @@ export const ResponseRawView = (props: IResponseRawViewProps) => {
         {onShare && <ShareButton onClick={onShare} />}
         <CopyButton textToCopy={formattedJson} />
       </div>
-      <CodeView text={formattedJson} language={'json'} className="p-4" />
+      <CodeView
+        text={formattedJson}
+        language={'json'}
+        className="p-4"
+        isSearchControlsVisible
+      />
     </div>
   )
 }

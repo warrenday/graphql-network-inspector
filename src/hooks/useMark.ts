@@ -47,6 +47,27 @@ export const useMarkSearch = (content?: string) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [totalResults, setTotalResults] = useState(0)
 
+  // Add mark to set current index as different color
+  useEffect(() => {
+    const elements = document.querySelectorAll('mark[data-markjs="true"]')
+    if (!elements.length) {
+      return
+    }
+
+    const currentElement = elements[currentIndex]
+    if (!currentElement) {
+      return
+    }
+
+    // Remove all existing data-markjs-current attributes
+    elements.forEach((element) => {
+      element.removeAttribute('data-markjs-current')
+    })
+
+    // Add data-markjs-current attribute to the current element
+    currentElement.setAttribute('data-markjs-current', 'true')
+  }, [currentIndex])
+
   // Once mark is complete we can jump to the first result
   const onMarkDone = useCallback(() => {
     const elements = document.querySelectorAll('mark[data-markjs="true"]')

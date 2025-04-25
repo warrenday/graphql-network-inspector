@@ -5,14 +5,15 @@ import { DelayedLoader } from '../DelayedLoader'
 import { Spinner } from '../Spinner'
 import { config } from '../../config'
 import classes from './CodeView.module.css'
-import { Ref } from 'react'
 import { useMarkSearch } from '../../hooks/useMark'
+import { Button } from '../Button'
 
 interface ICodeViewProps {
   text: string
   language: 'graphql' | 'json'
   autoFormat?: boolean
   className?: string
+  isSearchControlsVisible?: boolean
 }
 
 const LoadingIndicator = () => {
@@ -47,10 +48,16 @@ const SearchControls = (props: ISearchControlsProps) => {
   }
 
   return (
-    <div className="flex items-center">
-      <button onClick={jumpToPrevious}>Previous</button>
-      <button onClick={jumpToNext}>Next</button>
-      <div className="dark:text-white ml-4 mt-0.5">
+    <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-md p-2">
+      <div className="flex items-center gap-2">
+        <Button onClick={jumpToPrevious} variant="primary">
+          Previous
+        </Button>
+        <Button onClick={jumpToNext} variant="primary">
+          Next
+        </Button>
+      </div>
+      <div className="dark:text-white ml-4 mr-2 mt-0.5">
         {currentIndex + 1} of {totalResults}
       </div>
     </div>
@@ -58,7 +65,7 @@ const SearchControls = (props: ISearchControlsProps) => {
 }
 
 const CodeRenderer = (props: ICodeViewProps) => {
-  const { text, language, autoFormat } = props
+  const { text, language, autoFormat, isSearchControlsVisible } = props
 
   const formattedText = useFormattedCode(text, language, autoFormat)
   const { markup: jsonMarkup, loading } = useHighlight(language, formattedText)
@@ -67,14 +74,16 @@ const CodeRenderer = (props: ICodeViewProps) => {
 
   return (
     <>
-      <div className="absolute left-3 bottom-3 z-10 flex gap-2">
-        <SearchControls
-          currentIndex={currentIndex}
-          totalResults={totalResults}
-          jumpToNext={jumpToNext}
-          jumpToPrevious={jumpToPrevious}
-        />
-      </div>
+      {isSearchControlsVisible && (
+        <div className="fixed right-3 bottom-3 z-50 flex gap-2">
+          <SearchControls
+            currentIndex={currentIndex}
+            totalResults={totalResults}
+            jumpToNext={jumpToNext}
+            jumpToPrevious={jumpToPrevious}
+          />
+        </div>
+      )}
       <DelayedLoader loading={loading} loader={<LoadingIndicator />}>
         <pre>
           <code
@@ -89,7 +98,8 @@ const CodeRenderer = (props: ICodeViewProps) => {
 }
 
 export const CodeView = (props: ICodeViewProps) => {
-  const { text, language, autoFormat, className } = props
+  const { text, language, autoFormat, className, isSearchControlsVisible } =
+    props
   const size = useByteSize(text.length, { unit: 'mb' })
 
   return (
@@ -97,7 +107,12 @@ export const CodeView = (props: ICodeViewProps) => {
       {size > config.maxUsableResponseSizeMb ? (
         <CodeTooLargeMessage />
       ) : (
-        <CodeRenderer autoFormat={autoFormat} text={text} language={language} />
+        <CodeRenderer
+          autoFormat={autoFormat}
+          text={text}
+          language={language}
+          isSearchControlsVisible={isSearchControlsVisible}
+        />
       )}
     </div>
   )
