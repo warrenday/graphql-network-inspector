@@ -48,7 +48,7 @@ const SearchControls = (props: ISearchControlsProps) => {
   }
 
   return (
-    <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-md p-2">
+    <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-md p-2 shadow-md">
       <div className="flex items-center gap-2">
         <Button onClick={jumpToPrevious} variant="primary">
           Previous
