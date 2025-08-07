@@ -20,7 +20,7 @@ const getMatchedHeaders = (
 ): boolean => {
   return getHeaderSearchContent(networkRequests)
     .toLowerCase()
-    .includes(searchQuery.toLowerCase())
+    .includes(searchQuery)
 }
 
 const getMatchedRequest = (
@@ -29,7 +29,7 @@ const getMatchedRequest = (
 ): boolean => {
   return getRequestSearchContent(networkRequests)
     .toLowerCase()
-    .includes(searchQuery.toLowerCase())
+    .includes(searchQuery)
 }
 
 const getMatchedResponse = (
@@ -38,7 +38,7 @@ const getMatchedResponse = (
 ): boolean => {
   return getResponseSearchContent(networkRequests)
     .toLowerCase()
-    .includes(searchQuery.toLowerCase())
+    .includes(searchQuery)
 }
 
 export const getSearchResults = (
