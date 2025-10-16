@@ -105,7 +105,7 @@ describe('getNetworkCurl', () => {
       "curl 'https://api.example.com/graphql' \\\n" +
         "  -H 'content-type: application/json' \\\n" +
         '  -X POST \\\n' +
-        '  --data-raw $\'{"query":"query { test! }"}\''
+        '  --data-raw \'{"query":"query { test! }"}\''
     )
   })
 
@@ -162,7 +162,7 @@ describe('getNetworkCurl', () => {
         "  -H 'Content-Type: application/json' \\\n" +
         "  -H 'Authorization: Bearer token123' \\\n" +
         '  -X POST \\\n' +
-        '  --data-raw $\'{"query":"query TestQuery { test }","variables":{}}\''
+        '  --data-raw \'{"query":"query TestQuery { test }","variables":{}}\''
     )
   })
 
@@ -215,7 +215,7 @@ describe('getNetworkCurl', () => {
         "  -H 'content-type: application/json' \\\n" +
         "  -H 'authorization: Bearer token123' \\\n" +
         '  -X POST \\\n' +
-        '  --data-raw $\'{"query":"query { user { id name } }","variables":{"userId":"123"}}\''
+        '  --data-raw \'{"query":"query { user { id name } }","variables":{"userId":"123"}}\''
     )
   })
 
@@ -302,7 +302,7 @@ describe('getNetworkCurl', () => {
         "  -H 'content-type: application/json' \\\n" +
         "  -H 'authorization: Bearer token123' \\\n" +
         '  -X POST \\\n' +
-        '  --data-raw $\'{"query":"query { test }","variables":{}}\''
+        '  --data-raw \'{"query":"query { test }","variables":{}}\''
     )
   })
 })

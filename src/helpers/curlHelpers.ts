@@ -92,7 +92,7 @@ export const getNetworkCurl = async (
   // Add body with proper escaping
   if (chromeRequest.request.postData?.text) {
     const formattedBody = formatBody(chromeRequest.request.postData.text)
-    parts.push(`--data-raw $'${formattedBody}'`)
+    parts.push(`--data-raw '${formattedBody}'`)
   }
 
   return parts.join(' \\\n  ')
