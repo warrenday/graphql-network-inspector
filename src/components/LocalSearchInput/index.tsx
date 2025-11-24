@@ -59,8 +59,8 @@ export const LocalSearchInput = (props: ILocalSearchInputProps) => {
     : 'No matches'
 
   return (
-    <div className="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg pl-3 py-2 pr-20 shadow-lg">
-      <SearchIcon width="1rem" height="1rem" className="text-gray-500" />
+    <div className="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg pl-3 py-2 pr-24 shadow-lg">
+      <SearchIcon width="1rem" height="1rem" />
       <Textfield
         value={localValue}
         onChange={handleChange}
