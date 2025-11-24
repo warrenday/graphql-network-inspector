@@ -45,6 +45,10 @@ const CodeRenderer = (props: ICodeViewProps) => {
 
   const { markup: jsonMarkup, loading } = useHighlight(language, formattedText)
 
+  // TODO
+  // When mark returns results. Show a component to jump to the next/previous
+  // When the component renders also jump to the first result.
+
   // Use local search if searchQuery is provided, otherwise use global search
   const globalRef = useMarkSearch(jsonMarkup)
   const localMarkResult = useLocalMark(searchQuery || '', jsonMarkup)
