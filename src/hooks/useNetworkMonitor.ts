@@ -13,10 +13,14 @@ import {
 import {
   IIncompleteNetworkRequest,
   ICompleteNetworkRequest,
+  IResponseChunk,
   getRequestBody,
   isRequestComplete,
   matchWebAndNetworkRequest,
   urlHasFileExtension,
+  isMultipartMixedResponse,
+  getMultipartMixedBoundary,
+  parseMultipartMixedResponse,
 } from '../helpers/networkHelpers'
 import useLatestState from './useLatestState'
 
@@ -67,6 +71,32 @@ const processNetworkRequest = (
   details: chrome.devtools.network.Request,
   responseBody: string
 ) => {
+  const isMultipart = isMultipartMixedResponse(details.response.headers)
+  const boundary = isMultipart
+    ? getMultipartMixedBoundary(details.response.headers)
+    : undefined
+
+  let chunks: IResponseChunk[] | undefined
+  let finalBody = responseBody
+  let isStreaming = false
+
+  // Parse multipart/mixed response to extract incremental chunks
+  if (isMultipart && boundary) {
+    try {
+      chunks = parseMultipartMixedResponse(responseBody, boundary)
+      isStreaming = true
+
+      // Use the first chunk as the body for backwards compatibility
+      // The first chunk is usually the initial response
+      if (chunks.length > 0) {
+        finalBody = chunks[0].body
+      }
+    } catch (e) {
+      console.error('Error parsing multipart response:', e)
+      // Fall back to treating as regular response
+    }
+  }
+
   return {
     status: details.response.status,
     url: details.request.url,
@@ -75,11 +105,13 @@ const processNetworkRequest = (
     response: {
       headers: details.response.headers,
       headersSize: details.response.headersSize,
-      body: responseBody,
+      body: finalBody,
       bodySize:
         details.response.bodySize === -1
           ? details.response._transferSize || 0
           : details.response.bodySize,
+      chunks,
+      isStreaming,
     },
   }
 }
@@ -226,7 +258,9 @@ export const useNetworkMonitor = (): [
         return
       }
 
-      if (!validateNetworkRequest(details)) {
+      const isValid = await validateNetworkRequest(details)
+
+      if (!isValid) {
         return
       }
 

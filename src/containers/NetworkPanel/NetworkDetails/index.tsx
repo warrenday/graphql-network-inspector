@@ -24,6 +24,8 @@ export const NetworkDetails = (props: INetworkDetailsProps) => {
   const responseHeaders = data.response?.headers || []
   const requestBody = data.request.body
   const responseBody = data.response?.body
+  const responseChunks = data.response?.chunks
+  const isStreaming = data.response?.isStreaming
   const responseCollapsedCount = requestBody.length > 1 ? 3 : 2
   const tracing = useApolloTracing(responseBody)
   const [autoFormat, toggleAutoFormat] = useToggle()
@@ -86,6 +88,8 @@ export const NetworkDetails = (props: INetworkDetailsProps) => {
               onShare={isShareable ? handleShare : undefined}
               response={responseBody}
               collapsed={responseCollapsedCount}
+              chunks={responseChunks}
+              isStreaming={isStreaming}
             />
           ),
         },
