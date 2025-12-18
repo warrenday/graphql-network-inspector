@@ -8,6 +8,12 @@ export interface IHeader {
   value?: string
 }
 
+export interface IResponseChunk {
+  body: string
+  timestamp: number
+  isIncremental: boolean
+}
+
 export interface ICompleteNetworkRequest {
   id: string
   url: string
@@ -26,6 +32,8 @@ export interface ICompleteNetworkRequest {
     headersSize: number
     body: string
     bodySize: number
+    chunks?: IResponseChunk[]  // For incremental responses
+    isStreaming?: boolean
   }
   native: {
     networkRequest?: chrome.devtools.network.Request
@@ -408,4 +416,76 @@ export const matchWebAndNetworkRequest = async (
   } catch (e) {
     return false
   }
+}
+
+/**
+ * Check if a response is multipart/mixed (used for @defer/@stream)
+ */
+export const isMultipartMixedResponse = (headers: IHeader[]): boolean => {
+  const contentType = headers.find(
+    (header) => header.name.toLowerCase() === 'content-type'
+  )?.value
+  return contentType?.includes('multipart/mixed') || false
+}
+
+/**
+ * Extract the boundary from a multipart/mixed content-type header
+ */
+export const getMultipartMixedBoundary = (
+  headers: IHeader[]
+): string | undefined => {
+  const contentType = headers.find(
+    (header) => header.name.toLowerCase() === 'content-type'
+  )?.value
+
+  if (!contentType || !contentType.includes('multipart/mixed')) {
+    return undefined
+  }
+
+  const boundaryMatch = contentType.match(/boundary="?([^";,]+)"?/)
+  return boundaryMatch ? boundaryMatch[1] : undefined
+}
+
+/**
+ * Parse a multipart/mixed response body into individual chunks
+ * Each chunk is a separate JSON payload for incremental delivery
+ */
+export const parseMultipartMixedResponse = (
+  body: string,
+  boundary: string
+): IResponseChunk[] => {
+  const chunks: IResponseChunk[] = []
+  const delimiter = `--${boundary}`
+
+  // Split by boundary and process each part
+  const parts = body.split(delimiter)
+
+  for (const part of parts) {
+    // Skip empty parts and closing boundary
+    if (!part.trim() || part.trim() === '--') {
+      continue
+    }
+
+    // Normalize line endings to \n
+    const normalizedPart = part.replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+
+    // Find the double newline that separates headers from body
+    const headerBodySeparator = '\n\n'
+    const separatorIndex = normalizedPart.indexOf(headerBodySeparator)
+
+    if (separatorIndex !== -1) {
+      // Extract everything after the separator (the JSON body)
+      const chunkBody = normalizedPart.substring(separatorIndex + headerBodySeparator.length).trim()
+
+      if (chunkBody) {
+        chunks.push({
+          body: chunkBody,
+          timestamp: Date.now(), // Placeholder timestamp (not displayed)
+          isIncremental: chunks.length > 0, // First chunk is initial, rest are incremental
+        })
+      }
+    }
+  }
+
+  return chunks
 }

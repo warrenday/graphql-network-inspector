@@ -418,3 +418,170 @@ describe('networkHelpers.urlHasFileExtension', () => {
     )
   })
 })
+
+describe('networkHelpers.parseMultipartMixedResponse', () => {
+  it('parses a multipart/mixed response with multiple chunks', () => {
+    const { parseMultipartMixedResponse } = require('./networkHelpers')
+    const boundary = '-'
+    const multipartBody = dedent`
+      ---
+      Content-Type: application/json; charset=utf-8
+      Content-Length: 60
+
+      {"data":{"user":{"id":"1","name":"John"}},"hasNext":true}
+      ---
+      Content-Type: application/json; charset=utf-8
+      Content-Length: 85
+
+      {"incremental":[{"data":{"email":"john@example.com"},"path":["user"]}],"hasNext":true}
+      ---
+      Content-Type: application/json; charset=utf-8
+      Content-Length: 72
+
+      {"incremental":[{"data":{"posts":[{"title":"Post 1"}]},"path":["user"]}],"hasNext":false}
+      -----
+    `
+
+    const chunks = parseMultipartMixedResponse(multipartBody, boundary)
+
+    expect(chunks).toHaveLength(3)
+    expect(chunks[0].isIncremental).toBe(false)
+    expect(chunks[1].isIncremental).toBe(true)
+    expect(chunks[2].isIncremental).toBe(true)
+    expect(JSON.parse(chunks[0].body)).toMatchObject({
+      data: { user: { id: '1', name: 'John' } },
+      hasNext: true,
+    })
+    expect(JSON.parse(chunks[1].body)).toMatchObject({
+      incremental: [{ data: { email: 'john@example.com' }, path: ['user'] }],
+      hasNext: true,
+    })
+    expect(JSON.parse(chunks[2].body)).toMatchObject({
+      incremental: [{ data: { posts: [{ title: 'Post 1' }] }, path: ['user'] }],
+      hasNext: false,
+    })
+  })
+
+  it('handles different line endings (CRLF)', () => {
+    const { parseMultipartMixedResponse } = require('./networkHelpers')
+    const boundary = '-'
+    const multipartBody =
+      '---\r\nContent-Type: application/json\r\n\r\n{"data":{"test":"value"}}\r\n-----\r\n'
+
+    const chunks = parseMultipartMixedResponse(multipartBody, boundary)
+
+    expect(chunks).toHaveLength(1)
+    expect(JSON.parse(chunks[0].body)).toMatchObject({
+      data: { test: 'value' },
+    })
+  })
+
+  it('skips empty parts', () => {
+    const { parseMultipartMixedResponse } = require('./networkHelpers')
+    const boundary = '-'
+    const multipartBody = dedent`
+      ---
+      Content-Type: application/json
+
+      {"data":{"test":"value1"}}
+      ---
+
+      ---
+      Content-Type: application/json
+
+      {"data":{"test":"value2"}}
+      -----
+    `
+
+    const chunks = parseMultipartMixedResponse(multipartBody, boundary)
+
+    expect(chunks).toHaveLength(2)
+    expect(JSON.parse(chunks[0].body)).toMatchObject({
+      data: { test: 'value1' },
+    })
+    expect(JSON.parse(chunks[1].body)).toMatchObject({
+      data: { test: 'value2' },
+    })
+  })
+
+  it('returns empty array for invalid multipart body', () => {
+    const { parseMultipartMixedResponse } = require('./networkHelpers')
+    const boundary = '-'
+    const multipartBody = 'not a multipart response'
+
+    const chunks = parseMultipartMixedResponse(multipartBody, boundary)
+
+    expect(chunks).toHaveLength(0)
+  })
+})
+
+describe('networkHelpers.isMultipartMixedResponse', () => {
+  it('returns true for multipart/mixed content-type', () => {
+    const { isMultipartMixedResponse } = require('./networkHelpers')
+    const headers: IHeader[] = [
+      {
+        name: 'content-type',
+        value: 'multipart/mixed; boundary=graphql; deferSpec=20220824',
+      },
+    ]
+
+    expect(isMultipartMixedResponse(headers)).toBe(true)
+  })
+
+  it('returns false for non-multipart content-type', () => {
+    const { isMultipartMixedResponse } = require('./networkHelpers')
+    const headers: IHeader[] = [
+      {
+        name: 'content-type',
+        value: 'application/json',
+      },
+    ]
+
+    expect(isMultipartMixedResponse(headers)).toBe(false)
+  })
+
+  it('returns false when no content-type header', () => {
+    const { isMultipartMixedResponse } = require('./networkHelpers')
+    const headers: IHeader[] = []
+
+    expect(isMultipartMixedResponse(headers)).toBe(false)
+  })
+})
+
+describe('networkHelpers.getMultipartMixedBoundary', () => {
+  it('extracts boundary from content-type header', () => {
+    const { getMultipartMixedBoundary } = require('./networkHelpers')
+    const headers: IHeader[] = [
+      {
+        name: 'content-type',
+        value: 'multipart/mixed; boundary=graphql',
+      },
+    ]
+
+    expect(getMultipartMixedBoundary(headers)).toBe('graphql')
+  })
+
+  it('extracts boundary with quotes', () => {
+    const { getMultipartMixedBoundary } = require('./networkHelpers')
+    const headers: IHeader[] = [
+      {
+        name: 'content-type',
+        value: 'multipart/mixed; boundary="graphql"',
+      },
+    ]
+
+    expect(getMultipartMixedBoundary(headers)).toBe('graphql')
+  })
+
+  it('returns undefined for non-multipart content-type', () => {
+    const { getMultipartMixedBoundary } = require('./networkHelpers')
+    const headers: IHeader[] = [
+      {
+        name: 'content-type',
+        value: 'application/json',
+      },
+    ]
+
+    expect(getMultipartMixedBoundary(headers)).toBeUndefined()
+  })
+})
