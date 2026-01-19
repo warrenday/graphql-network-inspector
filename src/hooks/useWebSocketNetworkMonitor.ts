@@ -1,23 +1,24 @@
-import { useCallback, useState } from 'react'
-import { getHAR } from '../services/networkMonitor'
-import useInterval from './useInterval'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { IHeader } from '@/helpers/networkHelpers'
 import * as safeJson from '@/helpers/safeJson'
 import { isGraphqlQuery } from '../helpers/graphqlHelpers'
+import { chromeProvider } from '../services/chromeProvider'
+
+// ============================================================================
+// Types
+// ============================================================================
+
+export interface IWebSocketMessageData {
+  payload?: unknown
+  query?: string
+  variables?: Record<string, unknown>
+  [key: string]: unknown
+}
 
 export interface IWebSocketMessage {
-  /**
-   * typically "receive" or "send"
-   */
   type: string
-  /**
-   * Time request occured in milliseconds
-   */
   time: number
-  /**
-   * Data sent or received
-   */
-  data: Record<string, any>
+  data: IWebSocketMessageData
 }
 
 export interface IWebSocketNetworkRequest {
@@ -26,44 +27,32 @@ export interface IWebSocketNetworkRequest {
   url: string
   method: string
   messages: IWebSocketMessage[]
-  request: {
-    headers: IHeader[]
-  }
-  response: {
-    headers: IHeader[]
-  }
+  request: { headers: IHeader[] }
+  response: { headers: IHeader[] }
 }
 
-interface IWebSocketHAREntryMessage {
-  data: string
-  opcode: number
-  time: number
-  type: string
+interface ITrackedConnection {
+  id: string
+  type: 'websocket' | 'sse'
+  url: string
+  method: string
+  requestHeaders: IHeader[]
+  responseHeaders: IHeader[]
+  status: number
+  messages: IWebSocketMessage[]
 }
 
-interface WebSocketHAREntry {
-  _resourceType: 'websocket'
-  _webSocketMessages: IWebSocketHAREntryMessage[]
-  request: {
-    url: string
-  }
-}
-
-const isWebSocketEntry = (entry: any): entry is WebSocketHAREntry => {
-  return entry._resourceType === 'websocket'
-}
-
-const isGraphQLWebsocketEntry = (
-  entry: WebSocketHAREntry,
+interface IUseWebSocketNetworkOptions {
+  isEnabled: boolean
   urlFilter: string
-) => {
-  return urlFilter ? entry.request.url.includes(urlFilter) : true
 }
 
-interface IMessageData {
-  payload: {
-    query: string
-  }
+// ============================================================================
+// Message Data Types (for GraphQL payload detection)
+// ============================================================================
+
+interface IStandardMessageData {
+  payload: { query?: string; data?: unknown }
 }
 
 interface IRailsChannelSendMessageData {
@@ -74,155 +63,263 @@ interface IRailsChannelSendMessageData {
 
 interface IRailsChannelReceiveMessageData {
   identifier: string
-  message: {
-    data: Record<string, any>
-  }
+  message: { data: Record<string, unknown> }
 }
 
 type MessageData =
-  | IMessageData
+  | IStandardMessageData
   | IRailsChannelSendMessageData
   | IRailsChannelReceiveMessageData
 
-const isGraphQLPayload = (
-  type: string,
-  messageData?: MessageData
-): Record<string, any> | boolean => {
-  if (!messageData) {
-    return false
-  }
+// ============================================================================
+// Type Guards
+// ============================================================================
 
-  if ('payload' in messageData) {
+const isStandardMessageData = (data: MessageData): data is IStandardMessageData =>
+  'payload' in data
+
+const isRailsChannelSendData = (data: MessageData): data is IRailsChannelSendMessageData =>
+  'command' in data && 'identifier' in data && 'data' in data
+
+const isRailsChannelReceiveData = (data: MessageData): data is IRailsChannelReceiveMessageData =>
+  'identifier' in data && 'message' in data && !('command' in data)
+
+// ============================================================================
+// Helper Functions
+// ============================================================================
+
+const headersObjectToArray = (headers: Record<string, string> = {}): IHeader[] =>
+  Object.entries(headers).map(([name, value]) => ({ name, value }))
+
+const isGraphQLPayload = (type: string, data: MessageData): boolean => {
+  if (isStandardMessageData(data)) {
     if (type === 'send') {
-      const hasQuery = 'query' in messageData.payload
-      if (hasQuery && isGraphqlQuery(messageData.payload.query)) {
-        return messageData.payload
-      }
+      return Boolean(data.payload?.query && isGraphqlQuery(data.payload.query))
     }
+    return type === 'receive' && 'data' in data.payload
+  }
 
-    if (type === 'receive' && 'data' in messageData.payload) {
-      return messageData.payload
+  if (isRailsChannelSendData(data)) {
+    try {
+      return isGraphqlQuery(JSON.parse(data.data).query)
+    } catch {
+      return false
     }
   }
 
-  if (isIRailsChannelSendMessageData(messageData)) {
-    return isGraphqlQuery(JSON.parse(messageData.data).query)
-  }
-
-  if (isIRailsChannelReceiveMessageData(messageData)) {
-    return !!messageData.message
+  if (isRailsChannelReceiveData(data)) {
+    return Boolean(data.message)
   }
 
   return false
 }
 
-const prepareWebSocketRequests = (
-  har: chrome.devtools.network.HARLog,
-  options: { urlFilter: string }
-): IWebSocketNetworkRequest[] => {
-  return har.entries.flatMap((entry, i) => {
-    if (
-      isWebSocketEntry(entry) &&
-      isGraphQLWebsocketEntry(entry, options.urlFilter)
-    ) {
-      const websocketEntry: IWebSocketNetworkRequest = {
-        id: `subscription-${i}`,
-        status: entry.response.status,
-        url: entry.request.url,
-        method: entry.request.method,
-        messages: entry._webSocketMessages.flatMap((message) => {
-          const messageData = safeJson.parse(message.data) as
-            | MessageData
-            | undefined
+const formatMessageData = (data: MessageData): IWebSocketMessageData => {
+  if (isStandardMessageData(data)) {
+    return data as unknown as IWebSocketMessageData
+  }
 
-          if (!messageData || !isGraphQLPayload(message.type, messageData)) {
-            return []
-          }
-
-          return {
-            type: message.type,
-            time: message.time,
-            data: formatMessageData(messageData, message.type),
-          }
-        }),
-        request: {
-          headers: entry.request.headers,
-        },
-        response: {
-          headers: entry.response.headers,
-        },
+  if (isRailsChannelSendData(data)) {
+    try {
+      return {
+        command: data.command,
+        identifier: JSON.parse(data.identifier),
+        data: JSON.parse(data.data),
       }
-      return websocketEntry
-    } else {
-      return []
-    }
-  })
-}
-
-const formatMessageData = (messageData: MessageData, type: string) => {
-  if (isIMessageData(messageData)) {
-    return messageData
-  }
-
-  if (isIRailsChannelSendMessageData(messageData)) {
-    return {
-      command: messageData.command,
-      identifier: JSON.parse(messageData.identifier),
-      data: JSON.parse(messageData.data),
+    } catch {
+      return data as unknown as IWebSocketMessageData
     }
   }
 
-  if (isIRailsChannelReceiveMessageData(messageData)) {
-    return {
-      identifier: JSON.parse(messageData.identifier),
-      data: messageData.message,
+  if (isRailsChannelReceiveData(data)) {
+    try {
+      return {
+        identifier: JSON.parse(data.identifier),
+        data: data.message,
+      }
+    } catch {
+      return data as unknown as IWebSocketMessageData
     }
   }
 
-  return messageData
+  return data as unknown as IWebSocketMessageData
 }
 
-function isIMessageData(data: MessageData): data is IMessageData {
-  return 'payload' in data
-}
+const createWebSocketConnection = (requestId: string, url: string): ITrackedConnection => ({
+  id: requestId,
+  type: 'websocket',
+  url,
+  method: 'WS',
+  requestHeaders: [],
+  responseHeaders: [],
+  status: 101,
+  messages: [],
+})
 
-function isIRailsChannelSendMessageData(
-  data: MessageData
-): data is IRailsChannelSendMessageData {
-  return 'command' in data && 'identifier' in data && 'data' in data
-}
+const createSSEConnection = (
+  requestId: string,
+  url: string,
+  method: string,
+  headers: Record<string, string>
+): ITrackedConnection => ({
+  id: requestId,
+  type: 'sse',
+  url,
+  method,
+  requestHeaders: headersObjectToArray(headers),
+  responseHeaders: [],
+  status: 0,
+  messages: [],
+})
 
-function isIRailsChannelReceiveMessageData(
-  data: MessageData
-): data is IRailsChannelReceiveMessageData {
-  return 'identifier' in data && 'message' in data && !('command' in data)
-}
+const connectionToRequest = (conn: ITrackedConnection): IWebSocketNetworkRequest => ({
+  id: conn.id,
+  status: conn.status,
+  url: conn.url,
+  method: conn.method,
+  messages: conn.messages,
+  request: { headers: conn.requestHeaders },
+  response: { headers: conn.responseHeaders },
+})
 
-interface IUseWebSocketNetworkOptions {
-  isEnabled: boolean
-  urlFilter: string
-}
+// ============================================================================
+// Hook
+// ============================================================================
 
 export const useWebSocketNetworkMonitor = (
   options: IUseWebSocketNetworkOptions = { isEnabled: true, urlFilter: '' }
 ) => {
-  const [webSocketRequests, setWebSocketRequests] = useState<
-    IWebSocketNetworkRequest[]
-  >([])
+  const [requests, setRequests] = useState<IWebSocketNetworkRequest[]>([])
+  const connectionsRef = useRef(new Map<string, ITrackedConnection>())
+  const chrome = chromeProvider()
 
-  const clearWebSocketRequests = useCallback(() => {
-    setWebSocketRequests([])
-  }, [setWebSocketRequests])
+  useEffect(() => {
+    if (!options.isEnabled) return
 
-  const fetchWebSocketRequests = useCallback(async () => {
-    const har = await getHAR()
-    const websocketRequests = prepareWebSocketRequests(har, {
-      urlFilter: options.urlFilter,
+    const tabId = chrome.devtools.inspectedWindow.tabId
+    const connections = connectionsRef.current
+
+    const updateConnection = (
+      requestId: string,
+      updater: (conn: ITrackedConnection) => ITrackedConnection
+    ) => {
+      const existing = connections.get(requestId)
+      if (!existing) return
+
+      const updated = updater(existing)
+      connections.set(requestId, updated)
+    }
+
+    const syncRequestsState = () => {
+      const filtered = Array.from(connections.values())
+        .filter((conn) => {
+          if (options.urlFilter && !conn.url.includes(options.urlFilter)) {
+            return false
+          }
+          return conn.messages.length > 0
+        })
+        .map(connectionToRequest)
+
+      setRequests(filtered)
+    }
+
+    const addMessage = (requestId: string, type: 'send' | 'receive', rawData: string) => {
+      const conn = connections.get(requestId)
+      if (!conn) return
+
+      const parsed = safeJson.parse(rawData) as MessageData | undefined
+      if (!parsed || !isGraphQLPayload(type, parsed)) return
+
+      updateConnection(requestId, (c) => ({
+        ...c,
+        messages: [...c.messages, { type, time: Date.now(), data: formatMessageData(parsed) }],
+      }))
+
+      syncRequestsState()
+    }
+
+    // Event handlers mapped by method name
+    const eventHandlers: Record<string, (params: any) => void> = {
+      'Network.webSocketCreated': (params) => {
+        connections.set(params.requestId, createWebSocketConnection(params.requestId, params.url))
+      },
+
+      'Network.webSocketHandshakeResponseReceived': (params) => {
+        updateConnection(params.requestId, (conn) => ({
+          ...conn,
+          status: params.response?.status ?? 101,
+          responseHeaders: headersObjectToArray(params.response?.headers),
+          requestHeaders: headersObjectToArray(params.response?.requestHeaders),
+        }))
+      },
+
+      'Network.webSocketFrameSent': (params) => {
+        const payload = params.response?.payloadData
+        if (payload) addMessage(params.requestId, 'send', payload)
+      },
+
+      'Network.webSocketFrameReceived': (params) => {
+        const payload = params.response?.payloadData
+        if (payload) addMessage(params.requestId, 'receive', payload)
+      },
+
+      'Network.webSocketClosed': () => {
+        // Keep connection data for history
+      },
+
+      'Network.requestWillBeSent': (params) => {
+        const acceptHeader = params.request?.headers?.['Accept'] ?? ''
+        const isSSE = acceptHeader.includes('text/event-stream')
+
+        if (isSSE) {
+          connections.set(
+            params.requestId,
+            createSSEConnection(
+              params.requestId,
+              params.request.url,
+              params.request.method ?? 'GET',
+              params.request.headers
+            )
+          )
+        }
+      },
+
+      'Network.responseReceived': (params) => {
+        const conn = connections.get(params.requestId)
+        if (conn?.type !== 'sse') return
+
+        updateConnection(params.requestId, (c) => ({
+          ...c,
+          status: params.response?.status ?? 200,
+          responseHeaders: headersObjectToArray(params.response?.headers),
+        }))
+      },
+
+      'Network.eventSourceMessageReceived': (params) => {
+        if (params.data) addMessage(params.requestId, 'receive', params.data)
+      },
+    }
+
+    const handleDebuggerEvent = (_source: unknown, method: string, params: unknown) => {
+      eventHandlers[method]?.(params)
+    }
+
+    chrome.debugger.attach({ tabId }, '1.3', () => {
+      chrome.debugger.sendCommand({ tabId }, 'Network.enable')
     })
-    setWebSocketRequests(websocketRequests)
-  }, [setWebSocketRequests, options.urlFilter])
 
-  useInterval(fetchWebSocketRequests, 2000, { isRunning: options.isEnabled })
+    chrome.debugger.onEvent.addListener(handleDebuggerEvent)
 
-  return [webSocketRequests, clearWebSocketRequests] as const
+    return () => {
+      chrome.debugger.onEvent.removeListener(handleDebuggerEvent)
+      chrome.debugger.detach({ tabId })
+    }
+  }, [chrome, options.isEnabled, options.urlFilter])
+
+  const clearRequests = useCallback(() => {
+    connectionsRef.current.clear()
+    setRequests([])
+  }, [])
+
+  return [requests, clearRequests] as const
 }

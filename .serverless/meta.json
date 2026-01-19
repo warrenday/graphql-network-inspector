@@ -1,0 +1,27 @@
+{
+  "unknown": {
+    "versionFramework": "4.31.0",
+    "dashboard": {
+      "isEnabledForService": false,
+      "requiredAuthentication": false,
+      "orgFeaturesInUse": null,
+      "orgObservabilityIntegrations": null,
+      "serviceAppId": null,
+      "serviceProvider": null,
+      "instanceParameters": null
+    },
+    "command": [
+      "mcp"
+    ],
+    "options": {},
+    "orgId": "2fb5d3ca-bb29-4745-819f-b86fe600a2dc",
+    "orgName": "warrenjday",
+    "userId": "vtRR1C2H8DqrBZqhM2",
+    "userName": "warrenjday",
+    "serviceProviderAwsCfStackId": null,
+    "serviceProviderAwsCfStackCreated": null,
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": null,
+    "serviceProviderAwsCfStackOutputs": null
+  }
+}

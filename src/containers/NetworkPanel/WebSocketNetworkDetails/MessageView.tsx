@@ -43,7 +43,7 @@ const MessageView = React.memo((props: IMessageViewProps) => {
             {isGraphQLQuery ? (
               <div className="flex flex-col">
                 <CodeView
-                  text={message.data.query}
+                  text={message.data.query!}
                   language={"graphql"}
                   className="p-4"
                 />

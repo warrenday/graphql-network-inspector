@@ -1,0 +1,37 @@
+{
+  "name": "mock-server",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"next dev\" \"tsx ws-server.ts\"",
+    "dev:next": "next dev",
+    "dev:ws": "tsx ws-server.ts",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^14.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "graphql": "^16.8.0",
+    "graphql-yoga": "^5.1.0",
+    "urql": "^4.0.0",
+    "@urql/core": "^5.0.0",
+    "@urql/exchange-graphcache": "^7.0.0",
+    "graphql-ws": "^5.14.0",
+    "ws": "^8.16.0",
+    "@graphql-tools/schema": "^10.0.0",
+    "tsx": "^4.7.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0",
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/ws": "^8.5.0",
+    "typescript": "^5.0.0",
+    "eslint": "^8.0.0",
+    "eslint-config-next": "^14.2.0"
+  }
+}

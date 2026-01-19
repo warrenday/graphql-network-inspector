@@ -12,6 +12,29 @@ const eventEmitter = new EventEmitter<{
   onBeforeSendHeaders: { data: IMockRequest['webRequestHeaderDetails'] }
   onRequestFinished: { data: IMockRequest['networkRequest'] }
 }>()
+
+// Debugger event emitter for WebSocket/SSE monitoring
+type DebuggerEventCallback = (
+  source: chrome.debugger.Debuggee,
+  method: string,
+  params?: object
+) => void
+const debuggerEventEmitter = new EventEmitter<{
+  debuggerEvent: [chrome.debugger.Debuggee, string, object | undefined]
+}>()
+const debuggerEventListeners: DebuggerEventCallback[] = []
+
+export const emitDebuggerEvent = (
+  source: chrome.debugger.Debuggee,
+  method: string,
+  params?: object
+) => {
+  debuggerEventListeners.forEach((listener) => listener(source, method, params))
+}
+
+export const clearDebuggerListeners = () => {
+  debuggerEventListeners.length = 0
+}
 const handleKeydown = (e: KeyboardEvent) => {
   if (e.code === 'Digit1') {
     mockRequests.forEach(async (request) => {
@@ -104,6 +127,36 @@ const mockedChrome: DeepPartial<typeof chrome> = {
       }) as typeof chrome.storage.local.get,
       set: async (items: Record<string, any>) => {
         mockStorage = { ...mockStorage, ...items }
+      },
+    },
+  },
+  debugger: {
+    attach: ((_target: chrome.debugger.Debuggee, _version: string, callback?: () => void) => {
+      if (callback) callback()
+      else return Promise.resolve()
+    }) as typeof chrome.debugger.attach,
+    detach: ((_target: chrome.debugger.Debuggee, callback?: () => void) => {
+      if (callback) callback()
+      else return Promise.resolve()
+    }) as typeof chrome.debugger.detach,
+    sendCommand: ((
+      _target: chrome.debugger.Debuggee,
+      _method: string,
+      _commandParams?: object,
+      callback?: (result?: object) => void
+    ) => {
+      if (callback) callback()
+      else return Promise.resolve({})
+    }) as typeof chrome.debugger.sendCommand,
+    onEvent: {
+      addListener: (callback: DebuggerEventCallback) => {
+        debuggerEventListeners.push(callback)
+      },
+      removeListener: (callback: DebuggerEventCallback) => {
+        const index = debuggerEventListeners.indexOf(callback)
+        if (index > -1) {
+          debuggerEventListeners.splice(index, 1)
+        }
       },
     },
   },

@@ -1,450 +1,344 @@
-import { renderHook } from '@testing-library/react-hooks'
-import { DeepPartial } from 'utility-types'
+import { renderHook, act } from '@testing-library/react-hooks'
 import { useWebSocketNetworkMonitor } from './useWebSocketNetworkMonitor'
-import { getHAR } from '../services/networkMonitor'
-
-jest.mock('../services/networkMonitor')
-const mockGetHAR = getHAR as jest.MockedFunction<any>
+import {
+  emitDebuggerEvent,
+  clearDebuggerListeners,
+} from '../mocks/mock-chrome'
 
 describe('useWebSocketNetworkMonitor', () => {
   beforeEach(() => {
-    jest.resetAllMocks()
+    clearDebuggerListeners()
   })
 
-  it('polls the HAR log and returns the websocket requests', async () => {
-    mockGetHAR.mockResolvedValue({
-      entries: [
-        {
-          // This is a normal request, not a websocket
-          // should not appear in output
-        },
-        {
-          _resourceType: 'websocket',
-          request: {
-            url: 'ws://localhost:4000/graphql',
-            method: 'GET',
-            headers: [
-              { name: 'RequestHeader1', value: 'Value1' },
-              { name: 'RequestHeader2', value: 'Value2' },
-            ],
-          },
-          response: {
-            status: 101,
-            headers: [
-              { name: 'ResponseHeader1', value: 'Value1' },
-              { name: 'ResponseHeader2', value: 'Value2' },
-            ],
-          },
-          _webSocketMessages: [
-            {
-              data: JSON.stringify({
-                payload: {
-                  data: { reviewAdded: { stars: 4, episode: 'NEWHOPE' } },
-                },
-              }),
-              opcode: 1,
-              time: 1234,
-              type: 'receive',
-            },
-            {
-              data: JSON.stringify({
-                payload: {
-                  data: { reviewAdded: { stars: 4, episode: 'NEWHOPE' } },
-                },
-              }),
-              opcode: 1,
-              time: 1234,
-              type: 'receive',
-            },
-          ],
-        },
-      ],
-    } as DeepPartial<chrome.devtools.network.HARLog>)
+  const emitWebSocketCreated = (requestId: string, url: string) => {
+    emitDebuggerEvent({ tabId: 1 }, 'Network.webSocketCreated', {
+      requestId,
+      url,
+    })
+  }
 
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useWebSocketNetworkMonitor()
-    )
-
-    await waitForNextUpdate()
-
-    expect(result.current[0]).toEqual([
-      {
-        id: 'subscription-1',
+  const emitWebSocketHandshake = (
+    requestId: string,
+    headers: Record<string, string> = {},
+    requestHeaders: Record<string, string> = {}
+  ) => {
+    emitDebuggerEvent({ tabId: 1 }, 'Network.webSocketHandshakeResponseReceived', {
+      requestId,
+      response: {
         status: 101,
-        url: 'ws://localhost:4000/graphql',
-        method: 'GET',
-        request: {
-          headers: [
-            { name: 'RequestHeader1', value: 'Value1' },
-            { name: 'RequestHeader2', value: 'Value2' },
-          ],
-        },
-        response: {
-          headers: [
-            { name: 'ResponseHeader1', value: 'Value1' },
-            { name: 'ResponseHeader2', value: 'Value2' },
-          ],
-        },
-        messages: [
-          {
-            data: {
-              payload: {
-                data: {
-                  reviewAdded: {
-                    episode: 'NEWHOPE',
-                    stars: 4,
-                  },
-                },
-              },
-            },
-            time: 1234,
-            type: 'receive',
-          },
-          {
-            data: {
-              payload: {
-                data: {
-                  reviewAdded: {
-                    episode: 'NEWHOPE',
-                    stars: 4,
-                  },
-                },
-              },
-            },
-            time: 1234,
-            type: 'receive',
-          },
-        ],
+        headers,
+        requestHeaders,
       },
-    ])
-  })
+    })
+  }
 
-  it('only returns sent requests which contain a valid graphql query', async () => {
-    mockGetHAR.mockResolvedValue({
-      entries: [
-        {
-          _resourceType: 'websocket',
-          request: {
-            url: 'ws://localhost:4000/graphql',
-            method: 'GET',
-            headers: [
-              { name: 'RequestHeader1', value: 'Value1' },
-              { name: 'RequestHeader2', value: 'Value2' },
-            ],
-          },
-          response: {
-            status: 101,
-            headers: [
-              { name: 'ResponseHeader1', value: 'Value1' },
-              { name: 'ResponseHeader2', value: 'Value2' },
-            ],
-          },
-          _webSocketMessages: [
-            {
-              data: JSON.stringify({
-                payload: {
-                  query: 'invalid query',
-                },
-              }),
-              opcode: 1,
-              time: 1234,
-              type: 'send',
-            },
-            {
-              data: JSON.stringify({
-                payload: {
-                  query: 'query users { id }',
-                },
-              }),
-              opcode: 1,
-              time: 1234,
-              type: 'send',
-            },
-          ],
-        },
-      ],
-    } as DeepPartial<chrome.devtools.network.HARLog>)
+  const emitWebSocketFrameSent = (requestId: string, payloadData: string) => {
+    emitDebuggerEvent({ tabId: 1 }, 'Network.webSocketFrameSent', {
+      requestId,
+      response: { payloadData },
+    })
+  }
 
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useWebSocketNetworkMonitor()
-    )
+  const emitWebSocketFrameReceived = (requestId: string, payloadData: string) => {
+    emitDebuggerEvent({ tabId: 1 }, 'Network.webSocketFrameReceived', {
+      requestId,
+      response: { payloadData },
+    })
+  }
 
-    await waitForNextUpdate()
-
-    expect(result.current[0]).toEqual([
-      {
-        id: 'subscription-0',
-        status: 101,
-        url: 'ws://localhost:4000/graphql',
-        method: 'GET',
-        request: {
-          headers: [
-            { name: 'RequestHeader1', value: 'Value1' },
-            { name: 'RequestHeader2', value: 'Value2' },
-          ],
-        },
-        response: {
-          headers: [
-            { name: 'ResponseHeader1', value: 'Value1' },
-            { name: 'ResponseHeader2', value: 'Value2' },
-          ],
-        },
-        messages: [
-          {
-            data: {
-              payload: {
-                query: 'query users { id }',
-              },
-            },
-            time: 1234,
-            type: 'send',
-          },
-        ],
+  const emitSSERequest = (
+    requestId: string,
+    url: string,
+    method = 'POST',
+    headers: Record<string, string> = {}
+  ) => {
+    emitDebuggerEvent({ tabId: 1 }, 'Network.requestWillBeSent', {
+      requestId,
+      request: {
+        url,
+        method,
+        headers: { ...headers, Accept: 'text/event-stream' },
       },
-    ])
-  })
+    })
+  }
 
-  it('accepts sent messages for rails channel', async () => {
-    mockGetHAR.mockResolvedValue({
-      entries: [
-        {
-          _resourceType: 'websocket',
-          request: {
-            url: 'ws://localhost:4000/graphql',
-            method: 'GET',
-            headers: [
-              { name: 'RequestHeader1', value: 'Value1' },
-              { name: 'RequestHeader2', value: 'Value2' },
-            ],
+  const emitSSEResponse = (
+    requestId: string,
+    status = 200,
+    headers: Record<string, string> = {}
+  ) => {
+    emitDebuggerEvent({ tabId: 1 }, 'Network.responseReceived', {
+      requestId,
+      response: { status, headers },
+    })
+  }
+
+  const emitSSEMessage = (requestId: string, data: string) => {
+    emitDebuggerEvent({ tabId: 1 }, 'Network.eventSourceMessageReceived', {
+      requestId,
+      data,
+    })
+  }
+
+  it('captures WebSocket connections and received messages', async () => {
+    const { result } = renderHook(() => useWebSocketNetworkMonitor())
+
+    act(() => {
+      emitWebSocketCreated('req-1', 'ws://localhost:4000/graphql')
+      emitWebSocketHandshake(
+        'req-1',
+        { 'Upgrade': 'websocket' },
+        { 'Origin': 'http://localhost:3000' }
+      )
+      emitWebSocketFrameReceived(
+        'req-1',
+        JSON.stringify({
+          payload: {
+            data: { reviewAdded: { stars: 4, episode: 'NEWHOPE' } },
           },
-          response: {
-            status: 101,
-            headers: [
-              { name: 'ResponseHeader1', value: 'Value1' },
-              { name: 'ResponseHeader2', value: 'Value2' },
-            ],
-          },
-          _webSocketMessages: [
-            {
-              data: JSON.stringify({
-                command: 'message',
-                identifier:
-                  '{"channel":"GraphqlChannel","channelId":"1932245fcc6"}',
-                data: JSON.stringify({
-                  query: 'query users { id }',
-                  variables: {},
-                  operationName: 'Users',
-                  action: 'execute',
-                }),
-              }),
-              opcode: 1,
-              time: 1234,
-              type: 'send',
-            },
-          ],
-        },
-      ],
-    } as DeepPartial<chrome.devtools.network.HARLog>)
-
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useWebSocketNetworkMonitor()
-    )
-
-    await waitForNextUpdate()
-
-    expect(result.current[0]).toEqual([
-      {
-        id: 'subscription-0',
-        status: 101,
-        url: 'ws://localhost:4000/graphql',
-        method: 'GET',
-        request: {
-          headers: [
-            { name: 'RequestHeader1', value: 'Value1' },
-            { name: 'RequestHeader2', value: 'Value2' },
-          ],
-        },
-        response: {
-          headers: [
-            { name: 'ResponseHeader1', value: 'Value1' },
-            { name: 'ResponseHeader2', value: 'Value2' },
-          ],
-        },
-        messages: [
-          {
-            data: {
-              command: 'message',
-              identifier: {
-                channel: 'GraphqlChannel',
-                channelId: '1932245fcc6',
-              },
-              data: {
-                query: 'query users { id }',
-                variables: {},
-                operationName: 'Users',
-                action: 'execute',
-              },
-            },
-            time: 1234,
-            type: 'send',
-          },
-        ],
-      },
-    ])
-  })
-
-  it('accepts received messages for rails channel', async () => {
-    mockGetHAR.mockResolvedValue({
-      entries: [
-        {
-          _resourceType: 'websocket',
-          request: {
-            url: 'ws://localhost:4000/graphql',
-            method: 'GET',
-            headers: [
-              { name: 'RequestHeader1', value: 'Value1' },
-              { name: 'RequestHeader2', value: 'Value2' },
-            ],
-          },
-          response: {
-            status: 101,
-            headers: [
-              { name: 'ResponseHeader1', value: 'Value1' },
-              { name: 'ResponseHeader2', value: 'Value2' },
-            ],
-          },
-          _webSocketMessages: [
-            {
-              data: JSON.stringify({
-                identifier:
-                  '{"channel":"GraphqlChannel","channelId":"1932245fcc6"}',
-                message: {
-                  reviewAdded: { stars: 4, episode: 'CLONE_WARS' },
-                },
-              }),
-              time: 1234,
-              type: 'received',
-            },
-          ],
-        },
-      ],
-    } as DeepPartial<chrome.devtools.network.HARLog>)
-
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useWebSocketNetworkMonitor()
-    )
-
-    await waitForNextUpdate()
-
-    expect(result.current[0]).toEqual([
-      {
-        id: 'subscription-0',
-        status: 101,
-        url: 'ws://localhost:4000/graphql',
-        method: 'GET',
-        request: {
-          headers: [
-            { name: 'RequestHeader1', value: 'Value1' },
-            { name: 'RequestHeader2', value: 'Value2' },
-          ],
-        },
-        response: {
-          headers: [
-            { name: 'ResponseHeader1', value: 'Value1' },
-            { name: 'ResponseHeader2', value: 'Value2' },
-          ],
-        },
-        messages: [
-          {
-            data: {
-              identifier: {
-                channel: 'GraphqlChannel',
-                channelId: '1932245fcc6',
-              },
-              data: { reviewAdded: { stars: 4, episode: 'CLONE_WARS' } },
-            },
-            time: 1234,
-            type: 'received',
-          },
-        ],
-      },
-    ])
-  })
-
-  it('only returns messages from entries which filters by url term', async () => {
-    mockGetHAR.mockResolvedValue({
-      entries: [
-        {
-          _resourceType: 'websocket',
-          request: {
-            url: 'ws://localhost:4000/graphql',
-            method: 'GET',
-            headers: [],
-          },
-          response: {
-            status: 101,
-            headers: [],
-          },
-          _webSocketMessages: [],
-        },
-        // Ignored as url does not contain "graphql"
-        {
-          _resourceType: 'websocket',
-          request: {
-            url: 'ws://localhost:4000/some-other-url',
-            method: 'GET',
-            headers: [],
-          },
-          response: {
-            status: 101,
-            headers: [],
-          },
-          _webSocketMessages: [],
-        },
-      ],
-    } as DeepPartial<chrome.devtools.network.HARLog>)
-
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useWebSocketNetworkMonitor({
-        isEnabled: true,
-        urlFilter: 'some-other-url',
-      })
-    )
-
-    await waitForNextUpdate()
-
-    expect(result.current[0]).toEqual([
-      {
-        id: 'subscription-1',
-        status: 101,
-        url: 'ws://localhost:4000/some-other-url',
-        method: 'GET',
-        request: {
-          headers: [],
-        },
-        response: {
-          headers: [],
-        },
-        messages: [],
-      },
-    ])
-  })
-
-  it('does not poll the HAR log when "isEnabled" is false', async () => {
-    mockGetHAR.mockResolvedValue({
-      entries: [],
+        })
+      )
     })
 
-    const { rerender, waitForNextUpdate } = renderHook(
-      (props) => useWebSocketNetworkMonitor(props),
-      { initialProps: { isEnabled: false, urlFilter: 'graphql' } }
+    expect(result.current[0]).toHaveLength(1)
+    expect(result.current[0][0]).toMatchObject({
+      id: 'req-1',
+      status: 101,
+      url: 'ws://localhost:4000/graphql',
+      method: 'WS',
+      messages: [
+        {
+          type: 'receive',
+          data: {
+            payload: {
+              data: { reviewAdded: { stars: 4, episode: 'NEWHOPE' } },
+            },
+          },
+        },
+      ],
+    })
+  })
+
+  it('only captures sent messages with valid GraphQL queries', async () => {
+    const { result } = renderHook(() => useWebSocketNetworkMonitor())
+
+    act(() => {
+      emitWebSocketCreated('req-1', 'ws://localhost:4000/graphql')
+      emitWebSocketHandshake('req-1')
+
+      // Invalid query - should be ignored
+      emitWebSocketFrameSent(
+        'req-1',
+        JSON.stringify({ payload: { query: 'invalid query' } })
+      )
+
+      // Valid query - should be captured
+      emitWebSocketFrameSent(
+        'req-1',
+        JSON.stringify({ payload: { query: 'query users { id }' } })
+      )
+    })
+
+    expect(result.current[0]).toHaveLength(1)
+    expect(result.current[0][0].messages).toHaveLength(1)
+    expect(result.current[0][0].messages[0]).toMatchObject({
+      type: 'send',
+      data: { payload: { query: 'query users { id }' } },
+    })
+  })
+
+  it('accepts sent messages for Rails ActionCable channel', async () => {
+    const { result } = renderHook(() => useWebSocketNetworkMonitor())
+
+    act(() => {
+      emitWebSocketCreated('req-1', 'ws://localhost:4000/graphql')
+      emitWebSocketHandshake('req-1')
+      emitWebSocketFrameSent(
+        'req-1',
+        JSON.stringify({
+          command: 'message',
+          identifier: '{"channel":"GraphqlChannel","channelId":"1932245fcc6"}',
+          data: JSON.stringify({
+            query: 'query users { id }',
+            variables: {},
+            operationName: 'Users',
+            action: 'execute',
+          }),
+        })
+      )
+    })
+
+    expect(result.current[0]).toHaveLength(1)
+    expect(result.current[0][0].messages[0]).toMatchObject({
+      type: 'send',
+      data: {
+        command: 'message',
+        identifier: { channel: 'GraphqlChannel', channelId: '1932245fcc6' },
+        data: {
+          query: 'query users { id }',
+          variables: {},
+          operationName: 'Users',
+          action: 'execute',
+        },
+      },
+    })
+  })
+
+  it('accepts received messages for Rails ActionCable channel', async () => {
+    const { result } = renderHook(() => useWebSocketNetworkMonitor())
+
+    act(() => {
+      emitWebSocketCreated('req-1', 'ws://localhost:4000/graphql')
+      emitWebSocketHandshake('req-1')
+      emitWebSocketFrameReceived(
+        'req-1',
+        JSON.stringify({
+          identifier: '{"channel":"GraphqlChannel","channelId":"1932245fcc6"}',
+          message: { reviewAdded: { stars: 4, episode: 'CLONE_WARS' } },
+        })
+      )
+    })
+
+    expect(result.current[0]).toHaveLength(1)
+    expect(result.current[0][0].messages[0]).toMatchObject({
+      type: 'receive',
+      data: {
+        identifier: { channel: 'GraphqlChannel', channelId: '1932245fcc6' },
+        data: { reviewAdded: { stars: 4, episode: 'CLONE_WARS' } },
+      },
+    })
+  })
+
+  it('filters connections by URL when urlFilter is provided', async () => {
+    const { result } = renderHook(() =>
+      useWebSocketNetworkMonitor({ isEnabled: true, urlFilter: 'other-url' })
     )
 
-    expect(mockGetHAR).not.toHaveBeenCalled()
+    act(() => {
+      // This connection should be filtered out
+      emitWebSocketCreated('req-1', 'ws://localhost:4000/graphql')
+      emitWebSocketHandshake('req-1')
+      emitWebSocketFrameReceived(
+        'req-1',
+        JSON.stringify({ payload: { data: { test: 1 } } })
+      )
 
-    rerender({ isEnabled: true, urlFilter: 'graphql' })
-    await waitForNextUpdate()
+      // This connection should be included
+      emitWebSocketCreated('req-2', 'ws://localhost:4000/other-url')
+      emitWebSocketHandshake('req-2')
+      emitWebSocketFrameReceived(
+        'req-2',
+        JSON.stringify({ payload: { data: { test: 2 } } })
+      )
+    })
 
-    expect(mockGetHAR).toHaveBeenCalledTimes(1)
+    expect(result.current[0]).toHaveLength(1)
+    expect(result.current[0][0].url).toBe('ws://localhost:4000/other-url')
+  })
+
+  it('does not capture events when isEnabled is false', async () => {
+    const { result, rerender } = renderHook(
+      (props) => useWebSocketNetworkMonitor(props),
+      { initialProps: { isEnabled: false, urlFilter: '' } }
+    )
+
+    act(() => {
+      emitWebSocketCreated('req-1', 'ws://localhost:4000/graphql')
+      emitWebSocketHandshake('req-1')
+      emitWebSocketFrameReceived(
+        'req-1',
+        JSON.stringify({ payload: { data: { test: 1 } } })
+      )
+    })
+
+    expect(result.current[0]).toHaveLength(0)
+
+    // Enable monitoring
+    rerender({ isEnabled: true, urlFilter: '' })
+
+    act(() => {
+      emitWebSocketCreated('req-2', 'ws://localhost:4000/graphql')
+      emitWebSocketHandshake('req-2')
+      emitWebSocketFrameReceived(
+        'req-2',
+        JSON.stringify({ payload: { data: { test: 2 } } })
+      )
+    })
+
+    expect(result.current[0]).toHaveLength(1)
+  })
+
+  it('captures SSE connections and messages', async () => {
+    const { result } = renderHook(() => useWebSocketNetworkMonitor())
+
+    act(() => {
+      emitSSERequest('req-1', 'http://localhost:3000/api/graphql', 'POST')
+      emitSSEResponse('req-1', 200, { 'Content-Type': 'text/event-stream' })
+      emitSSEMessage(
+        'req-1',
+        JSON.stringify({ payload: { data: { userCreated: { id: '123' } } } })
+      )
+    })
+
+    expect(result.current[0]).toHaveLength(1)
+    expect(result.current[0][0]).toMatchObject({
+      id: 'req-1',
+      url: 'http://localhost:3000/api/graphql',
+      method: 'POST',
+      status: 200,
+      messages: [
+        {
+          type: 'receive',
+          data: { payload: { data: { userCreated: { id: '123' } } } },
+        },
+      ],
+    })
+  })
+
+  it('clears all requests when clearRequests is called', async () => {
+    const { result } = renderHook(() => useWebSocketNetworkMonitor())
+
+    act(() => {
+      emitWebSocketCreated('req-1', 'ws://localhost:4000/graphql')
+      emitWebSocketHandshake('req-1')
+      emitWebSocketFrameReceived(
+        'req-1',
+        JSON.stringify({ payload: { data: { test: 1 } } })
+      )
+    })
+
+    expect(result.current[0]).toHaveLength(1)
+
+    act(() => {
+      result.current[1]() // Call clearRequests
+    })
+
+    expect(result.current[0]).toHaveLength(0)
+  })
+
+  it('captures headers from WebSocket handshake', async () => {
+    const { result } = renderHook(() => useWebSocketNetworkMonitor())
+
+    act(() => {
+      emitWebSocketCreated('req-1', 'ws://localhost:4000/graphql')
+      emitWebSocketHandshake(
+        'req-1',
+        { 'Sec-WebSocket-Accept': 'abc123', 'Connection': 'Upgrade' },
+        { 'Origin': 'http://localhost:3000', 'Sec-WebSocket-Key': 'xyz789' }
+      )
+      emitWebSocketFrameReceived(
+        'req-1',
+        JSON.stringify({ payload: { data: { test: 1 } } })
+      )
+    })
+
+    expect(result.current[0][0].request.headers).toEqual([
+      { name: 'Origin', value: 'http://localhost:3000' },
+      { name: 'Sec-WebSocket-Key', value: 'xyz789' },
+    ])
+    expect(result.current[0][0].response.headers).toEqual([
+      { name: 'Sec-WebSocket-Accept', value: 'abc123' },
+      { name: 'Connection', value: 'Upgrade' },
+    ])
   })
 })
