@@ -1,9 +1,10 @@
-import { createServer } from 'http';
+import { createServer, IncomingMessage, ServerResponse } from 'http';
 import { parse } from 'url';
 import next from 'next';
 import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import crypto from 'crypto';
 import {
   generateWildPokemon,
   getAllPokemons,
@@ -18,6 +19,35 @@ import {
 const dev = process.env.NODE_ENV !== 'production';
 const hostname = '0.0.0.0';
 const port = parseInt(process.env.PORT || '3000', 10);
+
+const COOKIE_NAME = 'userId';
+
+function parseCookies(cookieHeader: string | undefined): Record<string, string> {
+  const cookies: Record<string, string> = {};
+  if (!cookieHeader) return cookies;
+
+  cookieHeader.split(';').forEach((cookie) => {
+    const [name, ...rest] = cookie.split('=');
+    if (name && rest.length > 0) {
+      cookies[name.trim()] = rest.join('=').trim();
+    }
+  });
+  return cookies;
+}
+
+function generateUserId(): string {
+  return crypto.randomUUID();
+}
+
+function getUserIdFromRequest(req: IncomingMessage): string | null {
+  const cookies = parseCookies(req.headers.cookie);
+  return cookies[COOKIE_NAME] || null;
+}
+
+function setUserIdCookie(res: ServerResponse, userId: string): void {
+  const maxAge = 60 * 60 * 24 * 365; // 1 year
+  res.setHeader('Set-Cookie', `${COOKIE_NAME}=${userId}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}`);
+}
 
 const app = next({ dev, hostname, port });
 const handle = app.getRequestHandler();
@@ -106,6 +136,13 @@ const schema = makeExecutableSchema({ typeDefs, resolvers });
 
 app.prepare().then(() => {
   const server = createServer((req, res) => {
+    // Ensure user has a userId cookie
+    let userId = getUserIdFromRequest(req);
+    if (!userId) {
+      userId = generateUserId();
+      setUserIdCookie(res, userId);
+    }
+
     const parsedUrl = parse(req.url!, true);
     handle(req, res, parsedUrl);
   });
@@ -118,7 +155,15 @@ app.prepare().then(() => {
   useServer(
     {
       schema,
-      context: () => ({ userId: 'default' }),
+      context: (ctx) => {
+        const req = ctx.extra.request;
+        let userId = getUserIdFromRequest(req);
+        // If no cookie, generate a temporary ID for this connection
+        if (!userId) {
+          userId = generateUserId();
+        }
+        return { userId };
+      },
     },
     wss
   );

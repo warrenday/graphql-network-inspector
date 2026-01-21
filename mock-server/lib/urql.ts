@@ -5,16 +5,14 @@ import { createClient as createWSClient } from 'graphql-ws';
 
 let client: Client | null = null;
 
-function getWsUrl(): string {
-  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-  return `${protocol}//${window.location.host}/graphql`;
-}
-
 export function getUrqlClient(): Client {
   if (client) return client;
 
   const wsClient = createWSClient({
-    url: getWsUrl(),
+    url: () => {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      return `${protocol}//${window.location.host}/graphql`;
+    },
   });
 
   client = createClient({
