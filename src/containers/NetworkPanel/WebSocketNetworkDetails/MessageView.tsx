@@ -8,6 +8,7 @@ import * as safeJson from "@/helpers/safeJson"
 interface IMessageViewProps {
   messages: IWebSocketMessage[]
   showFullMessage: boolean
+  newestFirst: boolean
 }
 
 /**
@@ -22,11 +23,12 @@ const getReadableTime = (time: number): string => {
 }
 
 const MessageView = React.memo((props: IMessageViewProps) => {
-  const { messages, showFullMessage } = props
+  const { messages, showFullMessage, newestFirst } = props
+  const orderedMessages = newestFirst ? [...messages].reverse() : messages
 
   return (
     <Panels>
-      {messages.map((message, i) => {
+      {orderedMessages.map((message, i) => {
         const payload = JSON.stringify(showFullMessage ? message.data : message.data.payload, null, 2)
         const isGraphQLQuery = message.type === "send" && message.data?.query
 

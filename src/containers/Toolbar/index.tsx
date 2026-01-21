@@ -23,6 +23,8 @@ interface IToolbarProps {
   onWebsocketUrlFilterChange: (websocketUrlFilter: string) => void
   showFullWebsocketMessage: boolean
   onShowFullWebsocketMessageChange: (showFullWebsocketMessage: boolean) => void
+  newestFirst: boolean
+  onNewestFirstChange: (newestFirst: boolean) => void
   onClear: () => void
 }
 
@@ -40,6 +42,8 @@ export const Toolbar = (props: IToolbarProps) => {
     onWebsocketUrlFilterChange,
     showFullWebsocketMessage,
     onShowFullWebsocketMessageChange,
+    newestFirst,
+    onNewestFirstChange,
     onClear,
   } = props
   const { setIsSearchOpen } = useSearch()
@@ -142,6 +146,13 @@ export const Toolbar = (props: IToolbarProps) => {
             checked={showFullWebsocketMessage}
             onChange={onShowFullWebsocketMessageChange}
             testId="show-full-websocket-message-checkbox"
+          />
+          <Checkbox
+            id="newestFirst"
+            label="Newest First"
+            checked={newestFirst}
+            onChange={onNewestFirstChange}
+            testId="newest-first-checkbox"
           />
         </Bar>
       )}

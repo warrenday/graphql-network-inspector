@@ -188,6 +188,10 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
           onShowFullWebsocketMessageChange={(shouldShowFullWebsocketMessage) => {
             setUserSettings({ shouldShowFullWebsocketMessage })
           }}
+          newestFirst={userSettings.isNewestFirstActive}
+          onNewestFirstChange={(isNewestFirstActive) => {
+            setUserSettings({ isNewestFirstActive })
+          }}
           onClear={() => {
             setSelectedRowId(null)
             clearWebRequests()
@@ -220,6 +224,7 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
             {selectedWebSocketRequest && (
               <WebSocketNetworkDetails
                 showFullMessage={userSettings.shouldShowFullWebsocketMessage}
+                newestFirst={userSettings.isNewestFirstActive}
                 data={selectedWebSocketRequest}
                 onClose={() => {
                   setSelectedRowId(null)

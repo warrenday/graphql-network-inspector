@@ -7,6 +7,7 @@ export interface IUserSettings {
   filter: string
   websocketUrlFilter: string
   shouldShowFullWebsocketMessage: boolean
+  isNewestFirstActive: boolean
 }
 
 export const getUserSettings = (

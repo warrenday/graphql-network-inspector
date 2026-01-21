@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"next dev\" \"tsx ws-server.ts\"",
+    "dev": "tsx server.ts",
     "dev:next": "next dev",
     "dev:ws": "tsx ws-server.ts",
     "build": "next build",
-    "start": "next start",
+    "start": "tsx server.ts",
     "lint": "next lint"
   },
   "dependencies": {
@@ -22,7 +22,8 @@
     "graphql-ws": "^5.14.0",
     "ws": "^8.16.0",
     "@graphql-tools/schema": "^10.0.0",
-    "tsx": "^4.7.0"
+    "tsx": "^4.7.0",
+    "typescript": "^5.0.0"
   },
   "devDependencies": {
     "concurrently": "^8.2.0",
@@ -30,7 +31,6 @@
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "@types/ws": "^8.5.0",
-    "typescript": "^5.0.0",
     "eslint": "^8.0.0",
     "eslint-config-next": "^14.2.0"
   }
