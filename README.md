@@ -58,6 +58,10 @@ yarn start
 
 This will also cache files in the `build` so you can load the directory as an unpacked extension in your browser. Changes will be loaded automatically, however you often have to close and reopen devtools.
 
+## Mock Server
+
+A mock server is available at https://graphql-mock-service-de771830b5b1.herokuapp.com and can be used to test the features of the extension.
+
 ## Contribute
 
 PRs are welcome! The best way to do this is to first fork the repository, create a branch and open a pull request back to this repository.
