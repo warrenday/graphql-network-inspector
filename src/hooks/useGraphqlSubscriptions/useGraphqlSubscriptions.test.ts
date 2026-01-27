@@ -1,11 +1,11 @@
 import { renderHook, act } from '@testing-library/react-hooks'
-import { useWebSocketNetworkMonitor } from './useWebSocketNetworkMonitor'
+import { useGraphqlSubscriptions } from './useGraphqlSubscriptions'
 import {
   emitDebuggerEvent,
   clearDebuggerListeners,
-} from '../mocks/mock-chrome'
+} from '../../mocks/mock-chrome'
 
-describe('useWebSocketNetworkMonitor', () => {
+describe('useGraphqlSubscriptions', () => {
   beforeEach(() => {
     clearDebuggerListeners()
   })
@@ -81,7 +81,7 @@ describe('useWebSocketNetworkMonitor', () => {
   }
 
   it('captures WebSocket connections and received messages', async () => {
-    const { result } = renderHook(() => useWebSocketNetworkMonitor())
+    const { result } = renderHook(() => useGraphqlSubscriptions())
 
     act(() => {
       emitWebSocketCreated('req-1', 'ws://localhost:4000/graphql')
@@ -120,7 +120,7 @@ describe('useWebSocketNetworkMonitor', () => {
   })
 
   it('only captures sent messages with valid GraphQL queries', async () => {
-    const { result } = renderHook(() => useWebSocketNetworkMonitor())
+    const { result } = renderHook(() => useGraphqlSubscriptions())
 
     act(() => {
       emitWebSocketCreated('req-1', 'ws://localhost:4000/graphql')
@@ -148,7 +148,7 @@ describe('useWebSocketNetworkMonitor', () => {
   })
 
   it('accepts sent messages for Rails ActionCable channel', async () => {
-    const { result } = renderHook(() => useWebSocketNetworkMonitor())
+    const { result } = renderHook(() => useGraphqlSubscriptions())
 
     act(() => {
       emitWebSocketCreated('req-1', 'ws://localhost:4000/graphql')
@@ -185,7 +185,7 @@ describe('useWebSocketNetworkMonitor', () => {
   })
 
   it('accepts received messages for Rails ActionCable channel', async () => {
-    const { result } = renderHook(() => useWebSocketNetworkMonitor())
+    const { result } = renderHook(() => useGraphqlSubscriptions())
 
     act(() => {
       emitWebSocketCreated('req-1', 'ws://localhost:4000/graphql')
@@ -211,7 +211,7 @@ describe('useWebSocketNetworkMonitor', () => {
 
   it('filters connections by URL when urlFilter is provided', async () => {
     const { result } = renderHook(() =>
-      useWebSocketNetworkMonitor({ isEnabled: true, urlFilter: 'other-url' })
+      useGraphqlSubscriptions({ isEnabled: true, urlFilter: 'other-url' })
     )
 
     act(() => {
@@ -238,7 +238,7 @@ describe('useWebSocketNetworkMonitor', () => {
 
   it('does not capture events when isEnabled is false', async () => {
     const { result, rerender } = renderHook(
-      (props) => useWebSocketNetworkMonitor(props),
+      (props) => useGraphqlSubscriptions(props),
       { initialProps: { isEnabled: false, urlFilter: '' } }
     )
 
@@ -269,7 +269,7 @@ describe('useWebSocketNetworkMonitor', () => {
   })
 
   it('captures SSE connections and messages', async () => {
-    const { result } = renderHook(() => useWebSocketNetworkMonitor())
+    const { result } = renderHook(() => useGraphqlSubscriptions())
 
     act(() => {
       emitSSERequest('req-1', 'http://localhost:3000/api/graphql', 'POST')
@@ -296,7 +296,7 @@ describe('useWebSocketNetworkMonitor', () => {
   })
 
   it('clears all requests when clearRequests is called', async () => {
-    const { result } = renderHook(() => useWebSocketNetworkMonitor())
+    const { result } = renderHook(() => useGraphqlSubscriptions())
 
     act(() => {
       emitWebSocketCreated('req-1', 'ws://localhost:4000/graphql')
@@ -317,7 +317,7 @@ describe('useWebSocketNetworkMonitor', () => {
   })
 
   it('captures headers from WebSocket handshake', async () => {
-    const { result } = renderHook(() => useWebSocketNetworkMonitor())
+    const { result } = renderHook(() => useGraphqlSubscriptions())
 
     act(() => {
       emitWebSocketCreated('req-1', 'ws://localhost:4000/graphql')

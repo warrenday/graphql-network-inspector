@@ -10,6 +10,7 @@ const useUserSettings = () => {
     isPreserveLogsActive: false,
     isInvertFilterActive: false,
     isRegexActive: false,
+    isNewestFirstActive: false,
     filter: '',
     websocketUrlFilter: '',
     shouldShowFullWebsocketMessage: true,

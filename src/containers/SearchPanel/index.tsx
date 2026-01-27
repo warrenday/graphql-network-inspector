@@ -7,11 +7,11 @@ import { SearchResults } from './SearchResults'
 import { Header } from '@/components/Header'
 import { CloseButton } from '@/components/CloseButton'
 import { SearchInput } from '@/components/SearchInput'
-import { IWebSocketNetworkRequest } from '@/hooks/useWebSocketNetworkMonitor'
+import { ISubscriptionRequest } from '@/hooks/useGraphqlSubscriptions'
 
 interface ISearchPanelProps {
   networkRequests: ICompleteNetworkRequest[]
-  webSocketNetworkRequests: IWebSocketNetworkRequest[]
+  webSocketNetworkRequests: ISubscriptionRequest[]
   onResultClick: (
     searchResult: ISearchResult,
     searchResultType: NetworkTabs

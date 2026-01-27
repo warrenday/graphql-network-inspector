@@ -8,7 +8,7 @@ import { useSearch } from '@/hooks/useSearch'
 import { useNetworkTabs } from '@/hooks/useNetworkTabs'
 import { NetworkPanel } from '../NetworkPanel'
 import { SearchPanel } from '../SearchPanel'
-import { useWebSocketNetworkMonitor } from '../../hooks/useWebSocketNetworkMonitor'
+import { useGraphqlSubscriptions } from '../../hooks/useGraphqlSubscriptions'
 import { useOperationFilters } from '../../hooks/useOperationFilters'
 import useUserSettings from '../../hooks/useUserSettings'
 import VersionNumber from '../../components/VersionNumber'
@@ -21,7 +21,7 @@ export const Main = () => {
   const [userSettings, setUserSettings] = useUserSettings()
   const [networkRequests, clearWebRequests] = useNetworkMonitor()
   const [webSocketNetworkRequests, clearWebSocketNetworkRequests] =
-    useWebSocketNetworkMonitor({
+    useGraphqlSubscriptions({
       isEnabled: operationFilters.subscription,
       urlFilter: userSettings.websocketUrlFilter,
     })

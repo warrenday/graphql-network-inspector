@@ -1,8 +1,8 @@
-import { useState, useEffect, useMemo, SetStateAction, Dispatch } from 'react'
+import { useEffect, useMemo } from 'react'
 import RegexParser from 'regex-parser'
 import { SplitPaneLayout } from '@/components/Layout'
 import { onNavigate } from '@/services/networkMonitor'
-import { IWebSocketNetworkRequest } from '@/hooks/useWebSocketNetworkMonitor'
+import { ISubscriptionRequest } from '@/hooks/useGraphqlSubscriptions'
 import { ICompleteNetworkRequest } from '@/helpers/networkHelpers'
 import { NetworkTable, INetworkTableDataRow } from './NetworkTable'
 import { NetworkDetails } from './NetworkDetails'
@@ -19,7 +19,7 @@ interface NetworkPanelProps {
   selectedRowId: string | number | null
   setSelectedRowId: (selectedRowId: string | number | null) => void
   networkRequests: ICompleteNetworkRequest[]
-  webSocketNetworkRequests: IWebSocketNetworkRequest[]
+  webSocketNetworkRequests: ISubscriptionRequest[]
   clearWebRequests: (opts?: IClearWebRequestsOptions) => void
   userSettings: IUserSettings
   setUserSettings: (userSettings: Partial<IUserSettings>) => void

@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useSubscription, gql } from 'urql';
 import { useState } from 'react';
+import { TransportToggle } from './components/TransportToggle';
 
 const POKEMONS_QUERY = gql`
   query GetPokemons {
@@ -228,6 +229,7 @@ export default function Home() {
       <header style={styles.header}>
         <h1>Pokemon GraphQL Mock Server</h1>
         <p>Test your GraphQL Network Inspector here!</p>
+        <TransportToggle />
       </header>
 
       {/* Wild Pokemon Section */}

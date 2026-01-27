@@ -1,12 +1,12 @@
 import React from "react"
 import { CodeView } from "../../../components/CodeView"
 import { CopyButton } from "../../../components/CopyButton"
-import { IWebSocketMessage } from "../../../hooks/useWebSocketNetworkMonitor"
+import { ISubscriptionMessage } from "../../../hooks/useGraphqlSubscriptions"
 import { PanelSection, Panels } from "../PanelSection"
 import * as safeJson from "@/helpers/safeJson"
 
 interface IMessageViewProps {
-  messages: IWebSocketMessage[]
+  messages: ISubscriptionMessage[]
   showFullMessage: boolean
   newestFirst: boolean
 }

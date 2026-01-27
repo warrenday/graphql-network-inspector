@@ -2,12 +2,12 @@ import { useEffect } from "react"
 import { CloseButton } from "../../../components/CloseButton"
 import { Tabs } from "../../../components/Tabs"
 import { NetworkTabs, useNetworkTabs } from "../../../hooks/useNetworkTabs"
-import { IWebSocketNetworkRequest } from "../../../hooks/useWebSocketNetworkMonitor"
+import { ISubscriptionRequest } from "../../../hooks/useGraphqlSubscriptions"
 import { HeaderView } from "../HeaderView"
 import MessageView from "./MessageView"
 
 interface WebSocketNetworkDetailsProps {
-  data: IWebSocketNetworkRequest
+  data: ISubscriptionRequest
   onClose: () => void
   showFullMessage: boolean
   newestFirst: boolean
