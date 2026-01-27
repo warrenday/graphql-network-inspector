@@ -45,6 +45,10 @@ export interface ITrackedConnection {
   responseHeaders: IHeader[]
   status: number
   messages: ISubscriptionMessage[]
+  /** Timestamp of last activity, used for stale connection cleanup */
+  lastActivityTime?: number
+  /** Whether the connection has been closed */
+  isClosed?: boolean
 }
 
 /**

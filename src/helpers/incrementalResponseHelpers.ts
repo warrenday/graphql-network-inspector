@@ -1,10 +1,34 @@
+/**
+ * Incremental Response Helpers
+ *
+ * This module provides utilities for handling GraphQL incremental delivery
+ * responses, which are used by @defer and @stream directives.
+ *
+ * GraphQL servers can use incremental delivery to send parts of a response
+ * as they become available, rather than waiting for the entire response.
+ * This improves perceived performance for complex queries.
+ *
+ * The response format follows the GraphQL-over-HTTP specification:
+ * - Initial response: Contains the initial data and hasNext: true
+ * - Subsequent responses: Contains incremental data at specific paths
+ * - Final response: Contains hasNext: false
+ *
+ * @see https://github.com/graphql/graphql-over-http/blob/main/spec/GraphQLOverHTTP.md
+ */
+
 import { IResponseChunk } from './networkHelpers'
 import { parse } from './safeJson'
 import { IIncrementalResponse, IIncrementalDataChunk } from '../types'
 
 /**
- * Get a value at a specific path in an object
- * Path is an array like ['user', 'posts', 0, 'comments']
+ * Get a value at a specific path in an object.
+ *
+ * @param obj - The object to traverse
+ * @param path - Array of keys/indices representing the path (e.g., ['user', 'posts', 0])
+ * @returns The value at the path, or undefined if not found
+ *
+ * @example
+ * getValueAtPath({ user: { posts: [{ id: 1 }] } }, ['user', 'posts', 0, 'id']) // returns 1
  */
 function getValueAtPath(obj: any, path: (string | number)[]): any {
   let current = obj
@@ -16,9 +40,17 @@ function getValueAtPath(obj: any, path: (string | number)[]): any {
 }
 
 /**
- * Set a value at a specific path in an object
- * Path is an array like ['user', 'posts', 0, 'comments']
- * Merges with existing value if present
+ * Set a value at a specific path in an object, creating intermediate
+ * objects/arrays as needed. Merges with existing value if present.
+ *
+ * @param obj - The object to modify (mutated in place)
+ * @param path - Array of keys/indices representing the path (e.g., ['user', 'posts', 0])
+ * @param value - The value to set at the path
+ *
+ * @example
+ * const obj = { data: {} }
+ * setValueAtPath(obj, ['data', 'user', 'name'], 'John')
+ * // obj is now { data: { user: { name: 'John' } } }
  */
 function setValueAtPath(obj: any, path: (string | number)[], value: any): void {
   if (path.length === 0) {
@@ -47,7 +79,22 @@ function setValueAtPath(obj: any, path: (string | number)[], value: any): void {
 }
 
 /**
- * Deep merge two objects, combining arrays and objects
+ * Deep merge two values, combining arrays and objects recursively.
+ *
+ * - Arrays are concatenated (target + source)
+ * - Objects are merged recursively
+ * - Primitives: source overwrites target
+ * - null/undefined: returns the other value
+ *
+ * @param target - The base value to merge into
+ * @param source - The value to merge from
+ * @returns The merged result
+ *
+ * @example
+ * deepMerge({ a: 1, b: { c: 2 } }, { b: { d: 3 } })
+ * // returns { a: 1, b: { c: 2, d: 3 } }
+ *
+ * deepMerge([1, 2], [3, 4]) // returns [1, 2, 3, 4]
  */
 function deepMerge(target: any, source: any): any {
   if (source === null || source === undefined) {
@@ -78,7 +125,20 @@ function deepMerge(target: any, source: any): any {
 }
 
 /**
- * Merge an incremental chunk into the base response
+ * Merge an incremental chunk into the base response.
+ *
+ * Handles the GraphQL incremental delivery format where chunks specify
+ * a path to indicate where their data should be merged in the response tree.
+ *
+ * @param baseResponse - The current accumulated response
+ * @param chunk - The incremental chunk to merge (contains path, data, errors, extensions)
+ * @returns A new response object with the chunk merged in
+ *
+ * @example
+ * const base = { data: { user: { id: '1' } } }
+ * const chunk = { data: { name: 'John' }, path: ['user'] }
+ * mergeIncrementalChunk(base, chunk)
+ * // returns { data: { user: { id: '1', name: 'John' } } }
  */
 export function mergeIncrementalChunk(
   baseResponse: any,
@@ -117,8 +177,21 @@ export function mergeIncrementalChunk(
 }
 
 /**
- * Merge all response chunks into a single complete response
- * This handles @defer/@stream incremental delivery format
+ * Merge all response chunks into a single complete response.
+ *
+ * This handles the @defer/@stream incremental delivery format,
+ * processing chunks in order and merging them into a final response.
+ *
+ * Supports multiple chunk formats:
+ * - `incremental` array format: chunks contain an incremental array with multiple updates
+ * - Single chunk format: chunks contain path and data directly
+ * - Full response format: chunks are complete responses to merge
+ *
+ * @param chunks - Array of response chunks to merge
+ * @returns Object containing:
+ *   - mergedData: The final merged response object
+ *   - hasIncrementalData: true if there were multiple chunks
+ *   - chunks: The original chunks array (for timeline display)
  */
 export function mergeResponseChunks(chunks: IResponseChunk[]): {
   mergedData: any
@@ -174,8 +247,13 @@ export function mergeResponseChunks(chunks: IResponseChunk[]): {
 }
 
 /**
- * Format incremental response for display
- * Shows the progression of data as chunks arrive
+ * Format incremental response chunks for timeline display.
+ *
+ * Creates a timeline view showing how the response was built up
+ * from multiple chunks, useful for debugging @defer/@stream performance.
+ *
+ * @param chunks - Array of response chunks
+ * @returns Array of timeline entries with parsed data and metadata
  */
 export function formatIncrementalResponseTimeline(
   chunks: IResponseChunk[]

@@ -419,7 +419,14 @@ export const matchWebAndNetworkRequest = async (
 }
 
 /**
- * Check if a response is multipart/mixed (used for @defer/@stream)
+ * Check if a response is multipart/mixed (used for @defer/@stream).
+ *
+ * GraphQL servers use multipart/mixed content type to stream incremental
+ * responses for @defer and @stream directives. Each part contains a JSON
+ * payload that should be merged into the final response.
+ *
+ * @param headers - Array of response headers to check
+ * @returns true if the Content-Type header indicates multipart/mixed
  */
 export const isMultipartMixedResponse = (headers: IHeader[]): boolean => {
   const contentType = headers.find(
@@ -429,7 +436,17 @@ export const isMultipartMixedResponse = (headers: IHeader[]): boolean => {
 }
 
 /**
- * Extract the boundary from a multipart/mixed content-type header
+ * Extract the boundary from a multipart/mixed content-type header.
+ *
+ * The boundary is used to separate individual parts in a multipart response.
+ * It can be quoted or unquoted in the Content-Type header.
+ *
+ * @example
+ * // Content-Type: multipart/mixed; boundary="graphql"
+ * getMultipartMixedBoundary(headers) // returns "graphql"
+ *
+ * @param headers - Array of response headers
+ * @returns The boundary string, or undefined if not found
  */
 export const getMultipartMixedBoundary = (
   headers: IHeader[]
@@ -447,8 +464,34 @@ export const getMultipartMixedBoundary = (
 }
 
 /**
- * Parse a multipart/mixed response body into individual chunks
- * Each chunk is a separate JSON payload for incremental delivery
+ * Parse a multipart/mixed response body into individual chunks.
+ *
+ * This function handles the multipart/mixed format used by GraphQL servers
+ * implementing @defer and @stream directives (as per the GraphQL-over-HTTP spec).
+ *
+ * Each part in the multipart response contains:
+ * 1. MIME headers (typically Content-Type: application/json)
+ * 2. A blank line separator
+ * 3. The JSON payload body
+ *
+ * The first chunk is the initial response, and subsequent chunks are
+ * incremental updates that should be merged into the initial response.
+ *
+ * @example
+ * // Example multipart body:
+ * // --graphql
+ * // Content-Type: application/json
+ * //
+ * // {"data":{"user":{"id":"1"}},"hasNext":true}
+ * // --graphql
+ * // Content-Type: application/json
+ * //
+ * // {"incremental":[{"data":{"name":"John"},"path":["user"]}],"hasNext":false}
+ * // --graphql--
+ *
+ * @param body - The raw multipart response body string
+ * @param boundary - The boundary string from the Content-Type header
+ * @returns Array of parsed response chunks
  */
 export const parseMultipartMixedResponse = (
   body: string,

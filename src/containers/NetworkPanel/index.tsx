@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import RegexParser from 'regex-parser'
 import { SplitPaneLayout } from '@/components/Layout'
 import { onNavigate } from '@/services/networkMonitor'
@@ -15,6 +15,9 @@ import {
 import { IClearWebRequestsOptions } from '../../hooks/useNetworkMonitor'
 import { IUserSettings } from '@/services/userSettingsService'
 
+/** Debounce delay in ms for filter input */
+const FILTER_DEBOUNCE_MS = 150
+
 interface NetworkPanelProps {
   selectedRowId: string | number | null
   setSelectedRowId: (selectedRowId: string | number | null) => void
@@ -25,14 +28,35 @@ interface NetworkPanelProps {
   setUserSettings: (userSettings: Partial<IUserSettings>) => void
 }
 
+/** Cache for compiled regex patterns to avoid recompilation */
+const regexCache = new Map<string, { regex: RegExp | null; errorMessage: string | null }>()
+
+/**
+ * Parse a regex pattern string with memoization.
+ * Results are cached to prevent recompilation of the same pattern.
+ */
 const getRegex = (str: string) => {
+  const cached = regexCache.get(str)
+  if (cached) {
+    return cached
+  }
+
   try {
     const regex = RegexParser(str)
-    return { regex, errorMessage: null }
+    const result = { regex, errorMessage: null }
+    regexCache.set(str, result)
+    // Limit cache size to prevent memory issues
+    if (regexCache.size > 100) {
+      const firstKey = regexCache.keys().next().value
+      if (firstKey) regexCache.delete(firstKey)
+    }
+    return result
   } catch (error) {
     let message = 'Invalid Regex'
     if (error instanceof Error) message = error.message
-    return { regex: null, errorMessage: message }
+    const result = { regex: null, errorMessage: message }
+    regexCache.set(str, result)
+    return result
   }
 }
 
@@ -82,12 +106,37 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
 
   const { operationFilters } = useOperationFilters()
 
-  const { results: filteredNetworkRequests, errorMessage: filterError } =
-    filterNetworkRequests(networkRequests, userSettings.filter, {
-      isInverted: userSettings.isInvertFilterActive,
-      isRegex: userSettings.isRegexActive,
-      operationFilters,
-    })
+  // Debounced filter value for performance with large datasets
+  const [debouncedFilter, setDebouncedFilter] = useState(userSettings.filter)
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Update debounced filter with delay
+  useEffect(() => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current)
+    }
+
+    debounceTimerRef.current = setTimeout(() => {
+      setDebouncedFilter(userSettings.filter)
+    }, FILTER_DEBOUNCE_MS)
+
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current)
+      }
+    }
+  }, [userSettings.filter])
+
+  // Memoize filter results to avoid recomputation on unrelated state changes
+  const { results: filteredNetworkRequests, errorMessage: filterError } = useMemo(
+    () =>
+      filterNetworkRequests(networkRequests, debouncedFilter, {
+        isInverted: userSettings.isInvertFilterActive,
+        isRegex: userSettings.isRegexActive,
+        operationFilters,
+      }),
+    [networkRequests, debouncedFilter, userSettings.isInvertFilterActive, userSettings.isRegexActive, operationFilters]
+  )
 
   const filteredWebsocketNetworkRequests = useMemo(() => {
     if (operationFilters.subscription) {

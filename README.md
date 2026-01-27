@@ -23,15 +23,26 @@ The plugin is available for both Chrome and Firefox:
 
 We provide a number of productivity features to help you debug and understand your GraphQL requests:
 
-- Automatically parse and display requests as GraphQL queries.
-- Support for query batching, displaying each query individually.
+- Automatically parse and display requests as GraphQL queries
+- Support for query batching, displaying each query individually
+- Support for persisted queries (Automatic Persisted Queries)
+- Support for incremental delivery (@defer/@stream directives)
 - Export requests to re-run and share with https://www.graphdev.app
 
-Some shortcuts you may find useful:
+### Subscription Support
 
-- Click any header to copy to clipboard.
-- Double click any JWT token header to both decode and copy to clipboard.
-- Press `Cmd/Ctrl + F` to open the full search panel.
+GraphQL Network Inspector supports monitoring GraphQL subscriptions over:
+
+- **WebSocket** - Full support for GraphQL over WebSocket protocol (graphql-ws)
+- **Server-Sent Events (SSE)** - Support for GraphQL subscriptions over SSE transport
+
+Enable subscription monitoring from the operation type filters in the toolbar.
+
+### Keyboard Shortcuts
+
+- Click any header to copy to clipboard
+- Double click any JWT token header to both decode and copy to clipboard
+- Press `Cmd/Ctrl + F` to open the full search panel
 
 ## Issue with extension not loading
 
@@ -58,9 +69,30 @@ yarn start
 
 This will also cache files in the `build` so you can load the directory as an unpacked extension in your browser. Changes will be loaded automatically, however you often have to close and reopen devtools.
 
-## Mock Server
+### Testing Locally
 
-A mock server is available at https://graphql-mock-service-de771830b5b1.herokuapp.com and can be used to test the features of the extension.
+A mock GraphQL server is available in the `mock-server` directory for testing the extension features:
+
+```bash
+cd mock-server
+npm install
+npm run dev
+```
+
+The mock server includes a transport toggle button allowing you to test both WebSocket and SSE subscriptions.
+
+## Architecture Overview
+
+The extension is built with React and follows a hooks-based architecture:
+
+- **`src/hooks/`** - Custom React hooks for core functionality
+  - `useNetworkMonitor` - Monitors HTTP/HTTPS GraphQL requests
+  - `useGraphqlSubscriptions` - Monitors WebSocket and SSE subscriptions
+  - `useHighlight` - Syntax highlighting with Web Worker support
+- **`src/containers/`** - Main UI components (NetworkPanel, Toolbar, etc.)
+- **`src/components/`** - Reusable UI components
+- **`src/helpers/`** - Utility functions for parsing and formatting
+- **`src/services/`** - Chrome API wrappers and services
 
 ## Contribute
 
@@ -78,7 +110,7 @@ GraphQL Network Inspector is proudly sponsored by:
 
 The MIT License (MIT)
 
-Copyright (c) 2023 GraphQL Network Inspector authors
+Copyright (c) 2026 GraphQL Network Inspector authors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

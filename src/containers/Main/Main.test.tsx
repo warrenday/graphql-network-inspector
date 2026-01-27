@@ -214,7 +214,12 @@ describe('Main', () => {
     })
 
     expect(filterInput.value).toBe('getmovie')
-    expect(queryAllByRole('row')).toHaveLength(2)
+
+    // Wait for debounce to apply filter
+    await waitFor(() => {
+      expect(queryAllByRole('row')).toHaveLength(2)
+    })
+
     queryAllByRole('row').forEach((row, i) => {
       // First row is header
       if (i !== 0) {
@@ -244,7 +249,12 @@ describe('Main', () => {
     })
 
     expect(filterInput.value).toBe('getmovie')
-    expect(queryAllByRole('row')).toHaveLength(8)
+
+    // Wait for debounce to apply filter
+    await waitFor(() => {
+      expect(queryAllByRole('row')).toHaveLength(8)
+    })
+
     queryAllByRole('row').forEach((row, i) => {
       // First row is header
       if (i !== 0) {
@@ -274,7 +284,12 @@ describe('Main', () => {
     })
 
     expect(filterInput.value).toBe('/getMovie/')
-    expect(queryAllByRole('row')).toHaveLength(2)
+
+    // Wait for debounce to apply filter
+    await waitFor(() => {
+      expect(queryAllByRole('row')).toHaveLength(2)
+    })
+
     queryAllByRole('row').forEach((row, i) => {
       // First row is header
       if (i !== 0) {

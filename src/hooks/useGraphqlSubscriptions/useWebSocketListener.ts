@@ -16,6 +16,7 @@ const createConnection = (requestId: string, url: string): ITrackedConnection =>
   responseHeaders: [],
   status: 101,
   messages: [],
+  lastActivityTime: Date.now(),
 })
 
 interface UseWebSocketListenerOptions {
@@ -64,6 +65,7 @@ export const useWebSocketListener = ({
       connections.set(requestId, {
         ...conn,
         messages: [...conn.messages, message],
+        lastActivityTime: Date.now(),
       })
 
       onUpdate()
@@ -96,6 +98,7 @@ export const useWebSocketListener = ({
             status: response?.status ?? 101,
             responseHeaders: headersToArray(response?.headers),
             requestHeaders: headersToArray(response?.requestHeaders),
+            lastActivityTime: Date.now(),
           })
           break
         }
@@ -118,6 +121,19 @@ export const useWebSocketListener = ({
           }
           if (response?.payloadData) {
             addMessage(requestId, 'receive', response.payloadData)
+          }
+          break
+        }
+
+        case 'Network.webSocketClosed': {
+          const { requestId } = p as { requestId: string }
+          const conn = connections.get(requestId)
+          if (conn && conn.type === 'websocket') {
+            connections.set(requestId, {
+              ...conn,
+              isClosed: true,
+              lastActivityTime: Date.now(),
+            })
           }
           break
         }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { v4 as uuid } from 'uuid'
 import {
   parseGraphqlBody,
@@ -151,6 +151,15 @@ export const useNetworkMonitor = (): [
     IIncompleteNetworkRequest[]
   >([])
 
+  // Track if component is mounted to prevent state updates after unmount
+  const isMountedRef = useRef(true)
+  useEffect(() => {
+    isMountedRef.current = true
+    return () => {
+      isMountedRef.current = false
+    }
+  }, [])
+
   const handleBeforeRequest = useCallback(
     (details: chrome.webRequest.WebRequestBodyDetails) => {
       if (details.method === 'GET' && urlHasFileExtension(details.url)) {
@@ -204,6 +213,9 @@ export const useNetworkMonitor = (): [
         details.requestHeaders || []
       )
 
+      // Check if still mounted after async operation
+      if (!isMountedRef.current) return
+
       if (!body) {
         return
       }
@@ -251,98 +263,136 @@ export const useNetworkMonitor = (): [
 
   const handleRequestFinished = useCallback(
     async (details: chrome.devtools.network.Request) => {
-      if (
-        details.request.method === 'GET' &&
-        urlHasFileExtension(details.request.url)
-      ) {
-        return
-      }
-
-      const isValid = await validateNetworkRequest(details)
-
-      if (!isValid) {
-        return
-      }
-
-      details.getContent(async (content, encoding) => {
-        const responseBody = encoding === 'base64' ? atob(content) : content
-        const requests = getLatestRequests()
-        const matchedRequest = await findMatchingWebRequest(requests, details)
-        if (!matchedRequest) {
+      try {
+        if (
+          details.request.method === 'GET' &&
+          urlHasFileExtension(details.request.url)
+        ) {
           return
         }
 
-        setRequests((prevRequests) => {
-          return prevRequests.map((prevRequest) => {
-            if (prevRequest.id === matchedRequest.id) {
-              return {
-                ...prevRequest,
-                ...processNetworkRequest(details, responseBody),
-                native: {
-                  ...prevRequest.native,
-                  networkRequest: details,
-                },
-              }
-            } else {
-              return prevRequest
+        const isValid = await validateNetworkRequest(details)
+
+        if (!isValid) {
+          return
+        }
+
+        details.getContent(async (content, encoding) => {
+          try {
+            // Check if still mounted before processing
+            if (!isMountedRef.current) return
+
+            const responseBody = encoding === 'base64' ? atob(content) : content
+            const requests = getLatestRequests()
+            const matchedRequest = await findMatchingWebRequest(requests, details)
+
+            // Check again after async operation
+            if (!isMountedRef.current || !matchedRequest) {
+              return
             }
-          })
+
+            setRequests((prevRequests) => {
+              return prevRequests.map((prevRequest) => {
+                if (prevRequest.id === matchedRequest.id) {
+                  return {
+                    ...prevRequest,
+                    ...processNetworkRequest(details, responseBody),
+                    native: {
+                      ...prevRequest.native,
+                      networkRequest: details,
+                    },
+                  }
+                } else {
+                  return prevRequest
+                }
+              })
+            })
+          } catch (error) {
+            console.error('Error processing request content:', error)
+          }
         })
-      })
+      } catch (error) {
+        console.error('Error handling finished request:', error)
+      }
     },
     [setRequests, getLatestRequests]
   )
 
   const handleHAREntries = useCallback(
     async (entries: chrome.devtools.network.Request[]) => {
-      const validEntries = entries.filter((details) => {
-        return 'getContent' in details && validateNetworkRequest(details)
-      })
+      try {
+        const validEntries = entries.filter((details) => {
+          return 'getContent' in details && validateNetworkRequest(details)
+        })
 
-      const entriesWithContent = await Promise.all(
-        validEntries.map((details) => {
-          return new Promise<ICompleteNetworkRequest>((resolve) => {
-            details.getContent(async (responseBody) => {
-              const body = await getRequestBody(details)
-              if (!body) {
-                return
+        const entriesWithContent = await Promise.all(
+          validEntries.map((details) => {
+            return new Promise<ICompleteNetworkRequest | null>((resolve) => {
+              try {
+                details.getContent(async (responseBody) => {
+                  try {
+                    const body = await getRequestBody(details)
+                    if (!body) {
+                      resolve(null)
+                      return
+                    }
+
+                    const graphqlRequestBody = parseGraphqlBody(body)
+                    if (!graphqlRequestBody) {
+                      resolve(null)
+                      return
+                    }
+
+                    const primaryOperation =
+                      getFirstGraphqlOperation(graphqlRequestBody)
+                    if (!primaryOperation) {
+                      resolve(null)
+                      return
+                    }
+
+                    resolve({
+                      id: uuid(),
+                      ...processNetworkRequest(details, responseBody),
+                      request: {
+                        primaryOperation,
+                        body: graphqlRequestBody.map((requestBody) => ({
+                          ...requestBody,
+                          id: uuid(),
+                        })),
+                        bodySize: body ? body.length : 0,
+                        headers: details.request.headers,
+                        headersSize: details.request.headersSize,
+                      },
+                      native: {
+                        networkRequest: details,
+                        webRequest: {} as chrome.webRequest.WebRequestBodyDetails,
+                      },
+                    })
+                  } catch (error) {
+                    console.error('Error processing HAR entry content:', error)
+                    resolve(null)
+                  }
+                })
+              } catch (error) {
+                console.error('Error getting HAR entry content:', error)
+                resolve(null)
               }
-
-              const graphqlRequestBody = parseGraphqlBody(body)
-              if (!graphqlRequestBody) {
-                return
-              }
-
-              const primaryOperation =
-                getFirstGraphqlOperation(graphqlRequestBody)
-              if (!primaryOperation) {
-                return
-              }
-
-              resolve({
-                id: uuid(),
-                ...processNetworkRequest(details, responseBody),
-                request: {
-                  primaryOperation,
-                  body: graphqlRequestBody.map((requestBody) => ({
-                    ...requestBody,
-                    id: uuid(),
-                  })),
-                  bodySize: body ? body.length : 0,
-                  headers: details.request.headers,
-                  headersSize: details.request.headersSize,
-                },
-                native: {
-                  networkRequest: details,
-                  webRequest: {} as chrome.webRequest.WebRequestBodyDetails,
-                },
-              })
             })
           })
-        })
-      )
+        )
 
-      setRequests(entriesWithContent)
+        // Filter out null entries from failed processing
+        const validResults = entriesWithContent.filter(
+          (entry): entry is ICompleteNetworkRequest => entry !== null
+        )
+
+        // Check if still mounted before setting state
+        if (isMountedRef.current) {
+          setRequests(validResults)
+        }
+      } catch (error) {
+        console.error('Error handling HAR entries:', error)
+      }
     },
     [setRequests]
   )
@@ -370,8 +420,12 @@ export const useNetworkMonitor = (): [
   // Collect historic network data in case any events fired before we started listening
   useEffect(() => {
     const fetchHistoricWebRequests = async () => {
-      const HARLog = await getHAR()
-      handleHAREntries(HARLog.entries as chrome.devtools.network.Request[])
+      try {
+        const HARLog = await getHAR()
+        handleHAREntries(HARLog.entries as chrome.devtools.network.Request[])
+      } catch (error) {
+        console.error('Error fetching historic web requests:', error)
+      }
     }
 
     clearRequests()

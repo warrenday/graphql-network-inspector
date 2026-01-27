@@ -21,6 +21,7 @@ const createConnection = (
   responseHeaders: [],
   status: 0,
   messages: [],
+  lastActivityTime: Date.now(),
 })
 
 /**
@@ -74,6 +75,7 @@ export const useSSEListener = ({
       connections.set(requestId, {
         ...conn,
         messages: [...conn.messages, message],
+        lastActivityTime: Date.now(),
       })
 
       onUpdate()

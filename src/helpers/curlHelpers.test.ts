@@ -305,4 +305,140 @@ describe('getNetworkCurl', () => {
         '  --data-raw \'{"query":"query { test }","variables":{}}\''
     )
   })
+
+  it('should handle special characters in header values', async () => {
+    const req = mockRequest({
+      native: {
+        networkRequest: {
+          request: {
+            url: 'https://api.example.com/graphql',
+            method: 'POST',
+            headers: [
+              { name: 'content-type', value: 'application/json' },
+              { name: 'x-custom', value: "value with 'quotes' and \"double\"" },
+            ],
+            postData: {
+              text: '{}',
+            },
+          },
+        } as chrome.devtools.network.Request,
+      },
+    })
+    const curl = await getNetworkCurl(req)
+    expect(curl).toContain("-H 'x-custom: value with 'quotes' and \"double\"'")
+  })
+
+  it('should return empty string when no Chrome request data', async () => {
+    const req = mockRequest({
+      native: {
+        networkRequest: undefined,
+      },
+    })
+    const curl = await getNetworkCurl(req)
+    expect(curl).toBe('')
+  })
+
+  it('should handle URL with query parameters', async () => {
+    const req = mockRequest({
+      native: {
+        networkRequest: {
+          request: {
+            url: 'https://api.example.com/graphql?foo=bar&baz=qux',
+            method: 'GET',
+            headers: [],
+          },
+        } as unknown as chrome.devtools.network.Request,
+      },
+    })
+    const curl = await getNetworkCurl(req)
+    expect(curl).toBe("curl 'https://api.example.com/graphql?foo=bar&baz=qux'")
+  })
+
+  it('should handle body with newlines', async () => {
+    const req = mockRequest({
+      native: {
+        networkRequest: {
+          request: {
+            url: 'https://api.example.com/graphql',
+            method: 'POST',
+            headers: [{ name: 'content-type', value: 'application/json' }],
+            postData: {
+              text: JSON.stringify({
+                query: `query {
+                  user {
+                    id
+                  }
+                }`,
+              }),
+            },
+          },
+        } as chrome.devtools.network.Request,
+      },
+    })
+    const curl = await getNetworkCurl(req)
+    expect(curl).toContain('--data-raw')
+    // Newlines should be preserved in JSON
+    expect(curl).toContain('\\n')
+  })
+
+  it('should exclude content-length header', async () => {
+    const req = mockRequest({
+      native: {
+        networkRequest: {
+          request: {
+            url: 'https://api.example.com/graphql',
+            method: 'POST',
+            headers: [
+              { name: 'content-type', value: 'application/json' },
+              { name: 'content-length', value: '100' },
+            ],
+            postData: {
+              text: '{}',
+            },
+          },
+        } as chrome.devtools.network.Request,
+      },
+    })
+    const curl = await getNetworkCurl(req)
+    expect(curl).not.toContain('content-length')
+  })
+
+  it('should exclude accept-encoding header', async () => {
+    const req = mockRequest({
+      native: {
+        networkRequest: {
+          request: {
+            url: 'https://api.example.com/graphql',
+            method: 'POST',
+            headers: [
+              { name: 'content-type', value: 'application/json' },
+              { name: 'accept-encoding', value: 'gzip, deflate, br' },
+            ],
+            postData: {
+              text: '{}',
+            },
+          },
+        } as chrome.devtools.network.Request,
+      },
+    })
+    const curl = await getNetworkCurl(req)
+    expect(curl).not.toContain('accept-encoding')
+  })
+
+  it('should handle empty postData', async () => {
+    const req = mockRequest({
+      native: {
+        networkRequest: {
+          request: {
+            url: 'https://api.example.com/graphql',
+            method: 'POST',
+            headers: [{ name: 'content-type', value: 'application/json' }],
+            postData: undefined,
+          },
+        } as chrome.devtools.network.Request,
+      },
+    })
+    const curl = await getNetworkCurl(req)
+    expect(curl).not.toContain('--data-raw')
+  })
 })

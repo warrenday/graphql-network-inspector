@@ -316,4 +316,145 @@ describe('incrementalResponseHelpers', () => {
       expect(result[0].data).toEqual({})
     })
   })
+
+  describe('edge cases', () => {
+    it('handles deeply nested paths', () => {
+      const baseResponse = {
+        data: {},
+      }
+
+      const chunk = {
+        data: { value: 'deep' },
+        path: ['a', 'b', 'c', 'd', 'e'],
+      }
+
+      const result = mergeIncrementalChunk(baseResponse, chunk)
+
+      expect(result.data.a.b.c.d.e).toEqual({ value: 'deep' })
+    })
+
+    it('handles numeric path indices for arrays', () => {
+      const baseResponse = {
+        data: {
+          users: [{ id: '1' }, { id: '2' }],
+        },
+      }
+
+      const chunk = {
+        data: { name: 'John' },
+        path: ['users', 0],
+      }
+
+      const result = mergeIncrementalChunk(baseResponse, chunk)
+
+      expect(result.data.users[0]).toEqual({ id: '1', name: 'John' })
+    })
+
+    it('handles null values in merge', () => {
+      const baseResponse = {
+        data: { user: { id: '1', name: null } },
+      }
+
+      const chunk = {
+        data: { name: 'John' },
+        path: ['user'],
+      }
+
+      const result = mergeIncrementalChunk(baseResponse, chunk)
+
+      expect(result.data.user.name).toBe('John')
+    })
+
+    it('handles undefined path gracefully', () => {
+      const baseResponse = {
+        data: { user: { id: '1' } },
+      }
+
+      const chunk = {
+        data: { email: 'test@example.com' },
+        path: undefined as any,
+      }
+
+      const result = mergeIncrementalChunk(baseResponse, chunk)
+
+      // Should not throw and return base response unchanged
+      expect(result.data.user).toEqual({ id: '1' })
+    })
+
+    it('handles undefined data gracefully', () => {
+      const baseResponse = {
+        data: { user: { id: '1' } },
+      }
+
+      const chunk = {
+        data: undefined as any,
+        path: ['user'],
+      }
+
+      const result = mergeIncrementalChunk(baseResponse, chunk)
+
+      // Should not throw
+      expect(result.data.user).toEqual({ id: '1' })
+    })
+
+    it('merges extensions from multiple chunks', () => {
+      const chunks: IResponseChunk[] = [
+        {
+          body: JSON.stringify({
+            data: { user: { id: '1' } },
+            extensions: { tracing: { startTime: 1000 } },
+          }),
+          timestamp: Date.now(),
+          isIncremental: false,
+        },
+        {
+          body: JSON.stringify({
+            data: { email: 'test@example.com' },
+            path: ['user'],
+            extensions: { caching: { ttl: 60 } },
+          }),
+          timestamp: Date.now(),
+          isIncremental: true,
+        },
+      ]
+
+      const result = mergeResponseChunks(chunks)
+
+      // Extensions from incremental chunks are merged (not deeply merged for nested objects)
+      expect(result.mergedData.extensions).toEqual({
+        tracing: { startTime: 1000 },
+        caching: { ttl: 60 },
+      })
+    })
+
+    it('handles empty arrays in merge', () => {
+      const baseResponse = {
+        data: { posts: [] },
+      }
+
+      const chunk = {
+        data: [{ id: '1' }],
+        path: ['posts'],
+      }
+
+      const result = mergeIncrementalChunk(baseResponse, chunk)
+
+      expect(result.data.posts).toEqual([{ id: '1' }])
+    })
+
+    it('handles primitive values at path', () => {
+      const baseResponse = {
+        data: { user: { count: 5 } },
+      }
+
+      const chunk = {
+        data: 10,
+        path: ['user', 'count'],
+      }
+
+      const result = mergeIncrementalChunk(baseResponse, chunk)
+
+      expect(result.data.user.count).toBe(10)
+    })
+  })
 })
