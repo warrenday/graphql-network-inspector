@@ -19,6 +19,10 @@ The plugin is available for both Chrome and Firefox:
 
 2. [Firefox Addons](https://addons.mozilla.org/en-US/firefox/addon/graphql-network-inspector)
 
+## Test Server
+
+You can test the functionality at our mock server https://graphql-mock-service-de771830b5b1.herokuapp.com
+
 ## Features
 
 We provide a number of productivity features to help you debug and understand your GraphQL requests:
