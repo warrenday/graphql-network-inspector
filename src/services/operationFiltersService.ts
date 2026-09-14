@@ -8,7 +8,7 @@ const STORAGE_KEY = 'operationFilters'
 const DEFAULT_FILTERS: IOperationFilters = {
   query: true,
   mutation: true,
-  subscription: true,
+  subscription: false,
   persisted: true,
 }
 

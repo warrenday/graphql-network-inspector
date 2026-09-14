@@ -31,7 +31,7 @@ interface UseGraphqlSubscriptionsOptions {
  * ```
  */
 export const useGraphqlSubscriptions = (
-  options: UseGraphqlSubscriptionsOptions = { isEnabled: true, urlFilter: '' }
+  options: UseGraphqlSubscriptionsOptions = { isEnabled: false, urlFilter: '' }
 ) => {
   const [requests, setRequests] = useState<ISubscriptionRequest[]>([])
   const connectionsRef = useRef(new Map<string, ITrackedConnection>())
