@@ -81,7 +81,7 @@ describe('useGraphqlSubscriptions', () => {
   }
 
   it('captures WebSocket connections and received messages', async () => {
-    const { result } = renderHook(() => useGraphqlSubscriptions())
+    const { result } = renderHook(() => useGraphqlSubscriptions({ isEnabled: true, urlFilter: '' }))
 
     act(() => {
       emitWebSocketCreated('req-1', 'ws://localhost:4000/graphql')
@@ -120,7 +120,7 @@ describe('useGraphqlSubscriptions', () => {
   })
 
   it('only captures sent messages with valid GraphQL queries', async () => {
-    const { result } = renderHook(() => useGraphqlSubscriptions())
+    const { result } = renderHook(() => useGraphqlSubscriptions({ isEnabled: true, urlFilter: '' }))
 
     act(() => {
       emitWebSocketCreated('req-1', 'ws://localhost:4000/graphql')
@@ -148,7 +148,7 @@ describe('useGraphqlSubscriptions', () => {
   })
 
   it('accepts sent messages for Rails ActionCable channel', async () => {
-    const { result } = renderHook(() => useGraphqlSubscriptions())
+    const { result } = renderHook(() => useGraphqlSubscriptions({ isEnabled: true, urlFilter: '' }))
 
     act(() => {
       emitWebSocketCreated('req-1', 'ws://localhost:4000/graphql')
@@ -185,7 +185,7 @@ describe('useGraphqlSubscriptions', () => {
   })
 
   it('accepts received messages for Rails ActionCable channel', async () => {
-    const { result } = renderHook(() => useGraphqlSubscriptions())
+    const { result } = renderHook(() => useGraphqlSubscriptions({ isEnabled: true, urlFilter: '' }))
 
     act(() => {
       emitWebSocketCreated('req-1', 'ws://localhost:4000/graphql')
@@ -269,7 +269,7 @@ describe('useGraphqlSubscriptions', () => {
   })
 
   it('captures SSE connections and messages', async () => {
-    const { result } = renderHook(() => useGraphqlSubscriptions())
+    const { result } = renderHook(() => useGraphqlSubscriptions({ isEnabled: true, urlFilter: '' }))
 
     act(() => {
       emitSSERequest('req-1', 'http://localhost:3000/api/graphql', 'POST')
@@ -296,7 +296,7 @@ describe('useGraphqlSubscriptions', () => {
   })
 
   it('clears all requests when clearRequests is called', async () => {
-    const { result } = renderHook(() => useGraphqlSubscriptions())
+    const { result } = renderHook(() => useGraphqlSubscriptions({ isEnabled: true, urlFilter: '' }))
 
     act(() => {
       emitWebSocketCreated('req-1', 'ws://localhost:4000/graphql')
@@ -317,7 +317,7 @@ describe('useGraphqlSubscriptions', () => {
   })
 
   it('captures headers from WebSocket handshake', async () => {
-    const { result } = renderHook(() => useGraphqlSubscriptions())
+    const { result } = renderHook(() => useGraphqlSubscriptions({ isEnabled: true, urlFilter: '' }))
 
     act(() => {
       emitWebSocketCreated('req-1', 'ws://localhost:4000/graphql')
