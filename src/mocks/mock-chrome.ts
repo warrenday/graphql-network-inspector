@@ -4,6 +4,8 @@ import { IMockRequest, mockRequests } from '../mocks/mock-requests'
 
 let mockStorage = {}
 
+const beforeRequestListeners = new Map<Function, (event: any) => void>()
+
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 // Configure an event to add more mock requests
@@ -78,10 +80,6 @@ const mockedChrome: DeepPartial<typeof chrome> = {
           eventEmitter.off('onRequestFinished')
         },
       },
-      onNavigated: {
-        addListener: () => {},
-        removeListener: () => {},
-      },
     },
   },
   webRequest: {
@@ -96,13 +94,18 @@ const mockedChrome: DeepPartial<typeof chrome> = {
       },
     },
     onBeforeRequest: {
-      addListener: (cb) => {
-        eventEmitter.on('onBeforeRequest', (event) => {
-          cb(event.data)
-        })
+      addListener: (cb, filter) => {
+        // Mock requests are never page navigations.
+        if (filter?.types?.includes('main_frame')) {
+          return
+        }
+        const listener = (event: { data: any }) => cb(event.data)
+        beforeRequestListeners.set(cb, listener)
+        eventEmitter.on('onBeforeRequest', listener)
       },
-      removeListener: () => {
-        eventEmitter.off('onBeforeRequest')
+      removeListener: (cb) => {
+        eventEmitter.off('onBeforeRequest', beforeRequestListeners.get(cb))
+        beforeRequestListeners.delete(cb)
       },
     },
   },

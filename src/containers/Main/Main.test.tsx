@@ -36,16 +36,17 @@ const mockOnNavigated = () => {
   let triggerOnNavigated: () => void
   mockChromeProvider.mockReturnValue({
     ...mockChrome,
-    devtools: {
-      ...mockChrome.devtools,
-      network: {
-        ...mockChrome.devtools.network,
-        onNavigated: {
-          addListener: (cb: any) => {
+    webRequest: {
+      ...mockChrome.webRequest,
+      onBeforeRequest: {
+        addListener: (cb: any, filter: chrome.webRequest.RequestFilter) => {
+          if (filter.types?.includes('main_frame')) {
             triggerOnNavigated = cb
-          },
-          removeListener: () => {},
+          } else {
+            mockChrome.webRequest.onBeforeRequest.addListener(cb, filter)
+          }
         },
+        removeListener: () => {},
       },
     },
   })
