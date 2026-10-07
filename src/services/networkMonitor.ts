@@ -52,11 +52,18 @@ export const onRequestFinished = (
   }
 }
 
+// Not devtools.network.onNavigated: since Chrome 153 it also fires on
+// same-document navigations (pushState/replaceState), which would clear the
+// log on every client-side route change.
 export const onNavigate = (cb: () => void) => {
   const chrome = chromeProvider()
-  chrome.devtools.network.onNavigated.addListener(cb)
+  chrome.webRequest.onBeforeRequest.addListener(cb, {
+    urls: ['<all_urls>'],
+    tabId: chrome.devtools.inspectedWindow.tabId,
+    types: ['main_frame'],
+  })
   return () => {
-    chrome.devtools.network.onNavigated.removeListener(cb)
+    chrome.webRequest.onBeforeRequest.removeListener(cb)
   }
 }
 
